@@ -11,4 +11,9 @@ public class User {
   private String account;
   private String email;
 
+  public User(int id, String account, String email) {
+    this.id = id;
+    this.account = account;
+    this.email = email;
+  }
 }

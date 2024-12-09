@@ -15,6 +15,7 @@ public interface UserRepository {
   @Select("SELECT * FROM users")
   List<User> findUser();
 
+
   @Select("SELECT * FROM user_details")
   List<UserDetail> findUserDetail();
 
