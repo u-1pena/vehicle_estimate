@@ -21,12 +21,6 @@ public class UserService {
     this.userRepository = userRepository;
   }
 
-  /*
-  ユーザー情報を全て取得する処理
-  findUser,findUserDetail, findUserPaymentで、各情報を取得
-  ユーザーはそのまま順に取得し、ユーザー詳細はidをキーにして取得し、ユーザー支払いはuserIdをキーにして取得
-  ユーザー詳細はtoMapでidをキーにしてMapに変換し、ユーザー支払いはgroupingByでuserIdをキーにしてMapに変換
-  */
 
   public List<UserInformationConverter> handleRequestParam(String account, String name,
       String kana, String email) {
