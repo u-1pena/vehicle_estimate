@@ -1,5 +1,6 @@
 package yuichi.user.management.entity;
 
+import java.time.YearMonth;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,5 +13,5 @@ public class UserPayment {
   private String cardNumber;
   private String cardBrand;
   private String cardHolder;
-  private String expirationDate;
+  private YearMonth expirationDate;
 }
