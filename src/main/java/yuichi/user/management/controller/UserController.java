@@ -20,8 +20,7 @@ public class UserController {
 
   /*ユーザー情報を全て取得する処理
   @RequestParamでaccount,name,kana,emailを受け取り、handleRequestParamでそれぞれの値を受け取り、
-  それぞれの値がnullでない場合、それぞれの値をキーにして検索を行う
-   */
+  それぞれの値がnullでない場合、それぞれの値をキーにして検索を行う*/
   @GetMapping("/users")
   public List<UserInformationConverter> handleUserRequest(
       @RequestParam(value = "account", required = false) String account,
