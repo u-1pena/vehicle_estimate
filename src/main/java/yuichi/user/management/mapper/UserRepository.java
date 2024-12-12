@@ -13,14 +13,13 @@ public interface UserRepository {
 
   //全件取得
   @Select("SELECT * FROM users")
-  List<User> findUser();
-
+  List<User> findAllUsers();
 
   @Select("SELECT * FROM user_details")
-  List<UserDetail> findUserDetail();
+  List<UserDetail> findAllUserDetails();
 
   @Select("SELECT * FROM user_payments")
-  List<UserPayment> findUserPayment();
+  List<UserPayment> findAllUserPayments();
 
   /*検索取得
   idをキーにして取得*/
@@ -31,21 +30,20 @@ public interface UserRepository {
   Optional<UserDetail> findUserDetailById(int userId);
 
   @Select("SELECT * FROM user_payments WHERE user_id = #{userId}")
-  List<UserPayment> findAllPaymentsByUserId(int userId);
+  List<UserPayment> findUserPaymentsByUserId(int userId);
 
   @Select("SELECT * FROM users WHERE account LIKE CONCAT('%', #{account}, '%')")
-  List<User> searchByAccountName(String account);
+  List<User> findByAccountName(String account);
 
   //各種検索
   //カナ検索
   @Select("SELECT *FROM user_details WHERE CONCAT(last_name_kana, first_name_kana) LIKE CONCAT('%', #{kana}, '%')")
-  List<UserDetail> searchByFullNameKana(String kana);
+  List<UserDetail> findByFullNameKana(String kana);
 
   //ユーザー名検索
   @Select("SELECT * FROM user_details WHERE CONCAT(last_name, first_name) LIKE CONCAT('%', #{name}, '%')")
-  List<UserDetail> searchByDetailName(String name);
+  List<UserDetail> findByDetailName(String name);
 
   @Select("SELECT * FROM users WHERE email = #{email}")
-  List<User> searchByEmail(String email);
-
+  List<User> findByEmail(String email);
 }
