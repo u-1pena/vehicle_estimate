@@ -21,8 +21,3 @@ public class UserInformationConverter {
     return userInformationDto;
   }
 }
-
-
-
-
-
