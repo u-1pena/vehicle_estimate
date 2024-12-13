@@ -1,4 +1,4 @@
-package yuichi.user.management;
+package yuichi.user.management.entity;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -8,13 +8,12 @@ import lombok.Setter;
 public class User {
 
   private int id;
-  private String name;
+  private String account;
   private String email;
 
-  public User(int id, String name, String email) {
+  public User(int id, String account, String email) {
     this.id = id;
-    this.name = name;
+    this.account = account;
     this.email = email;
   }
-
 }
