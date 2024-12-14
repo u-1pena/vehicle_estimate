@@ -80,7 +80,7 @@ public class UserService {
   }
 
 
-  private List<User> findAllUsers() {
+  public List<User> findAllUsers() {
     return userRepository.findAllUsers();
   }
 

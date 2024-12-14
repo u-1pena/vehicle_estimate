@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="yuichi.user.management.mapper.UserRepository">
+
+  <select id="findAllUsers" resultType="yuichi.user.management.entity.User">
+    SELECT * FROM users
+  </select>
+
+  <select id="findAllUserDetails" resultType="yuichi.user.management.entity.UserDetail">
+    SELECT * FROM user_details
+  </select>
+
+  <select id="findAllUserPayments" resultType="yuichi.user.management.entity.UserPayment">
+    SELECT * FROM user_payments
+  </select>
+
+  <select id="findUserById" parameterType="int" resultType="yuichi.user.management.entity.User">
+    SELECT * FROM users WHERE id = #{id}
+  </select>
+
+  <select id="findUserDetailById" parameterType="int"
+    resultType="yuichi.user.management.entity.UserDetail">
+    SELECT * FROM user_details WHERE id = #{id}
+  </select>
+
+  <select id="findUserPaymentsByUserId" parameterType="int"
+    resultType="yuichi.user.management.entity.UserPayment">
+    SELECT * FROM user_payments WHERE id = #{id}
+  </select>
+
+  <select id="findByAccountName" parameterType="String"
+    resultType="yuichi.user.management.entity.User">
+    SELECT * FROM users WHERE account LIKE CONCAT('%', #{account}, '%')
+  </select>
+
+  <select id="findByFullNameKana" parameterType="String"
+    resultType="yuichi.user.management.entity.UserDetail">
+    SELECT * FROM user_details WHERE CONCAT(last_name_kana, first_name_kana) LIKE CONCAT('%',
+    #{kana}, '%')
+  </select>
+    
+  <select id="findByDetailName" parameterType="String"
+    resultType="yuichi.user.management.entity.UserDetail">
+    SELECT * FROM user_details WHERE CONCAT(last_name, first_name) LIKE CONCAT('%', #{name}, '%')
+  </select>
+
+  <select id="findByEmail" parameterType="String" resultType="yuichi.user.management.entity.User">
+    SELECT * FROM users WHERE email = #{email}
+  </select>
+</mapper>
