@@ -17,4 +17,15 @@ public class UserDetail {
   private String mobilePhoneNumber;
   private String password;
 
+  public UserDetail(int id, String firstName, String lastName, String firstNameKana,
+      String lastNameKana, LocalDate birthday, String mobilePhoneNumber, String password) {
+    this.id = id;
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.firstNameKana = firstNameKana;
+    this.lastNameKana = lastNameKana;
+    this.birthday = birthday;
+    this.mobilePhoneNumber = mobilePhoneNumber;
+    this.password = password;
+  }
 }

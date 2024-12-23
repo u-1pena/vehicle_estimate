@@ -14,4 +14,14 @@ public class UserPayment {
   private String cardBrand;
   private String cardHolder;
   private YearMonth expirationDate;
+
+  public UserPayment(int id, int userId, String cardNumber, String cardBrand, String cardHolder,
+      YearMonth expirationDate) {
+    this.id = id;
+    this.userId = userId;
+    this.cardNumber = cardNumber;
+    this.cardBrand = cardBrand;
+    this.cardHolder = cardHolder;
+    this.expirationDate = expirationDate;
+  }
 }

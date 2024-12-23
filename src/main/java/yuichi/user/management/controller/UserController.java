@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import yuichi.user.management.dto.UserInformationDto;
-import yuichi.user.management.entity.User;
 import yuichi.user.management.service.UserService;
 
 
@@ -38,8 +37,4 @@ public class UserController {
     return userService.findUserInformationById(id);
   }
 
-  @GetMapping("/all")
-  public List<User> findAll() {
-    return userService.findAllUsers();
-  }
 }

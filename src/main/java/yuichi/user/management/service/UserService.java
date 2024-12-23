@@ -1,5 +1,6 @@
 package yuichi.user.management.service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -73,14 +74,15 @@ public class UserService {
     return users.stream()
         .map(user -> {
           UserDetail detail = detailMap.get(user.getId());
-          List<UserPayment> payments = paymentMap.get(user.getId());
+          List<UserPayment> payments = paymentMap.getOrDefault(user.getId(),
+              Collections.emptyList());
           return UserInformationConverter.convertToUserInformationDto(user, detail, payments);
         })
         .collect(Collectors.toList());
   }
 
 
-  public List<User> findAllUsers() {
+  private List<User> findAllUsers() {
     return userRepository.findAllUsers();
   }
 
@@ -89,7 +91,8 @@ public class UserService {
   }
 
   private List<UserPayment> findAllUserPayments() {
-    return userRepository.findAllUserPayments();
+    List<UserPayment> userPaymentsList = userRepository.findAllUserPayments();
+    return userPaymentsList != null ? userPaymentsList : Collections.emptyList();
   }
 
   private User findUserById(int id) {
@@ -143,7 +146,7 @@ public class UserService {
   private List<User> findByAccountName(String account) {
     List<User> user = userRepository.findByAccountName(account);
     if (user.isEmpty()) {
-      throw new UserNotFoundException("user not found with name: " + account);
+      throw new UserNotFoundException("user not found with account: " + account);
     }
     return user;
   }

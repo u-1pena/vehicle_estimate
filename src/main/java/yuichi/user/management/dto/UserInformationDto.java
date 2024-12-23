@@ -15,4 +15,5 @@ public class UserInformationDto {
   private UserDetail userDetail;
   private List<UserPayment> userPayment;
 
+
 }
