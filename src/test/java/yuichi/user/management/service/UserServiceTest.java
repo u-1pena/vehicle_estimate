@@ -249,7 +249,7 @@ class UserServiceTest {
       assertEquals("user not found with email: unknown@test.jp", exception.getMessage());
     }
 
-
+    //testロジックをメソッド化
     private void assertUserInformation(UserInformationDto actual, User expectedUser,
         UserDetail expectedUserDetail,
         List<UserPayment> expectedUserPayments) {
@@ -269,11 +269,11 @@ class UserServiceTest {
       assertThat(actual.getUserDetail().getMobilePhoneNumber()).isEqualTo(
           expectedUserDetail.getMobilePhoneNumber());
       assertThat(actual.getUserDetail().getPassword()).isEqualTo(expectedUserDetail.getPassword());
-      assertThat(actual.getUserPayment()).isNotNull(); // null チェックを追加
+      assertThat(actual.getUserPayment()).isNotNull();
       assertThat(actual.getUserPayment()).hasSize(expectedUserPayments.size());
       if (expectedUserPayments.isEmpty()) {
         assertThat(actual.getUserPayment()).isEmpty();
-        return; // 以降の検証をスキップ
+        return;
       }
       for (int i = 0; i < expectedUserPayments.size(); i++) {
         UserPayment actualPayment = actual.getUserPayment().get(i);

@@ -126,7 +126,11 @@ public class UserService {
 
   private List<UserInformationDto> findInformationByAccountName(String account) {
     List<User> users = findByAccountName(account);
+    if (users.isEmpty()) {
+      throw new UserNotFoundException("user not found with account: " + account);
+    }
     return findUserByCriteria(users);
+
   }
 
 
