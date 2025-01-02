@@ -1,4 +1,4 @@
-package yuichi.user.management;
+package yuichi.user.management.helper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

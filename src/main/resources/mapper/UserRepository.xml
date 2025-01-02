@@ -26,7 +26,7 @@
 
   <select id="findUserPaymentsByUserId" parameterType="int"
     resultType="yuichi.user.management.entity.UserPayment">
-    SELECT * FROM user_payments WHERE id = #{id}
+    SELECT * FROM user_payments WHERE user_id = #{user_id}
   </select>
 
   <select id="findByAccountName" parameterType="String"
@@ -39,7 +39,7 @@
     SELECT * FROM user_details WHERE CONCAT(last_name_kana, first_name_kana) LIKE CONCAT('%',
     #{kana}, '%')
   </select>
-    
+
   <select id="findByDetailName" parameterType="String"
     resultType="yuichi.user.management.entity.UserDetail">
     SELECT * FROM user_details WHERE CONCAT(last_name, first_name) LIKE CONCAT('%', #{name}, '%')

@@ -16,12 +16,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import yuichi.user.management.TestHelper;
 import yuichi.user.management.controller.exception.UserNotFoundException;
 import yuichi.user.management.dto.UserInformationDto;
 import yuichi.user.management.entity.User;
 import yuichi.user.management.entity.UserDetail;
 import yuichi.user.management.entity.UserPayment;
+import yuichi.user.management.helper.TestHelper;
 import yuichi.user.management.mapper.UserRepository;
 
 

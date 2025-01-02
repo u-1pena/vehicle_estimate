@@ -20,9 +20,9 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import yuichi.user.management.CustomizedMockMvc;
-import yuichi.user.management.TestHelper;
 import yuichi.user.management.dto.UserInformationDto;
+import yuichi.user.management.helper.CustomizedMockMvc;
+import yuichi.user.management.helper.TestHelper;
 import yuichi.user.management.service.UserService;
 
 @ExtendWith(MockitoExtension.class)

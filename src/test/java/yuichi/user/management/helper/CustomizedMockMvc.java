@@ -1,4 +1,4 @@
-package yuichi.user.management;
+package yuichi.user.management.helper;
 
 import org.springframework.boot.test.autoconfigure.web.servlet.MockMvcBuilderCustomizer;
 import org.springframework.stereotype.Component;
