@@ -23,18 +23,14 @@ public class UserController {
   @RequestParamでaccount,name,kana,emailを受け取り、handleRequestParamでそれぞれの値を受け取り、
   それぞれの値がnullでない場合、それぞれの値をキーにして検索を行う*/
   @GetMapping("/users")
-  public ResponseEntity<List<UserInformationDto>> searchUsersByRequestParam(
+  public List<UserInformationDto> searchUsersByRequestParam(
       @RequestParam(value = "account", required = false) String account,
       @RequestParam(value = "name", required = false) String name,
       @RequestParam(value = "kana", required = false) String kana,
       @RequestParam(value = "email", required = false) String email) {
     List<UserInformationDto> result = userService.searchUsersByRequestParam(account, name, kana,
         email);
-
-    if (result.isEmpty()) {
-      return ResponseEntity.notFound().build();
-    }
-    return ResponseEntity.ok(result);
+    return result;
   }
 
   //ユーザー情報をidで検索する処理

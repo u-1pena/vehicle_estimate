@@ -181,7 +181,6 @@ class UserServiceTest {
           expectedUserPayments);
     }
 
-
     //id:3のユーザーは支払い情報を複数持ったオブジェクトです
     @Test
     void 複数の支払い情報を持つユーザーを正しく取得できること() {
@@ -262,11 +261,5 @@ class UserServiceTest {
       });
       assertEquals("user not found with email: unknown@test.jp", exception.getMessage());
     }
-
-    //testロジックをメソッド化
-
   }
 }
-
-
-

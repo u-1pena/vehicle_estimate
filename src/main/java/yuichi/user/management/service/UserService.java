@@ -126,9 +126,6 @@ public class UserService {
 
   private List<UserInformationDto> findInformationByAccountName(String account) {
     List<User> users = findByAccountName(account);
-    if (users.isEmpty()) {
-      throw new UserNotFoundException("user not found with account: " + account);
-    }
     return findUserByCriteria(users);
 
   }
@@ -149,17 +146,11 @@ public class UserService {
 
   private List<User> findByAccountName(String account) {
     List<User> user = userRepository.findByAccountName(account);
-    if (user.isEmpty()) {
-      throw new UserNotFoundException("user not found with account: " + account);
-    }
     return user;
   }
 
   private List<User> findByEmail(String email) {
     List<User> user = userRepository.findByEmail(email);
-    if (user.isEmpty()) {
-      throw new UserNotFoundException("user not found with email: " + email);
-    }
     return user;
   }
 
@@ -189,17 +180,11 @@ public class UserService {
 
   private List<UserDetail> findByDetailName(String name) {
     List<UserDetail> UserDetail = userRepository.findByDetailName(name);
-    if (UserDetail.isEmpty()) {
-      throw new UserNotFoundException("user not found with name: " + name);
-    }
     return UserDetail;
   }
 
   private List<UserDetail> findByFullNameKana(String kana) {
     List<UserDetail> UserDetail = userRepository.findByFullNameKana(kana);
-    if (UserDetail.isEmpty()) {
-      throw new UserNotFoundException("user not found with name: " + kana);
-    }
     return UserDetail;
   }
 
