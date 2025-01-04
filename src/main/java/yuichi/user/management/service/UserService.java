@@ -91,8 +91,7 @@ public class UserService {
   }
 
   private List<UserPayment> findAllUserPayments() {
-    List<UserPayment> userPaymentsList = userRepository.findAllUserPayments();
-    return userPaymentsList != null ? userPaymentsList : Collections.emptyList();
+    return userRepository.findAllUserPayments();
   }
 
   private User findUserById(int id) {
@@ -187,5 +186,4 @@ public class UserService {
     List<UserDetail> UserDetail = userRepository.findByFullNameKana(kana);
     return UserDetail;
   }
-
 }
