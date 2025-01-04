@@ -1,13 +1,9 @@
 package yuichi.user.management.helper;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
-import org.springframework.test.web.servlet.MvcResult;
-import yuichi.user.management.dto.UserInformationDto;
 import yuichi.user.management.entity.User;
 import yuichi.user.management.entity.UserDetail;
 import yuichi.user.management.entity.UserPayment;
@@ -55,56 +51,4 @@ public class TestHelper {
         new UserPayment(4, 3, "4444444444444444", "AMEX", "YOSHIYUKI MINE",
             YearMonth.of(2029, 1))));
   }
-
-
-  public void assertControllerUserResponses(MvcResult result, List<UserInformationDto> expectedList)
-      throws Exception {
-    String responseBody = result.getResponse().getContentAsString();
-    System.out.println("Response Body: " + result.getResponse().getContentAsString());
-
-    // 空リストの場合の対応
-    if (expectedList.isEmpty()) {
-      assertThat(responseBody).isEqualTo("[]"); // 空のJSONリストであることを検証
-      return;
-    }
-
-    for (UserInformationDto expected : expectedList) {
-      assertThat(responseBody).contains("\"id\":" + expected.getUser().getId());
-      assertThat(responseBody).contains(
-          "\"account\":\"" + expected.getUser().getAccount() + "\"");
-      assertThat(responseBody).contains("\"email\":\"" + expected.getUser().getEmail() + "\"");
-      assertThat(responseBody).contains(
-          "\"firstName\":\"" + expected.getUserDetail().getFirstName() + "\"");
-      assertThat(responseBody).contains(
-          "\"lastName\":\"" + expected.getUserDetail().getLastName() + "\"");
-      assertThat(responseBody).contains(
-          "\"firstNameKana\":\"" + expected.getUserDetail().getFirstNameKana() + "\"");
-      assertThat(responseBody).contains(
-          "\"lastNameKana\":\"" + expected.getUserDetail().getLastNameKana() + "\"");
-      assertThat(responseBody).contains(
-          "\"birthday\":\"" + expected.getUserDetail().getBirthday() + "\"");
-      assertThat(responseBody).contains(
-          "\"mobilePhoneNumber\":\"" + expected.getUserDetail().getMobilePhoneNumber() + "\"");
-      assertThat(responseBody).contains(
-          "\"password\":\"" + expected.getUserDetail().getPassword() + "\"");
-
-      for (int j = 0; j < expected.getUserPayment().size(); j++) {
-        assertThat(responseBody).contains("\"id\":" + expected.getUserPayment().get(j).getId());
-        assertThat(responseBody).contains(
-            "\"userId\":" + expected.getUserPayment().get(j).getUserId());
-        assertThat(responseBody).contains(
-            "\"cardNumber\":\"" + expected.getUserPayment().get(j).getCardNumber() + "\"");
-        assertThat(responseBody).contains(
-            "\"cardBrand\":\"" + expected.getUserPayment().get(j).getCardBrand() + "\"");
-        assertThat(responseBody).contains(
-            "\"cardHolder\":\"" + expected.getUserPayment().get(j).getCardHolder() + "\"");
-        assertThat(responseBody).contains(
-            "\"expirationDate\":\"" + expected.getUserPayment().get(j).getExpirationDate()
-                + "\"");
-      }
-    }
-  }
 }
-
-
-

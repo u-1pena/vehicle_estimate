@@ -1,8 +1,10 @@
 package yuichi.user.management.controller;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.ArrayList;
@@ -60,7 +62,7 @@ class UserControllerTest {
               .contentType(MediaType.APPLICATION_JSON))
           .andExpect(status().isOk())
           .andReturn();
-      testHelper.assertControllerUserResponses(result, List.of(expectedUserInformation));
+      assertUserResponses(result, List.of(expectedUserInformation));
       verify(userService).findUserInformationById(1);
     }
 
@@ -90,20 +92,19 @@ class UserControllerTest {
               .contentType(MediaType.APPLICATION_JSON))
           .andExpect(status().isOk())
           .andReturn();
-      testHelper.assertControllerUserResponses(result, expected);
+      assertUserResponses(result, expected);
       verify(userService).searchUsersByRequestParam("ganmo", null, null, null);
     }
 
     @Test
-    void 指定したアカウント名のユーザーが存在しない場合は404を返す() throws Exception {
+    void 指定したアカウント名のユーザーが存在しない場合は空のリストをかえすこと() throws Exception {
       doReturn(Collections.emptyList()).when(userService)
           .searchUsersByRequestParam("l", null, null, null);
 
       mockMvc.perform(get("/users")
               .param("account", "l")
               .contentType(MediaType.APPLICATION_JSON))
-          .andExpect(status().isNotFound())
-          .andReturn();
+          .andExpect(status().isOk()).andExpect(content().string("[]"));
       verify(userService).searchUsersByRequestParam("l", null, null, null);
     }
 
@@ -122,20 +123,19 @@ class UserControllerTest {
               .contentType(MediaType.APPLICATION_JSON))
           .andExpect(status().isOk())
           .andReturn();
-      testHelper.assertControllerUserResponses(result, expected);
+      assertUserResponses(result, expected);
       verify(userService).searchUsersByRequestParam(null, "shima", null, null);
     }
 
     @Test
-    void 指定した名前のユーザーが存在しない場合は404を返す() throws Exception {
+    void 指定した名前のユーザーが存在しない場合は空のリストをかえすこと() throws Exception {
       doReturn(Collections.emptyList()).when(userService)
           .searchUsersByRequestParam(null, "hoge", null, null);
 
       mockMvc.perform(get("/users")
               .param("name", "hoge")
               .contentType(MediaType.APPLICATION_JSON))
-          .andExpect(status().isNotFound())
-          .andReturn();
+          .andExpect(status().isOk()).andExpect(content().string("[]"));
       verify(userService).searchUsersByRequestParam(null, "hoge", null, null);
     }
 
@@ -154,20 +154,19 @@ class UserControllerTest {
               .contentType(MediaType.APPLICATION_JSON))
           .andExpect(status().isOk())
           .andReturn();
-      testHelper.assertControllerUserResponses(result, expected);
+      assertUserResponses(result, expected);
       verify(userService).searchUsersByRequestParam(null, null, "ﾕｳｲﾁ", null);
     }
 
     @Test
-    void 指定した読み仮名のユーザーが存在しない場合は404を返す() throws Exception {
+    void 指定した読み仮名のユーザーが存在しない場合は空のリストをかえすこと() throws Exception {
       doReturn(Collections.emptyList()).when(userService)
           .searchUsersByRequestParam(null, null, "ホゲ", null);
 
       mockMvc.perform(get("/users")
               .param("kana", "ホゲ")
               .contentType(MediaType.APPLICATION_JSON))
-          .andExpect(status().isNotFound())
-          .andReturn();
+          .andExpect(status().isOk()).andExpect(content().string("[]"));
       verify(userService).searchUsersByRequestParam(null, null, "ホゲ"
           , null);
     }
@@ -189,20 +188,19 @@ class UserControllerTest {
               .contentType(MediaType.APPLICATION_JSON))
           .andExpect(status().isOk())
           .andReturn();
-      testHelper.assertControllerUserResponses(result, expected);
+      assertUserResponses(result, expected);
       verify(userService).searchUsersByRequestParam(null, null, null, "shimaichi5973@gmail.com");
     }
 
     @Test
-    void 指定したメールアドレスが存在しない場合は404を返す() throws Exception {
+    void 指定したメールアドレスが存在しない場合は空のリストをかえすこと() throws Exception {
       doReturn(Collections.emptyList()).when(userService)
           .searchUsersByRequestParam(null, null, null, "hogehoge@test.ne.jp");
 
       mockMvc.perform(get("/users")
               .param("email", "hogehoge@test.ne.jp")
               .contentType(MediaType.APPLICATION_JSON))
-          .andExpect(status().isNotFound())
-          .andReturn();
+          .andExpect(status().isOk()).andExpect(content().string("[]"));
       verify(userService).searchUsersByRequestParam(null, null, null
           , "hogehoge@test.ne.jp");
     }
@@ -227,10 +225,57 @@ class UserControllerTest {
               .contentType(MediaType.APPLICATION_JSON))
           .andExpect(status().isOk())
           .andReturn();
-      testHelper.assertControllerUserResponses(result, expectedList);
+      assertUserResponses(result, expectedList);
       verify(userService).searchUsersByRequestParam(null, null, null, null);
     }
 
+    private void assertUserResponses(MvcResult result,
+        List<UserInformationDto> expectedList)
+        throws Exception {
+      String responseBody = result.getResponse().getContentAsString();
+      System.out.println("Response Body: " + result.getResponse().getContentAsString());
+
+      // 空リストの場合の対応
+      if (expectedList.isEmpty()) {
+        assertThat(responseBody).isEqualTo("[]"); // 空のJSONリストであることを検証
+        return;
+      }
+
+      for (UserInformationDto expected : expectedList) {
+        assertThat(responseBody).contains("\"id\":" + expected.getUser().getId());
+        assertThat(responseBody).contains(
+            "\"account\":\"" + expected.getUser().getAccount() + "\"");
+        assertThat(responseBody).contains("\"email\":\"" + expected.getUser().getEmail() + "\"");
+        assertThat(responseBody).contains(
+            "\"firstName\":\"" + expected.getUserDetail().getFirstName() + "\"");
+        assertThat(responseBody).contains(
+            "\"lastName\":\"" + expected.getUserDetail().getLastName() + "\"");
+        assertThat(responseBody).contains(
+            "\"firstNameKana\":\"" + expected.getUserDetail().getFirstNameKana() + "\"");
+        assertThat(responseBody).contains(
+            "\"lastNameKana\":\"" + expected.getUserDetail().getLastNameKana() + "\"");
+        assertThat(responseBody).contains(
+            "\"birthday\":\"" + expected.getUserDetail().getBirthday() + "\"");
+        assertThat(responseBody).contains(
+            "\"mobilePhoneNumber\":\"" + expected.getUserDetail().getMobilePhoneNumber() + "\"");
+        assertThat(responseBody).contains(
+            "\"password\":\"" + expected.getUserDetail().getPassword() + "\"");
+
+        for (int j = 0; j < expected.getUserPayment().size(); j++) {
+          assertThat(responseBody).contains("\"id\":" + expected.getUserPayment().get(j).getId());
+          assertThat(responseBody).contains(
+              "\"userId\":" + expected.getUserPayment().get(j).getUserId());
+          assertThat(responseBody).contains(
+              "\"cardNumber\":\"" + expected.getUserPayment().get(j).getCardNumber() + "\"");
+          assertThat(responseBody).contains(
+              "\"cardBrand\":\"" + expected.getUserPayment().get(j).getCardBrand() + "\"");
+          assertThat(responseBody).contains(
+              "\"cardHolder\":\"" + expected.getUserPayment().get(j).getCardHolder() + "\"");
+          assertThat(responseBody).contains(
+              "\"expirationDate\":\"" + expected.getUserPayment().get(j).getExpirationDate()
+                  + "\"");
+        }
+      }
+    }
   }
 }
-

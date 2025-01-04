@@ -227,28 +227,28 @@ class UserServiceTest {
     }
 
     @Test
-    void 存在しないアカウントで検索したとき存在しないことを知らせること() {
+    void 存在しないアカウントで検索したとき空のリストをかえすこと() {
       doReturn(Collections.emptyList()).when(userRepository).findByAccountName("unknownAccount");
       assertThat(userService.searchUsersByRequestParam("unknownAccount", "", "", ""))
           .isEmpty();
     }
 
     @Test
-    void 存在しない名前で検索したとき存在しないことを知らせること() {
+    void 存在しない名前で検索したとき空のリストをかえすこと() {
       doReturn(Collections.emptyList()).when(userRepository).findByDetailName("unknownName");
       assertThat(userService.searchUsersByRequestParam("", "unknownName", "", ""))
           .isEmpty();
     }
 
     @Test
-    void 存在しない読みがなで検索したとき存在しないことを知らせること() {
+    void 存在しない読みがなで検索したとき空のリストをかえすこと() {
       doReturn(Collections.emptyList()).when(userRepository).findByFullNameKana("ヲ");
       assertThat(userService.searchUsersByRequestParam("", "", "ヲ", ""))
           .isEmpty();
     }
 
     @Test
-    void 存在しないEmailで検索したとき存在しないことを知らせること() {
+    void 存在しないEmailで検索したとき空のリストをかえすこと() {
       doReturn(Collections.emptyList()).when(userRepository).findByEmail("unknown@test.jp");
       assertThat(userService.searchUsersByRequestParam("", "", "", "unknown@test.jp"))
           .isEmpty();
