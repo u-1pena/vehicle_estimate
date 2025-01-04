@@ -56,43 +56,6 @@ public class TestHelper {
             YearMonth.of(2029, 1))));
   }
 
-  public void assertServiceUserInformation(UserInformationDto actual, User expectedUser,
-      UserDetail expectedUserDetail,
-      List<UserPayment> expectedUserPayments) {
-    assertThat(actual.getUser().getId()).isEqualTo(expectedUser.getId());
-    assertThat(actual.getUser().getAccount()).isEqualTo(expectedUser.getAccount());
-    assertThat(actual.getUser().getEmail()).isEqualTo(expectedUser.getEmail());
-
-    assertThat(actual.getUserDetail().getId()).isEqualTo(expectedUserDetail.getId());
-    assertThat(actual.getUserDetail().getFirstName()).isEqualTo(
-        expectedUserDetail.getFirstName());
-    assertThat(actual.getUserDetail().getLastName()).isEqualTo(expectedUserDetail.getLastName());
-    assertThat(actual.getUserDetail().getFirstNameKana()).isEqualTo(
-        expectedUserDetail.getFirstNameKana());
-    assertThat(actual.getUserDetail().getLastNameKana()).isEqualTo(
-        expectedUserDetail.getLastNameKana());
-    assertThat(actual.getUserDetail().getBirthday()).isEqualTo(expectedUserDetail.getBirthday());
-    assertThat(actual.getUserDetail().getMobilePhoneNumber()).isEqualTo(
-        expectedUserDetail.getMobilePhoneNumber());
-    assertThat(actual.getUserDetail().getPassword()).isEqualTo(expectedUserDetail.getPassword());
-    assertThat(actual.getUserPayment()).isNotNull();
-    assertThat(actual.getUserPayment()).hasSize(expectedUserPayments.size());
-    if (expectedUserPayments.isEmpty()) {
-      assertThat(actual.getUserPayment()).isEmpty();
-      return;
-    }
-    for (int i = 0; i < expectedUserPayments.size(); i++) {
-      UserPayment actualPayment = actual.getUserPayment().get(i);
-      UserPayment expectedPayment = expectedUserPayments.get(i);
-      assertThat(actualPayment.getId()).isEqualTo(expectedPayment.getId());
-      assertThat(actualPayment.getUserId()).isEqualTo(expectedPayment.getUserId());
-      assertThat(actualPayment.getCardNumber()).isEqualTo(expectedPayment.getCardNumber());
-      assertThat(actualPayment.getCardBrand()).isEqualTo(expectedPayment.getCardBrand());
-      assertThat(actualPayment.getCardHolder()).isEqualTo(expectedPayment.getCardHolder());
-      assertThat(actualPayment.getExpirationDate()).isEqualTo(
-          expectedPayment.getExpirationDate());
-    }
-  }
 
   public void assertControllerUserResponses(MvcResult result, List<UserInformationDto> expectedList)
       throws Exception {

@@ -65,7 +65,7 @@ class UserServiceTest {
         List<UserPayment> userPayments = expectedUserPayments.stream()
             .filter(payment -> payment.getUserId() == expectedUser.getId())
             .toList();
-        testHelper.assertServiceUserInformation(actual, expectedUser, expectedUserDetail,
+        assertUserInformation(actual, expectedUser, expectedUserDetail,
             userPayments);
       }
       verify(userRepository).findAllUsers();
@@ -88,7 +88,7 @@ class UserServiceTest {
       List<UserInformationDto> actualList = userService.findUserInformationById(1);
 
       UserInformationDto actual = actualList.get(0);
-      testHelper.assertServiceUserInformation(actual, expectedUser, expectedUserDetail,
+      assertUserInformation(actual, expectedUser, expectedUserDetail,
           expectedUserPayments);
     }
 
@@ -110,7 +110,7 @@ class UserServiceTest {
           "");
       UserInformationDto actual = actualList.get(0);
       assertThat(actualList).hasSize(1);
-      testHelper.assertServiceUserInformation(actual, expectedUser, expectedUserDetail,
+      assertUserInformation(actual, expectedUser, expectedUserDetail,
           expectedUserPayments);
     }
 
@@ -132,7 +132,7 @@ class UserServiceTest {
           "");
       UserInformationDto actual = actualList.get(0);
       assertThat(actualList).hasSize(1);
-      testHelper.assertServiceUserInformation(actual, expectedUser, expectedUserDetail,
+      assertUserInformation(actual, expectedUser, expectedUserDetail,
           expectedUserPayments);
     }
 
@@ -154,7 +154,7 @@ class UserServiceTest {
           "");
       UserInformationDto actual = actualList.get(0);
       assertThat(actualList).hasSize(1);
-      testHelper.assertServiceUserInformation(actual, expectedUser, expectedUserDetail,
+      assertUserInformation(actual, expectedUser, expectedUserDetail,
           expectedUserPayments);
     }
 
@@ -177,7 +177,7 @@ class UserServiceTest {
           "shimaichi5973@gmail.com");
       UserInformationDto actual = actualList.get(0);
       assertThat(actualList).hasSize(1);
-      testHelper.assertServiceUserInformation(actual, expectedUser, expectedUserDetail,
+      assertUserInformation(actual, expectedUser, expectedUserDetail,
           expectedUserPayments);
     }
 
@@ -196,7 +196,7 @@ class UserServiceTest {
 
       List<UserInformationDto> userInfoList = userService.findUserInformationById(3);
       UserInformationDto actual = userInfoList.get(0);
-      testHelper.assertServiceUserInformation(actual, expectedUser, expectedUserDetail,
+      assertUserInformation(actual, expectedUser, expectedUserDetail,
           expectedUserPayments);
     }
 
@@ -213,7 +213,7 @@ class UserServiceTest {
 
       List<UserInformationDto> userInfoList = userService.findUserInformationById(4);
       UserInformationDto actual = userInfoList.get(0);
-      testHelper.assertServiceUserInformation(actual, expectedUser, expectedUserDetail,
+      assertUserInformation(actual, expectedUser, expectedUserDetail,
           expectedUserPayments);
     }
 
@@ -229,37 +229,67 @@ class UserServiceTest {
     @Test
     void 存在しないアカウントで検索したとき存在しないことを知らせること() {
       doReturn(Collections.emptyList()).when(userRepository).findByAccountName("unknownAccount");
-      UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> {
-        userService.searchUsersByRequestParam("unknownAccount", "", "", "");
-      });
-      assertEquals("user not found with account: unknownAccount", exception.getMessage());
+      assertThat(userService.searchUsersByRequestParam("unknownAccount", "", "", ""))
+          .isEmpty();
     }
 
     @Test
     void 存在しない名前で検索したとき存在しないことを知らせること() {
       doReturn(Collections.emptyList()).when(userRepository).findByDetailName("unknownName");
-      UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> {
-        userService.searchUsersByRequestParam("", "unknownName", "", "");
-      });
-      assertEquals("user not found with name: unknownName", exception.getMessage());
+      assertThat(userService.searchUsersByRequestParam("", "unknownName", "", ""))
+          .isEmpty();
     }
 
     @Test
     void 存在しない読みがなで検索したとき存在しないことを知らせること() {
       doReturn(Collections.emptyList()).when(userRepository).findByFullNameKana("ヲ");
-      UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> {
-        userService.searchUsersByRequestParam("", "", "ヲ", "");
-      });
-      assertEquals("user not found with name: ヲ", exception.getMessage());
+      assertThat(userService.searchUsersByRequestParam("", "", "ヲ", ""))
+          .isEmpty();
     }
 
     @Test
     void 存在しないEmailで検索したとき存在しないことを知らせること() {
       doReturn(Collections.emptyList()).when(userRepository).findByEmail("unknown@test.jp");
-      UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> {
-        userService.searchUsersByRequestParam("", "", "", "unknown@test.jp");
-      });
-      assertEquals("user not found with email: unknown@test.jp", exception.getMessage());
+      assertThat(userService.searchUsersByRequestParam("", "", "", "unknown@test.jp"))
+          .isEmpty();
+    }
+
+    private void assertUserInformation(UserInformationDto actual, User expectedUser,
+        UserDetail expectedUserDetail,
+        List<UserPayment> expectedUserPayments) {
+      assertThat(actual.getUser().getId()).isEqualTo(expectedUser.getId());
+      assertThat(actual.getUser().getAccount()).isEqualTo(expectedUser.getAccount());
+      assertThat(actual.getUser().getEmail()).isEqualTo(expectedUser.getEmail());
+
+      assertThat(actual.getUserDetail().getId()).isEqualTo(expectedUserDetail.getId());
+      assertThat(actual.getUserDetail().getFirstName()).isEqualTo(
+          expectedUserDetail.getFirstName());
+      assertThat(actual.getUserDetail().getLastName()).isEqualTo(expectedUserDetail.getLastName());
+      assertThat(actual.getUserDetail().getFirstNameKana()).isEqualTo(
+          expectedUserDetail.getFirstNameKana());
+      assertThat(actual.getUserDetail().getLastNameKana()).isEqualTo(
+          expectedUserDetail.getLastNameKana());
+      assertThat(actual.getUserDetail().getBirthday()).isEqualTo(expectedUserDetail.getBirthday());
+      assertThat(actual.getUserDetail().getMobilePhoneNumber()).isEqualTo(
+          expectedUserDetail.getMobilePhoneNumber());
+      assertThat(actual.getUserDetail().getPassword()).isEqualTo(expectedUserDetail.getPassword());
+      assertThat(actual.getUserPayment()).isNotNull();
+      assertThat(actual.getUserPayment()).hasSize(expectedUserPayments.size());
+      if (expectedUserPayments.isEmpty()) {
+        assertThat(actual.getUserPayment()).isEmpty();
+        return;
+      }
+      for (int i = 0; i < expectedUserPayments.size(); i++) {
+        UserPayment actualPayment = actual.getUserPayment().get(i);
+        UserPayment expectedPayment = expectedUserPayments.get(i);
+        assertThat(actualPayment.getId()).isEqualTo(expectedPayment.getId());
+        assertThat(actualPayment.getUserId()).isEqualTo(expectedPayment.getUserId());
+        assertThat(actualPayment.getCardNumber()).isEqualTo(expectedPayment.getCardNumber());
+        assertThat(actualPayment.getCardBrand()).isEqualTo(expectedPayment.getCardBrand());
+        assertThat(actualPayment.getCardHolder()).isEqualTo(expectedPayment.getCardHolder());
+        assertThat(actualPayment.getExpirationDate()).isEqualTo(
+            expectedPayment.getExpirationDate());
+      }
     }
   }
 }
