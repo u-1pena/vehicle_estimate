@@ -17,7 +17,7 @@ public class TestHelper {
     return List.of(
         new User(1, "ganmo", "shimaichi5973@gmail.com"),
         new User(2, "yurina", "kana1231@gmail.com"),
-        new User(3, "jyun", "jyun0702@aol.com"),
+        new User(3, "jyun", "jyun0702@ymail.com"),
         new User(4, "momo", "momonga1103@docomo.ne.jp"));
   }
 
@@ -27,11 +27,11 @@ public class TestHelper {
   public List<UserDetail> mockUserDetails() {
     return List.of(
         new UserDetail(1, "yuichi", "shimada", "ﾕｳｲﾁ", "ｼﾏﾀﾞ",
-            LocalDate.of(1984, 7, 3), "080-1379-0555", "Shimaichi@5973"),
+            LocalDate.of(1984, 7, 3), "080-1379-0555", "Shimaichi@0703"),
         new UserDetail(2, "kana", "nishida", "ｶﾅ", "ﾆｼﾀﾞ",
-            LocalDate.of(1993, 12, 31), "080-1234-5678", "Kana@1231"),
+            LocalDate.of(1993, 12, 31), "090-1234-5678", "Kana@1231"),
         new UserDetail(3, "yoshiyuki", "mine", "ﾖｼﾕｷ", "ﾐﾈ",
-            LocalDate.of(1984, 7, 2), "090-1111-2222", "Jyun@0703"),
+            LocalDate.of(1984, 7, 2), "070-1234-5678", "Yoshiyuki@0702"),
         new UserDetail(4, "momoko", "tanaka", "ﾓﾓｺ", "ﾀﾅｶ",
             LocalDate.of(2000, 11, 3), "080-1111-6660", "momoKo@1212"));
 
@@ -42,13 +42,13 @@ public class TestHelper {
    */
   public List<UserPayment> mockUserPayments() {
     return new ArrayList<>(List.of(
-        new UserPayment(1, 1, "1234567890123456", "VISA", "YUICHI SHIMADA",
+        new UserPayment(1, 1, "4444123456789012", "visa", "YUICHI SHIMADA",
             YearMonth.of(2028, 1)),
-        new UserPayment(2, 2, "9876543210987654", "MASTER", "KANA NISHIDA",
+        new UserPayment(2, 2, "3530123456789012", "jcb", "KANA NISHIDA",
             YearMonth.of(2029, 1)),
-        new UserPayment(3, 3, "3333333333333333", "JCB", "YOSHIYUKI MINE",
-            YearMonth.of(2028, 1)),
-        new UserPayment(4, 3, "4444444444444444", "AMEX", "YOSHIYUKI MINE",
-            YearMonth.of(2029, 1))));
+        new UserPayment(3, 3, "3412123412341234", "amex", "YOSHIYUKI MINE",
+            YearMonth.of(2025, 4)),
+        new UserPayment(4, 3, "5112123412341234", "master", "YOSHIYUKI MINE",
+            YearMonth.of(2027, 6))));
   }
 }
