@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,6 +28,7 @@ import yuichi.user.management.helper.CustomizedMockMvc;
 import yuichi.user.management.helper.TestHelper;
 import yuichi.user.management.service.UserService;
 
+
 @ExtendWith(MockitoExtension.class)
 @WebMvcTest(UserController.class)
 @Import(CustomizedMockMvc.class)
@@ -39,6 +41,9 @@ class UserControllerTest {
   UserService userService;
 
   TestHelper testHelper;
+
+  @Autowired
+  ObjectMapper objectMapper;
 
   @BeforeEach
   void setup() {
@@ -220,62 +225,26 @@ class UserControllerTest {
       }
 
       doReturn(expectedList).when(userService).searchUsersByRequestParam(null, null, null, null);
-
+      String expectedJson = objectMapper.writeValueAsString(expectedList);
+      System.out.println(expectedJson);
       MvcResult result = mockMvc.perform(get("/users")
               .contentType(MediaType.APPLICATION_JSON))
           .andExpect(status().isOk())
+          .andExpect(content().json(expectedJson))
           .andReturn();
       assertUserResponses(result, expectedList);
       verify(userService).searchUsersByRequestParam(null, null, null, null);
     }
 
-    private void assertUserResponses(MvcResult result,
-        List<UserInformationDto> expectedList)
+
+    private void assertUserResponses(MvcResult result, List<UserInformationDto> expectedList)
         throws Exception {
+      objectMapper.findAndRegisterModules();
       String responseBody = result.getResponse().getContentAsString();
-      System.out.println("Response Body: " + result.getResponse().getContentAsString());
-
-      // 空リストの場合の対応
-      if (expectedList.isEmpty()) {
-        assertThat(responseBody).isEqualTo("[]"); // 空のJSONリストであることを検証
-        return;
-      }
-
-      for (UserInformationDto expected : expectedList) {
-        assertThat(responseBody).contains("\"id\":" + expected.getUser().getId());
-        assertThat(responseBody).contains(
-            "\"account\":\"" + expected.getUser().getAccount() + "\"");
-        assertThat(responseBody).contains("\"email\":\"" + expected.getUser().getEmail() + "\"");
-        assertThat(responseBody).contains(
-            "\"firstName\":\"" + expected.getUserDetail().getFirstName() + "\"");
-        assertThat(responseBody).contains(
-            "\"lastName\":\"" + expected.getUserDetail().getLastName() + "\"");
-        assertThat(responseBody).contains(
-            "\"firstNameKana\":\"" + expected.getUserDetail().getFirstNameKana() + "\"");
-        assertThat(responseBody).contains(
-            "\"lastNameKana\":\"" + expected.getUserDetail().getLastNameKana() + "\"");
-        assertThat(responseBody).contains(
-            "\"birthday\":\"" + expected.getUserDetail().getBirthday() + "\"");
-        assertThat(responseBody).contains(
-            "\"mobilePhoneNumber\":\"" + expected.getUserDetail().getMobilePhoneNumber() + "\"");
-        assertThat(responseBody).contains(
-            "\"password\":\"" + expected.getUserDetail().getPassword() + "\"");
-
-        for (int j = 0; j < expected.getUserPayment().size(); j++) {
-          assertThat(responseBody).contains("\"id\":" + expected.getUserPayment().get(j).getId());
-          assertThat(responseBody).contains(
-              "\"userId\":" + expected.getUserPayment().get(j).getUserId());
-          assertThat(responseBody).contains(
-              "\"cardNumber\":\"" + expected.getUserPayment().get(j).getCardNumber() + "\"");
-          assertThat(responseBody).contains(
-              "\"cardBrand\":\"" + expected.getUserPayment().get(j).getCardBrand() + "\"");
-          assertThat(responseBody).contains(
-              "\"cardHolder\":\"" + expected.getUserPayment().get(j).getCardHolder() + "\"");
-          assertThat(responseBody).contains(
-              "\"expirationDate\":\"" + expected.getUserPayment().get(j).getExpirationDate()
-                  + "\"");
-        }
-      }
+      List<UserInformationDto> actualList = objectMapper.readValue(responseBody,
+          objectMapper.getTypeFactory()
+              .constructCollectionType(List.class, UserInformationDto.class));
+      assertThat(actualList).isEqualTo(expectedList);
     }
   }
 }
