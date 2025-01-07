@@ -1,5 +1,6 @@
 package yuichi.user.management.service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -73,7 +74,8 @@ public class UserService {
     return users.stream()
         .map(user -> {
           UserDetail detail = detailMap.get(user.getId());
-          List<UserPayment> payments = paymentMap.get(user.getId());
+          List<UserPayment> payments = paymentMap.getOrDefault(user.getId(),
+              Collections.emptyList());
           return UserInformationConverter.convertToUserInformationDto(user, detail, payments);
         })
         .collect(Collectors.toList());
@@ -124,6 +126,7 @@ public class UserService {
   private List<UserInformationDto> findInformationByAccountName(String account) {
     List<User> users = findByAccountName(account);
     return findUserByCriteria(users);
+
   }
 
 
@@ -142,17 +145,11 @@ public class UserService {
 
   private List<User> findByAccountName(String account) {
     List<User> user = userRepository.findByAccountName(account);
-    if (user.isEmpty()) {
-      throw new UserNotFoundException("user not found with name: " + account);
-    }
     return user;
   }
 
   private List<User> findByEmail(String email) {
     List<User> user = userRepository.findByEmail(email);
-    if (user.isEmpty()) {
-      throw new UserNotFoundException("user not found with email: " + email);
-    }
     return user;
   }
 
@@ -182,18 +179,11 @@ public class UserService {
 
   private List<UserDetail> findByDetailName(String name) {
     List<UserDetail> UserDetail = userRepository.findByDetailName(name);
-    if (UserDetail.isEmpty()) {
-      throw new UserNotFoundException("user not found with name: " + name);
-    }
     return UserDetail;
   }
 
   private List<UserDetail> findByFullNameKana(String kana) {
     List<UserDetail> UserDetail = userRepository.findByFullNameKana(kana);
-    if (UserDetail.isEmpty()) {
-      throw new UserNotFoundException("user not found with name: " + kana);
-    }
     return UserDetail;
   }
-
 }

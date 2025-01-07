@@ -19,3 +19,4 @@
 | email   | String | yamada11@test.ne.jp　 | ユーザーのEmailアドレスで検索  |
 
 ※Emailアドレスは完全一致のみの検索になります。
+

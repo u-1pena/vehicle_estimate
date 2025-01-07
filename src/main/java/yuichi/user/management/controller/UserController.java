@@ -1,6 +1,7 @@
 package yuichi.user.management.controller;
 
 import java.util.List;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,13 +28,19 @@ public class UserController {
       @RequestParam(value = "name", required = false) String name,
       @RequestParam(value = "kana", required = false) String kana,
       @RequestParam(value = "email", required = false) String email) {
-    return userService.searchUsersByRequestParam(account, name, kana, email);
+    List<UserInformationDto> result = userService.searchUsersByRequestParam(account, name, kana,
+        email);
+    return result;
   }
 
   //ユーザー情報をidで検索する処理
   @GetMapping("/users/{id}")
-  public List<UserInformationDto> findUserInformationById(
+  public ResponseEntity<List<UserInformationDto>> findUserInformationById(
       @PathVariable("id") int id) {
-    return userService.findUserInformationById(id);
+    List<UserInformationDto> users = userService.findUserInformationById(id);
+    if (users.isEmpty()) {
+      return ResponseEntity.notFound().build();
+    }
+    return ResponseEntity.ok(users);
   }
 }
