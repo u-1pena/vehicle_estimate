@@ -5,8 +5,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
+import yuichi.user.management.controller.exception.UserDetailAlreadyExistsException;
 import yuichi.user.management.controller.exception.UserNotFoundException;
+import yuichi.user.management.converter.UserCreateConverter;
+import yuichi.user.management.converter.UserDetailCreateConverter;
 import yuichi.user.management.converter.UserInformationConverter;
+import yuichi.user.management.converter.UserPaymentCreateConverter;
+import yuichi.user.management.dto.Request.UserCreateRequest;
+import yuichi.user.management.dto.Request.UserDetailCreateRequest;
+import yuichi.user.management.dto.Request.UserPaymentCreateRequest;
 import yuichi.user.management.dto.UserInformationDto;
 import yuichi.user.management.entity.User;
 import yuichi.user.management.entity.UserDetail;
@@ -94,12 +101,12 @@ public class UserService {
     return userRepository.findAllUserPayments();
   }
 
-  private User findUserById(int id) {
+  public User findUserById(int id) {
     return userRepository.findUserById(id)
         .orElseThrow(() -> new UserNotFoundException("user not found with id: " + id));
   }
 
-  private UserDetail findUserDetailById(int id) {
+  public UserDetail findUserDetailById(int id) {
     return userRepository.findUserDetailById(id)
         .orElseThrow(() -> new UserNotFoundException("user not found with id: " + id));
   }
@@ -185,5 +192,88 @@ public class UserService {
   private List<UserDetail> findByFullNameKana(String kana) {
     List<UserDetail> UserDetail = userRepository.findByFullNameKana(kana);
     return UserDetail;
+  }
+
+  public User registerUser(UserCreateRequest userCreateRequest) {
+    checkAlreadyExistEmail(userCreateRequest.getEmail());
+    User user = UserCreateConverter.userConvertToEntity(userCreateRequest);
+    createUser(user);
+    return user;
+  }
+
+  private void checkAlreadyExistEmail(String email) {
+    userRepository.checkAlreadyExistByEmail(email)
+        .ifPresent(userDetail -> {
+          throw new UserDetailAlreadyExistsException(
+              "UserDetail already exists with email: " + email);
+        });
+  }
+
+  private void createUser(User user) {
+    userRepository.insertUser(user);
+  }
+
+  public UserDetail registerUserDetail(int id, UserDetailCreateRequest userDetailCreateRequest) {
+    User user = findUserById(id);
+    checkAlreadyExistUserDetail(id);
+    checkAlreadyExistMobilePhoneNumber(userDetailCreateRequest.getMobilePhoneNumber());
+    UserDetail userDetail = UserDetailCreateConverter.userDetailConvertToEntity(user,
+        userDetailCreateRequest);
+    createUserDetail(userDetail);
+    return userDetail;
+  }
+
+  private void checkAlreadyExistUserDetail(int id) {
+    userRepository.findUserDetailById(id)
+        .map(userDetail -> {
+          throw new UserDetailAlreadyExistsException("userDetail already exist with id: " + id);
+        });
+  }
+
+  private void checkAlreadyExistMobilePhoneNumber(String mobilePhoneNumber) {
+    userRepository.CheckAlreadyExistByMobilePhoneNumber(mobilePhoneNumber)
+        .ifPresent(userDetail -> {
+          throw new UserDetailAlreadyExistsException(
+              "UserDetail already exists with mobilePhoneNumber: " + mobilePhoneNumber
+          );
+        });
+  }
+
+  private void createUserDetail(UserDetail userDetail) {
+    userRepository.insertUserDetail(userDetail);
+  }
+
+  public UserPayment registerUserPayment(int id,
+      UserPaymentCreateRequest userPaymentCreateRequest) {
+    UserDetail userDetail = findUserDetailById(id);
+    checkAlreadyExistCardNumber(userPaymentCreateRequest.getCardNumber());
+    UserPayment userPayment = UserPaymentCreateConverter.userPaymentConvertToEntity(userDetail,
+        userPaymentCreateRequest, this);
+    createUserPayment(userPayment);
+    return userPayment;
+  }
+
+  private void checkAlreadyExistCardNumber(String cardNumber) {
+    userRepository.checkAlreadyExistByCardNumber(cardNumber)
+        .ifPresent(userPayment -> {
+          throw new UserDetailAlreadyExistsException(
+              "UserPayment already exists with cardNumber: " + cardNumber
+          );
+        });
+  }
+
+  public String identifyCardBrand(String cardNumber) {
+    return switch (cardNumber.substring(0, 1)) {
+      case "2" -> "American Express";
+      case "3" -> "JCB";
+      case "4" -> "VISA";
+      case "5" -> "MasterCard";
+      case "6" -> "Discover";
+      default -> throw new IllegalArgumentException("Invalid card number");
+    };
+  }
+
+  private void createUserPayment(UserPayment userPayment) {
+    userRepository.insertUserPayment(userPayment);
   }
 }

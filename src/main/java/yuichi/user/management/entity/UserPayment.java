@@ -26,6 +26,19 @@ public class UserPayment {
     this.expirationDate = expirationDate;
   }
 
+  public UserPayment() {
+
+  }
+
+  public UserPayment(int userId, String cardNumber, String cardBrand, String cardHolder,
+      YearMonth expirationDate) {
+    this.userId = userId;
+    this.cardNumber = cardNumber;
+    this.cardBrand = cardBrand;
+    this.cardHolder = cardHolder;
+    this.expirationDate = expirationDate;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {

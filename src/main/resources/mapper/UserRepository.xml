@@ -48,4 +48,38 @@
   <select id="findByEmail" parameterType="String" resultType="yuichi.user.management.entity.User">
     SELECT * FROM users WHERE email = #{email}
   </select>
+
+  <select id="CheckAlreadyExistByMobilePhoneNumber" parameterType="String"
+    resultType="yuichi.user.management.entity.UserDetail">
+    SELECT * FROM user_details WHERE mobile_phone_number = #{MobilePhoneNumber}
+  </select>
+
+  <select id="checkAlreadyExistByEmail" parameterType="String"
+    resultType="yuichi.user.management.entity.User">
+    SELECT * FROM users WHERE email = #{email}
+  </select>
+
+  <select id="checkAlreadyExistByCardNumber" parameterType="String"
+    resultType="yuichi.user.management.entity.UserPayment">
+    SELECT * FROM user_payments WHERE card_number = #{cardNumber}
+  </select>
+
+  <insert id="insertUser" useGeneratedKeys="true" keyProperty="id"
+    parameterType="yuichi.user.management.entity.User">
+    INSERT INTO users (account, email) VALUES (#{account}, #{email})
+  </insert>
+
+  <insert id="insertUserDetail" parameterType="yuichi.user.management.entity.UserDetail">
+    INSERT INTO user_details (id, last_name, first_name, last_name_kana, first_name_kana,
+    birthday,mobile_phone_number,password) VALUES (#{id}, #{lastName},
+    #{firstName}, #{lastNameKana}, #{firstNameKana}, #{birthday}, #{mobilePhoneNumber},
+    #{password})
+  </insert>
+
+  <insert id="insertUserPayment" useGeneratedKeys="true" keyProperty="id"
+    parameterType="yuichi.user.management.entity.UserPayment">
+    INSERT INTO user_payments (id, user_id, card_number, card_brand, card_holder, expiration_date)
+    VALUES (#{id}, #{userId}, #{cardNumber},#{cardBrand}, #{cardHolder}, #{expirationDate})
+  </insert>
+
 </mapper>

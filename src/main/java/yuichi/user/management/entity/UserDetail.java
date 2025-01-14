@@ -32,6 +32,9 @@ public class UserDetail {
     this.password = password;
   }
 
+  public UserDetail() {
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -54,4 +57,5 @@ public class UserDetail {
     return Objects.hash(id, firstName, lastName, firstNameKana, lastNameKana, birthday,
         mobilePhoneNumber, password);
   }
+
 }
