@@ -17,9 +17,9 @@ class UserInformationConverterTest {
 
   @Test
   void ユーザー情報をまとめて正常に変換できる() {
-    User user = testHelper.mockUsers().get(0);
-    UserDetail userDetail = testHelper.mockUserDetails().get(0);
-    List<UserPayment> userPayment = List.of(testHelper.mockUserPayments().get(0));
+    User user = testHelper.usersMock().get(0);
+    UserDetail userDetail = testHelper.userDetailsMock().get(0);
+    List<UserPayment> userPayment = List.of(testHelper.userPaymentsMock().get(0));
 
     UserInformationDto actual = UserInformationConverter.convertToUserInformationDto(
         user,
@@ -32,9 +32,9 @@ class UserInformationConverterTest {
 
   @Test
   void ユーザーの支払い情報が複数ある場合に正常に変換できる() {
-    User user = testHelper.mockUsers().get(2);
-    UserDetail userDetail = testHelper.mockUserDetails().get(2);
-    List<UserPayment> userPayment = testHelper.mockUserPayments()
+    User user = testHelper.usersMock().get(2);
+    UserDetail userDetail = testHelper.userDetailsMock().get(2);
+    List<UserPayment> userPayment = testHelper.userPaymentsMock()
         .stream()
         .filter(userPayment1 -> userPayment1.getUserId() == 3)
         .toList();
@@ -51,8 +51,8 @@ class UserInformationConverterTest {
 
   @Test
   void ユーザーの支払い情報が空の場合に正常に変換できる() {
-    User user = testHelper.mockUsers().get(3);
-    UserDetail userDetail = testHelper.mockUserDetails().get(3);
+    User user = testHelper.usersMock().get(3);
+    UserDetail userDetail = testHelper.userDetailsMock().get(3);
     List<UserPayment> userPayment = emptyList();
 
     UserInformationDto actual = UserInformationConverter.convertToUserInformationDto(

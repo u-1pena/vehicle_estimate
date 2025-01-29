@@ -4,6 +4,9 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
+import yuichi.user.management.dto.Request.UserCreateRequest;
+import yuichi.user.management.dto.Request.UserDetailCreateRequest;
+import yuichi.user.management.dto.Request.UserPaymentCreateRequest;
 import yuichi.user.management.entity.User;
 import yuichi.user.management.entity.UserDetail;
 import yuichi.user.management.entity.UserPayment;
@@ -13,7 +16,7 @@ public class TestHelper {
   /*
    * テスト用のユーザーデータを作成するクラス
    */
-  public List<User> mockUsers() {
+  public List<User> usersMock() {
     return List.of(
         new User(1, "ganmo", "shimaichi5973@gmail.com"),
         new User(2, "yurina", "kana1231@gmail.com"),
@@ -24,7 +27,7 @@ public class TestHelper {
   /*
    * テスト用のユーザー詳細データを作成するクラス
    */
-  public List<UserDetail> mockUserDetails() {
+  public List<UserDetail> userDetailsMock() {
     return List.of(
         new UserDetail(1, "yuichi", "shimada", "ﾕｳｲﾁ", "ｼﾏﾀﾞ",
             LocalDate.of(1984, 7, 3), "080-1379-0555", "Shimaichi@0703"),
@@ -40,7 +43,7 @@ public class TestHelper {
   /*
    * テスト用のユーザー支払いデータを作成するクラス
    */
-  public List<UserPayment> mockUserPayments() {
+  public List<UserPayment> userPaymentsMock() {
     return new ArrayList<>(List.of(
         new UserPayment(1, 1, "4444123456789012", "visa", "YUICHI SHIMADA",
             YearMonth.of(2028, 1)),
@@ -50,5 +53,60 @@ public class TestHelper {
             YearMonth.of(2025, 4)),
         new UserPayment(4, 3, "5112123412341234", "master", "YOSHIYUKI MINE",
             YearMonth.of(2027, 6))));
+  }
+
+  public User createUserMock() {
+    User user = new User(userCreateRequestMock().getAccount(),
+        userCreateRequestMock().getEmail());
+    return user;
+  }
+
+  public UserCreateRequest userCreateRequestMock() {
+    UserCreateRequest userCreateRequest = new UserCreateRequest();
+    userCreateRequest.setAccount("test");
+    userCreateRequest.setEmail("test@example.ne.jp");
+    return userCreateRequest;
+  }
+
+  public UserDetail createUserDetailMock(User user) {
+    UserDetail userDetail = new UserDetail(user.getId(),
+        userDetailCreateRequestMock().getFirstName(),
+        userDetailCreateRequestMock().getLastName(),
+        userDetailCreateRequestMock().getFirstNameKana(),
+        userDetailCreateRequestMock().getLastNameKana(),
+        LocalDate.parse(userDetailCreateRequestMock().getBirthday()),
+        userDetailCreateRequestMock().getMobilePhoneNumber(),
+        userDetailCreateRequestMock().getPassword());
+    return userDetail;
+  }
+
+  public UserDetailCreateRequest userDetailCreateRequestMock() {
+    UserDetailCreateRequest userDetailCreateRequest = new UserDetailCreateRequest();
+    userDetailCreateRequest.setFirstName("test");
+    userDetailCreateRequest.setLastName("test");
+    userDetailCreateRequest.setFirstNameKana("ﾃｽﾄ");
+    userDetailCreateRequest.setLastNameKana("ﾃｽﾄ");
+    userDetailCreateRequest.setBirthday("2000-01-01");
+    userDetailCreateRequest.setMobilePhoneNumber("090-1111-9999");
+    userDetailCreateRequest.setPassword("Test@0101");
+    return userDetailCreateRequest;
+  }
+
+  public UserPayment createUserPaymentMock(UserDetail userDetail) {
+    UserPayment userPayment = new UserPayment(userDetail.getId(),
+        userPaymentCreateRequestMock().getCardNumber(),
+        userPaymentCreateRequestMock().getCardBrand(),
+        userPaymentCreateRequestMock().getCardHolder(),
+        YearMonth.parse(userPaymentCreateRequestMock().getExpirationDate()));
+    return userPayment;
+  }
+
+  public UserPaymentCreateRequest userPaymentCreateRequestMock() {
+    UserPaymentCreateRequest userPaymentCreateRequest = new UserPaymentCreateRequest();
+    userPaymentCreateRequest.setCardNumber("4444123456789019");
+    userPaymentCreateRequest.setCardBrand("VISA");
+    userPaymentCreateRequest.setCardHolder("TEST USER");
+    userPaymentCreateRequest.setExpirationDate("2028-01");
+    return userPaymentCreateRequest;
   }
 }

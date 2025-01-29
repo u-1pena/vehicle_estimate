@@ -32,6 +32,7 @@ public class UserDetail {
     this.password = password;
   }
 
+  //引数なしのコンストラクタ
   public UserDetail() {
   }
 
@@ -57,5 +58,4 @@ public class UserDetail {
     return Objects.hash(id, firstName, lastName, firstNameKana, lastNameKana, birthday,
         mobilePhoneNumber, password);
   }
-
 }

@@ -41,6 +41,18 @@ public class UserExceptionHandler extends RuntimeException {
     return ResponseEntity.badRequest().body(errorResponse);
   }
 
+  @ExceptionHandler(UserAlreadyExistsException.class)
+  public ResponseEntity<Map<String, String>> handleUserAlreadyExistsException(
+      UserAlreadyExistsException e, HttpServletRequest request) {
+    Map<String, String> body = Map.of(
+        "status", "422",
+        "error", "Unprocessable Entity",
+        "message", e.getMessage(),
+        "path", request.getRequestURI());
+
+    return new ResponseEntity<>(body, HttpStatus.UNPROCESSABLE_ENTITY);
+  }
+
   @ExceptionHandler(UserDetailAlreadyExistsException.class)
   public ResponseEntity<Map<String, String>> handleUserAlreadyExistsException(
       UserDetailAlreadyExistsException e, HttpServletRequest request) {
@@ -68,6 +80,18 @@ public class UserExceptionHandler extends RuntimeException {
   @ExceptionHandler(IllegalArgumentException.class)
   public ResponseEntity<Map<String, String>> handleIllegalArgumentException(
       IllegalArgumentException e, HttpServletRequest request) {
+    Map<String, String> body = Map.of(
+        "status", "400",
+        "error", "Bad Request",
+        "message", e.getMessage(),
+        "path", request.getRequestURI());
+
+    return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler(PaymentExpirationInvalidException.class)
+  public ResponseEntity<Map<String, String>> handlePaymentExpirationInvalidException(
+      PaymentExpirationInvalidException e, HttpServletRequest request) {
     Map<String, String> body = Map.of(
         "status", "400",
         "error", "Bad Request",

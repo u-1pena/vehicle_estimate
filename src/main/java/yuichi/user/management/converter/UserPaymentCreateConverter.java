@@ -10,7 +10,6 @@ public class UserPaymentCreateConverter {
 
   UserPaymentCreateRequest userPaymentCreateRequest;
 
-
   public static UserPayment userPaymentConvertToEntity(UserDetail userDetail,
       UserPaymentCreateRequest userPaymentCreateRequest, UserService userService) {
     UserPayment userPayment = new UserPayment();
@@ -22,5 +21,4 @@ public class UserPaymentCreateConverter {
     userPayment.setExpirationDate(YearMonth.parse(userPaymentCreateRequest.getExpirationDate()));
     return userPayment;
   }
-
 }

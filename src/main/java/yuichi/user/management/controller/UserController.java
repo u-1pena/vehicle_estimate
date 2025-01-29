@@ -87,5 +87,4 @@ public class UserController {
     CreateResponse body = new CreateResponse("UserPayment Created");
     return ResponseEntity.created(location).body(body);
   }
-
 }

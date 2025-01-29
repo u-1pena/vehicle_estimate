@@ -7,13 +7,10 @@ public class UserCreateConverter {
 
   UserCreateRequest userCreateRequest;
 
-
   public static User userConvertToEntity(UserCreateRequest userCreateRequest) {
     User user = new User();
     user.setAccount(userCreateRequest.getAccount());
     user.setEmail(userCreateRequest.getEmail());
     return user;
   }
-
-
 }

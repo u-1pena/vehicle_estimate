@@ -1,6 +1,6 @@
 CREATE TABLE users
 (
-    id INT PRIMARY KEY NOT NULL,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     account VARCHAR(100) NOT NULL,
     email VARCHAR(254) NOT NULL UNIQUE
 );
@@ -19,7 +19,7 @@ CREATE TABLE user_details
 
 CREATE TABLE user_payments
 (
-    id INT PRIMARY KEY NOT NULL,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     card_number VARCHAR(255) UNIQUE NOT NULL,
     card_brand VARCHAR(32) NOT NULL,

@@ -1,12 +1,17 @@
 package yuichi.user.management.service;
 
+import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
+import yuichi.user.management.controller.exception.PaymentExpirationInvalidException;
+import yuichi.user.management.controller.exception.UserAlreadyExistsException;
 import yuichi.user.management.controller.exception.UserDetailAlreadyExistsException;
 import yuichi.user.management.controller.exception.UserNotFoundException;
+import yuichi.user.management.controller.exception.UserPaymentAlreadyExistsException;
 import yuichi.user.management.converter.UserCreateConverter;
 import yuichi.user.management.converter.UserDetailCreateConverter;
 import yuichi.user.management.converter.UserInformationConverter;
@@ -88,7 +93,6 @@ public class UserService {
         .collect(Collectors.toList());
   }
 
-
   private List<User> findAllUsers() {
     return userRepository.findAllUsers();
   }
@@ -101,12 +105,12 @@ public class UserService {
     return userRepository.findAllUserPayments();
   }
 
-  public User findUserById(int id) {
+  private User findUserById(int id) {
     return userRepository.findUserById(id)
         .orElseThrow(() -> new UserNotFoundException("user not found with id: " + id));
   }
 
-  public UserDetail findUserDetailById(int id) {
+  private UserDetail findUserDetailById(int id) {
     return userRepository.findUserDetailById(id)
         .orElseThrow(() -> new UserNotFoundException("user not found with id: " + id));
   }
@@ -133,9 +137,7 @@ public class UserService {
   private List<UserInformationDto> findInformationByAccountName(String account) {
     List<User> users = findByAccountName(account);
     return findUserByCriteria(users);
-
   }
-
 
   //ユーザー情報を取得する処理 完全一致のEmailで検索しユーザー情報を照会します
   private List<UserInformationDto> findUserInformationByEmail(String email) {
@@ -147,7 +149,6 @@ public class UserService {
     UserDetail userDetail = findUserDetailById(user.getId());
     List<UserPayment> userPayments = findUserPaymentsById(user.getId());
     return UserInformationConverter.convertToUserInformationDto(user, userDetail, userPayments);
-
   }
 
   private List<User> findByAccountName(String account) {
@@ -176,13 +177,11 @@ public class UserService {
     return findUserDetailByCriteria(userDetails);
   }
 
-
   private UserInformationDto convertToUserInformationDtoFromUserDetail(UserDetail userDetail) {
     User user = findUserById(userDetail.getId());
     List<UserPayment> userPayments = findUserPaymentsById(userDetail.getId());
     return UserInformationConverter.convertToUserInformationDto(user, userDetail, userPayments);
   }
-
 
   private List<UserDetail> findByDetailName(String name) {
     List<UserDetail> UserDetail = userRepository.findByDetailName(name);
@@ -203,9 +202,9 @@ public class UserService {
 
   private void checkAlreadyExistEmail(String email) {
     userRepository.checkAlreadyExistByEmail(email)
-        .ifPresent(userDetail -> {
-          throw new UserDetailAlreadyExistsException(
-              "UserDetail already exists with email: " + email);
+        .ifPresent(user -> {
+          throw new UserAlreadyExistsException(
+              "User already exists with email: " + email);
         });
   }
 
@@ -217,6 +216,7 @@ public class UserService {
     User user = findUserById(id);
     checkAlreadyExistUserDetail(id);
     checkAlreadyExistMobilePhoneNumber(userDetailCreateRequest.getMobilePhoneNumber());
+    checkBirthDayValid(userDetailCreateRequest.getBirthday());
     UserDetail userDetail = UserDetailCreateConverter.userDetailConvertToEntity(user,
         userDetailCreateRequest);
     createUserDetail(userDetail);
@@ -239,6 +239,14 @@ public class UserService {
         });
   }
 
+  private void checkBirthDayValid(String birthday) {
+    LocalDate birthDay = LocalDate.parse(birthday);
+    LocalDate currentDay = LocalDate.now();
+    if (birthDay.isAfter(currentDay)) {
+      throw new IllegalArgumentException("Birthday is invalid");
+    }
+  }
+
   private void createUserDetail(UserDetail userDetail) {
     userRepository.insertUserDetail(userDetail);
   }
@@ -247,6 +255,7 @@ public class UserService {
       UserPaymentCreateRequest userPaymentCreateRequest) {
     UserDetail userDetail = findUserDetailById(id);
     checkAlreadyExistCardNumber(userPaymentCreateRequest.getCardNumber());
+    checkExpirationDate(userPaymentCreateRequest.getExpirationDate());
     UserPayment userPayment = UserPaymentCreateConverter.userPaymentConvertToEntity(userDetail,
         userPaymentCreateRequest, this);
     createUserPayment(userPayment);
@@ -256,24 +265,97 @@ public class UserService {
   private void checkAlreadyExistCardNumber(String cardNumber) {
     userRepository.checkAlreadyExistByCardNumber(cardNumber)
         .ifPresent(userPayment -> {
-          throw new UserDetailAlreadyExistsException(
+          throw new UserPaymentAlreadyExistsException(
               "UserPayment already exists with cardNumber: " + cardNumber
           );
         });
   }
 
+  /*
+  カードブランドを識別するメソッド
+  国際ブランドのプレフィックスは以下の通り。
+  ダイナース　300-305、3095、36、38-39
+  アメリカンエクスプレス　34、37
+  JCB　3528-3589
+  Visa　4
+  MasterCard　5 追加のMasterCardの範囲は2221から2720
+  Discover　60110、60112-60114、601174-601179、601186-601199、644-649、65
+  中国銀聯　622126-622925, 624-626, 6282-6288
+   */
   public String identifyCardBrand(String cardNumber) {
-    return switch (cardNumber.substring(0, 1)) {
-      case "2" -> "American Express";
-      case "3" -> "JCB";
-      case "4" -> "VISA";
-      case "5" -> "MasterCard";
-      case "6" -> "Discover";
-      default -> throw new IllegalArgumentException("Invalid card number");
-    };
+
+    //VISAは4から始まる
+    if (cardNumber.startsWith("4")) {
+      return "VISA";
+
+      //MasterCardは5から始まるが、51~55の範囲内であること
+    } else if (cardNumber.startsWith("5")) {
+      return "MasterCard";
+    }
+
+    //American Expressは34か37
+    if (cardNumber.startsWith("34") || cardNumber.startsWith("37")) {
+      return "AmericanExpress";
+
+      //Dinersは300,301,302,303,304,305,36,38から始まる
+    } else if (cardNumber.startsWith("300") || cardNumber.startsWith("301") ||
+        cardNumber.startsWith("302") || cardNumber.startsWith("303") ||
+        cardNumber.startsWith("304") || cardNumber.startsWith("305") ||
+        cardNumber.startsWith("36") || cardNumber.startsWith("38") ||
+        cardNumber.startsWith("39") || cardNumber.startsWith("3095")) {
+      return "Diners";
+
+      //UnionPayは62から始まる
+    } else if (cardNumber.startsWith("62")) {
+      return "UnionPay";
+    }
+
+    /*
+    Discover　60110、60112-60114、601174-601179、601186-601199、644-649、65
+     */
+    if (cardNumber.startsWith("65") || cardNumber.startsWith("644") ||
+        cardNumber.startsWith("645") || cardNumber.startsWith("646") ||
+        cardNumber.startsWith("647") || cardNumber.startsWith("648") ||
+        cardNumber.startsWith("649") || cardNumber.startsWith("6011")) {
+      return "Discover";
+    } else if (Integer.parseInt(cardNumber.substring(0, 5)) >= 60112
+        && Integer.parseInt(cardNumber.substring(0, 5)) <= 60114) {
+      return "Discover";
+    } else if (Integer.parseInt(cardNumber.substring(0, 6)) >= 601174
+        && Integer.parseInt(cardNumber.substring(0, 6)) <= 601179) {
+      return "Discover";
+    } else if (Integer.parseInt(cardNumber.substring(0, 6)) >= 601186
+        && Integer.parseInt(cardNumber.substring(0, 6)) <= 601199) {
+      return "Discover";
+
+      //JCBCardは3528から3589の範囲内であること
+    } else if (Integer.parseInt(cardNumber.substring(0, 4)) >= 3528
+        && Integer.parseInt(cardNumber.substring(0, 4)) <= 3589) {
+      return "JCB";
+    }
+
+    //追加のMasterCardの範囲は2221から2720,4桁以上の場合
+    if (cardNumber.length() >= 4) {
+      int firstFourDigits = Integer.parseInt(cardNumber.substring(0, 4));
+      if (firstFourDigits >= 2221 && firstFourDigits <= 2720) {
+        return "MasterCard";
+      }
+    }
+
+    //何にも該当しない場合は登録できないブランドとしてエラーを返す
+    throw new IllegalArgumentException("Unknown card brand");
   }
 
   private void createUserPayment(UserPayment userPayment) {
     userRepository.insertUserPayment(userPayment);
+  }
+
+  //クレジットカードの有効期限をチェックするメソッド
+  private void checkExpirationDate(String expirationDate) {
+    YearMonth expDate = YearMonth.parse(expirationDate);
+    YearMonth currentMonth = YearMonth.now();
+    if (!expDate.isAfter(currentMonth) && !expDate.equals(currentMonth)) {
+      throw new PaymentExpirationInvalidException("Expiration date is invalid");
+    }
   }
 }

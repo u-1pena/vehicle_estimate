@@ -26,8 +26,8 @@ public class UserPayment {
     this.expirationDate = expirationDate;
   }
 
+  //引数なしのコンストラクタ
   public UserPayment() {
-
   }
 
   public UserPayment(int userId, String cardNumber, String cardBrand, String cardHolder,
