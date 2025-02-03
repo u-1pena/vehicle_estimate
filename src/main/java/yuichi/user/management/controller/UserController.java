@@ -66,7 +66,7 @@ public class UserController {
     return ResponseEntity.created(location).body(body);
   }
 
-  @PostMapping("details/{id}")
+  @PostMapping("user_details/{id}")
   public ResponseEntity<CreateResponse> createUserDetail(
       @PathVariable("id") int id,
       @RequestBody @Valid UserDetailCreateRequest userDetailCreateRequest, // 専用リクエストクラス
