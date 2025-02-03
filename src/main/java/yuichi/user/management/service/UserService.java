@@ -7,11 +7,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
-import yuichi.user.management.controller.exception.PaymentExpirationInvalidException;
-import yuichi.user.management.controller.exception.UserAlreadyExistsException;
-import yuichi.user.management.controller.exception.UserDetailAlreadyExistsException;
-import yuichi.user.management.controller.exception.UserNotFoundException;
+import yuichi.user.management.controller.exception.UserDetailException.AlreadyExistsMobileNumberException;
+import yuichi.user.management.controller.exception.UserDetailException.BirthdayInvalidException;
+import yuichi.user.management.controller.exception.UserDetailException.UserDetailAlreadyExistsException;
+import yuichi.user.management.controller.exception.UserException.AlreadyExistsEmailException;
+import yuichi.user.management.controller.exception.UserException.UserNotFoundException;
 import yuichi.user.management.controller.exception.UserPaymentAlreadyExistsException;
+import yuichi.user.management.controller.exception.UserPaymentException.NotExistCardBrandException;
+import yuichi.user.management.controller.exception.UserPaymentException.PaymentExpirationInvalidException;
 import yuichi.user.management.converter.UserCreateConverter;
 import yuichi.user.management.converter.UserDetailCreateConverter;
 import yuichi.user.management.converter.UserInformationConverter;
@@ -203,7 +206,7 @@ public class UserService {
   private void checkAlreadyExistEmail(String email) {
     userRepository.checkAlreadyExistByEmail(email)
         .ifPresent(user -> {
-          throw new UserAlreadyExistsException(
+          throw new AlreadyExistsEmailException(
               "User already exists with email: " + email);
         });
   }
@@ -233,9 +236,7 @@ public class UserService {
   private void checkAlreadyExistMobilePhoneNumber(String mobilePhoneNumber) {
     userRepository.CheckAlreadyExistByMobilePhoneNumber(mobilePhoneNumber)
         .ifPresent(userDetail -> {
-          throw new UserDetailAlreadyExistsException(
-              "UserDetail already exists with mobilePhoneNumber: " + mobilePhoneNumber
-          );
+          throw new AlreadyExistsMobileNumberException();
         });
   }
 
@@ -243,7 +244,7 @@ public class UserService {
     LocalDate birthDay = LocalDate.parse(birthday);
     LocalDate currentDay = LocalDate.now();
     if (birthDay.isAfter(currentDay)) {
-      throw new IllegalArgumentException("Birthday is invalid");
+      throw new BirthdayInvalidException();
     }
   }
 
@@ -265,9 +266,7 @@ public class UserService {
   private void checkAlreadyExistCardNumber(String cardNumber) {
     userRepository.checkAlreadyExistByCardNumber(cardNumber)
         .ifPresent(userPayment -> {
-          throw new UserPaymentAlreadyExistsException(
-              "UserPayment already exists with cardNumber: " + cardNumber
-          );
+          throw new UserPaymentAlreadyExistsException();
         });
   }
 
@@ -343,7 +342,7 @@ public class UserService {
     }
 
     //何にも該当しない場合は登録できないブランドとしてエラーを返す
-    throw new IllegalArgumentException("Unknown card brand");
+    throw new NotExistCardBrandException();
   }
 
   private void createUserPayment(UserPayment userPayment) {
@@ -355,7 +354,7 @@ public class UserService {
     YearMonth expDate = YearMonth.parse(expirationDate);
     YearMonth currentMonth = YearMonth.now();
     if (!expDate.isAfter(currentMonth) && !expDate.equals(currentMonth)) {
-      throw new PaymentExpirationInvalidException("Expiration date is invalid");
+      throw new PaymentExpirationInvalidException();
     }
   }
 }

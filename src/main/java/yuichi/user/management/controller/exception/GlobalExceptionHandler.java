@@ -10,9 +10,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import yuichi.user.management.controller.exception.UserDetailException.UserDetailAlreadyExistsException;
+import yuichi.user.management.controller.exception.UserException.UserAlreadyExistsException;
+import yuichi.user.management.controller.exception.UserException.UserNotFoundException;
+import yuichi.user.management.controller.exception.UserPaymentException.NotExistCardBrandException;
+import yuichi.user.management.controller.exception.UserPaymentException.PaymentExpirationInvalidException;
 
 @RestControllerAdvice
-public class UserExceptionHandler extends RuntimeException {
+public class GlobalExceptionHandler extends RuntimeException {
 
   @ExceptionHandler(UserNotFoundException.class)
   public ResponseEntity<Map<String, String>> handleUserNotFoundException(
@@ -77,9 +82,9 @@ public class UserExceptionHandler extends RuntimeException {
     return new ResponseEntity<>(body, HttpStatus.UNPROCESSABLE_ENTITY);
   }
 
-  @ExceptionHandler(IllegalArgumentException.class)
+  @ExceptionHandler(NotExistCardBrandException.class)
   public ResponseEntity<Map<String, String>> handleIllegalArgumentException(
-      IllegalArgumentException e, HttpServletRequest request) {
+      NotExistCardBrandException e, HttpServletRequest request) {
     Map<String, String> body = Map.of(
         "status", "400",
         "error", "Bad Request",
