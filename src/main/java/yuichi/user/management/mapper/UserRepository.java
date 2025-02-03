@@ -36,9 +36,9 @@ public interface UserRepository {
 
   Optional<UserPayment> checkAlreadyExistByCardNumber(String cardNumber);
 
-  void insertUser(User user);
+  void createUser(User user);
 
-  void insertUserDetail(UserDetail userDetail);
+  void createUserDetail(UserDetail userDetail);
 
-  void insertUserPayment(UserPayment userPayment);
+  void createUserPayment(UserPayment userPayment);
 }

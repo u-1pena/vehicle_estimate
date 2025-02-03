@@ -316,7 +316,7 @@ class UserServiceTest {
       //モックの振る舞いを設定
       when(userRepository.checkAlreadyExistByEmail(userCreateRequest.getEmail())).thenReturn(
           Optional.empty());
-      doNothing().when(userRepository).insertUser(expectedUser);
+      doNothing().when(userRepository).createUser(expectedUser);
 
       //実行
       User actual = userService.registerUser(userCreateRequest);
@@ -325,7 +325,7 @@ class UserServiceTest {
       assertThat(actual).isEqualTo(expectedUser);
       assertThat(actual.getAccount()).isEqualTo(expectedUser.getAccount());
       assertThat(actual.getEmail()).isEqualTo(expectedUser.getEmail());
-      verify(userRepository, times(1)).insertUser(expectedUser);
+      verify(userRepository, times(1)).createUser(expectedUser);
       verify(userRepository, times(1)).checkAlreadyExistByEmail(userCreateRequest.getEmail());
     }
 
@@ -362,7 +362,7 @@ class UserServiceTest {
       doReturn(Optional.empty()).when(userRepository).findUserDetailById(expecteduser.getId());
       when(userRepository.CheckAlreadyExistByMobilePhoneNumber(
           expectedUserDetail.getMobilePhoneNumber())).thenReturn(Optional.empty());
-      doNothing().when(userRepository).insertUserDetail(expectedUserDetail);
+      doNothing().when(userRepository).createUserDetail(expectedUserDetail);
 
       //実行
       UserDetail actual = userService.registerUserDetail(expecteduser.getId(),
@@ -374,7 +374,7 @@ class UserServiceTest {
       verify(userRepository).findUserDetailById(expecteduser.getId());
       verify(userRepository).CheckAlreadyExistByMobilePhoneNumber(
           expectedUserDetail.getMobilePhoneNumber());
-      verify(userRepository).insertUserDetail(expectedUserDetail);
+      verify(userRepository).createUserDetail(expectedUserDetail);
     }
 
     @Test
@@ -497,7 +497,7 @@ class UserServiceTest {
       when(userRepository.checkAlreadyExistByCardNumber(
           userPaymentCreateRequest.getCardNumber())).thenReturn(
           Optional.empty());
-      doNothing().when(userRepository).insertUserPayment(expectedUserPayment);
+      doNothing().when(userRepository).createUserPayment(expectedUserPayment);
 
       //実行
       UserPayment actual = userService.registerUserPayment(expectedUserDetail.getId(),
@@ -508,7 +508,7 @@ class UserServiceTest {
       verify(userRepository, times(1)).findUserDetailById(expectedUserDetail.getId());
       verify(userRepository, times(1)).checkAlreadyExistByCardNumber(
           userPaymentCreateRequest.getCardNumber());
-      verify(userRepository).insertUserPayment(expectedUserPayment);
+      verify(userRepository).createUserPayment(expectedUserPayment);
     }
 
     @Test
@@ -542,7 +542,7 @@ class UserServiceTest {
       when(userRepository.checkAlreadyExistByCardNumber(
           userPaymentCreateRequest.getCardNumber())).thenReturn(
           Optional.empty());
-      doNothing().when(userRepository).insertUserPayment(expectedUserPayment);
+      doNothing().when(userRepository).createUserPayment(expectedUserPayment);
 
       //実行
       UserPayment actual = userService.registerUserPayment(expectedUserDetail.getId(),
@@ -553,7 +553,7 @@ class UserServiceTest {
       verify(userRepository, times(1)).findUserDetailById(expectedUserDetail.getId());
       verify(userRepository, times(1)).checkAlreadyExistByCardNumber(
           userPaymentCreateRequest.getCardNumber());
-      verify(userRepository).insertUserPayment(expectedUserPayment);
+      verify(userRepository).createUserPayment(expectedUserPayment);
     }
 
     @Test

@@ -130,7 +130,7 @@ class UserRepositoryTest {
       int initialSize = userRepository.findAllUsers().size();
       User user = testHelper.createUserMock();
       //実行
-      userRepository.insertUser(user);
+      userRepository.createUser(user);
       //検証
       List<User> actual = userRepository.findAllUsers();
       assertThat(actual).hasSize(initialSize + 1);
@@ -146,7 +146,7 @@ class UserRepositoryTest {
       user.setEmail("test@exampel.ne.jp");
       UserDetail userDetail = testHelper.createUserDetailMock(user);
       //実行
-      userRepository.insertUserDetail(userDetail);
+      userRepository.createUserDetail(userDetail);
       //検証
       List<UserDetail> actual = userRepository.findAllUserDetails();
       assertThat(actual).hasSize(initialSize + 1);
@@ -164,7 +164,7 @@ class UserRepositoryTest {
       userPayment.setCardHolder("TEST USER");
       userPayment.setExpirationDate(YearMonth.of(2028, 1));
       //実行
-      userRepository.insertUserPayment(userPayment);
+      userRepository.createUserPayment(userPayment);
       //検証
       List<UserPayment> actual = userRepository.findAllUserPayments();
       assertThat(actual).hasSize(initialSize + 1);

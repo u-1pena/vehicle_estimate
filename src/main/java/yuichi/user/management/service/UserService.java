@@ -209,7 +209,7 @@ public class UserService {
   }
 
   private void createUser(User user) {
-    userRepository.insertUser(user);
+    userRepository.createUser(user);
   }
 
   public UserDetail registerUserDetail(int id, UserDetailCreateRequest userDetailCreateRequest) {
@@ -248,7 +248,7 @@ public class UserService {
   }
 
   private void createUserDetail(UserDetail userDetail) {
-    userRepository.insertUserDetail(userDetail);
+    userRepository.createUserDetail(userDetail);
   }
 
   public UserPayment registerUserPayment(int id,
@@ -347,7 +347,7 @@ public class UserService {
   }
 
   private void createUserPayment(UserPayment userPayment) {
-    userRepository.insertUserPayment(userPayment);
+    userRepository.createUserPayment(userPayment);
   }
 
   //クレジットカードの有効期限をチェックするメソッド
