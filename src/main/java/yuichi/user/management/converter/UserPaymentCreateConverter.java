@@ -8,8 +8,6 @@ import yuichi.user.management.service.UserService;
 
 public class UserPaymentCreateConverter {
 
-  UserPaymentCreateRequest userPaymentCreateRequest;
-
   public static UserPayment userPaymentConvertToEntity(UserDetail userDetail,
       UserPaymentCreateRequest userPaymentCreateRequest, UserService userService) {
     UserPayment userPayment = new UserPayment();

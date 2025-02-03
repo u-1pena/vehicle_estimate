@@ -7,8 +7,6 @@ import yuichi.user.management.entity.UserDetail;
 
 public class UserDetailCreateConverter {
 
-  UserDetailCreateRequest userDetailCreateRequest;
-
   public static UserDetail userDetailConvertToEntity(User user,
       UserDetailCreateRequest userDetailCreateRequest) {
     UserDetail userDetail = new UserDetail();
