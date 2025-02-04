@@ -49,7 +49,7 @@
     SELECT * FROM users WHERE email = #{email}
   </select>
 
-  <select id="CheckAlreadyExistByMobilePhoneNumber" parameterType="String"
+  <select id="findByMobilePhoneNumber" parameterType="String"
     resultType="yuichi.user.management.entity.UserDetail">
     SELECT * FROM user_details WHERE mobile_phone_number = #{MobilePhoneNumber}
   </select>
@@ -59,7 +59,7 @@
     SELECT * FROM users WHERE email = #{email}
   </select>
 
-  <select id="checkAlreadyExistByCardNumber" parameterType="String"
+  <select id="findByCardNumber" parameterType="String"
     resultType="yuichi.user.management.entity.UserPayment">
     SELECT * FROM user_payments WHERE card_number = #{cardNumber}
   </select>

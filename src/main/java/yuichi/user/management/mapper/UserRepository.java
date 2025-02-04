@@ -30,11 +30,11 @@ public interface UserRepository {
 
   List<User> findByEmail(String email);
 
-  Optional<UserDetail> CheckAlreadyExistByMobilePhoneNumber(String mobilePhoneNumber);
+  Optional<UserDetail> findByMobilePhoneNumber(String mobilePhoneNumber);
 
   Optional<User> checkAlreadyExistByEmail(String email);
 
-  Optional<UserPayment> checkAlreadyExistByCardNumber(String cardNumber);
+  Optional<UserPayment> findByCardNumber(String cardNumber);
 
   void createUser(User user);
 

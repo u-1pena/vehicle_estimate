@@ -360,7 +360,7 @@ class UserServiceTest {
       //モックの振る舞いを設定
       doReturn(Optional.of(expecteduser)).when(userRepository).findUserById(expecteduser.getId());
       doReturn(Optional.empty()).when(userRepository).findUserDetailById(expecteduser.getId());
-      when(userRepository.CheckAlreadyExistByMobilePhoneNumber(
+      when(userRepository.findByMobilePhoneNumber(
           expectedUserDetail.getMobilePhoneNumber())).thenReturn(Optional.empty());
       doNothing().when(userRepository).createUserDetail(expectedUserDetail);
 
@@ -372,7 +372,7 @@ class UserServiceTest {
       assertUserDetail(actual, expectedUserDetail);
       verify(userRepository).findUserById(expecteduser.getId());
       verify(userRepository).findUserDetailById(expecteduser.getId());
-      verify(userRepository).CheckAlreadyExistByMobilePhoneNumber(
+      verify(userRepository).findByMobilePhoneNumber(
           expectedUserDetail.getMobilePhoneNumber());
       verify(userRepository).createUserDetail(expectedUserDetail);
     }
@@ -405,7 +405,7 @@ class UserServiceTest {
       //モックの振る舞いを設定
       doReturn(Optional.of(expecteduser)).when(userRepository).findUserById(expecteduser.getId());
       doReturn(Optional.empty()).when(userRepository).findUserDetailById(expecteduser.getId());
-      when(userRepository.CheckAlreadyExistByMobilePhoneNumber(
+      when(userRepository.findByMobilePhoneNumber(
           expectedUserDetail.getMobilePhoneNumber())).thenReturn(Optional.of(expectedUserDetail));
 
       //実行
@@ -420,7 +420,7 @@ class UserServiceTest {
           exception.getMessage());
       verify(userRepository, times(1)).findUserById(expecteduser.getId());
       verify(userRepository, times(1)).findUserDetailById(expecteduser.getId());
-      verify(userRepository, times(1)).CheckAlreadyExistByMobilePhoneNumber(
+      verify(userRepository, times(1)).findByMobilePhoneNumber(
           expectedUserDetail.getMobilePhoneNumber());
     }
 
@@ -494,7 +494,7 @@ class UserServiceTest {
 //モックの振る舞いを設定
       doReturn(Optional.of(expectedUserDetail)).when(userRepository)
           .findUserDetailById(expectedUserDetail.getId());
-      when(userRepository.checkAlreadyExistByCardNumber(
+      when(userRepository.findByCardNumber(
           userPaymentCreateRequest.getCardNumber())).thenReturn(
           Optional.empty());
       doNothing().when(userRepository).createUserPayment(expectedUserPayment);
@@ -506,7 +506,7 @@ class UserServiceTest {
       //検証
       assertUserPayment(actual, expectedUserPayment);
       verify(userRepository, times(1)).findUserDetailById(expectedUserDetail.getId());
-      verify(userRepository, times(1)).checkAlreadyExistByCardNumber(
+      verify(userRepository, times(1)).findByCardNumber(
           userPaymentCreateRequest.getCardNumber());
       verify(userRepository).createUserPayment(expectedUserPayment);
     }
@@ -539,7 +539,7 @@ class UserServiceTest {
       //モックの振る舞いを設定
       doReturn(Optional.of(expectedUserDetail)).when(userRepository)
           .findUserDetailById(expectedUserDetail.getId());
-      when(userRepository.checkAlreadyExistByCardNumber(
+      when(userRepository.findByCardNumber(
           userPaymentCreateRequest.getCardNumber())).thenReturn(
           Optional.empty());
       doNothing().when(userRepository).createUserPayment(expectedUserPayment);
@@ -551,7 +551,7 @@ class UserServiceTest {
       //検証
       assertUserPayment(actual, expectedUserPayment);
       verify(userRepository, times(1)).findUserDetailById(expectedUserDetail.getId());
-      verify(userRepository, times(1)).checkAlreadyExistByCardNumber(
+      verify(userRepository, times(1)).findByCardNumber(
           userPaymentCreateRequest.getCardNumber());
       verify(userRepository).createUserPayment(expectedUserPayment);
     }
@@ -566,7 +566,7 @@ class UserServiceTest {
       //モックの振る舞いを設定
       doReturn(Optional.of(expectedUserDetail)).when(userRepository)
           .findUserDetailById(expectedUserDetail.getId());
-      when(userRepository.checkAlreadyExistByCardNumber(
+      when(userRepository.findByCardNumber(
           userPaymentCreateRequest.getCardNumber())).thenReturn(
           Optional.of(expectedUserPayment));
 
@@ -760,7 +760,7 @@ class UserServiceTest {
       //モックの振る舞いを設定
       doReturn(Optional.of(expectedUserDetail)).when(userRepository)
           .findUserDetailById(expectedUserDetail.getId());
-      when(userRepository.checkAlreadyExistByCardNumber(
+      when(userRepository.findByCardNumber(
           userPaymentCreateRequest.getCardNumber())).thenReturn(
           Optional.empty());
 

@@ -233,7 +233,7 @@ public class UserService {
   }
 
   private void checkAlreadyExistMobilePhoneNumber(String mobilePhoneNumber) {
-    userRepository.CheckAlreadyExistByMobilePhoneNumber(mobilePhoneNumber)
+    userRepository.findByMobilePhoneNumber(mobilePhoneNumber)
         .ifPresent(userDetail -> {
           throw new AlreadyExistsMobileNumberException();
         });
@@ -263,7 +263,7 @@ public class UserService {
   }
 
   private void checkAlreadyExistCardNumber(String cardNumber) {
-    userRepository.checkAlreadyExistByCardNumber(cardNumber)
+    userRepository.findByCardNumber(cardNumber)
         .ifPresent(userPayment -> {
           throw new UserPaymentAlreadyExistsException();
         });
