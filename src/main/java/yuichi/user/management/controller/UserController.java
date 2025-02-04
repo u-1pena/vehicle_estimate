@@ -37,7 +37,7 @@ public class UserController {
   それぞれの値がnullでない場合、それぞれの値をキーにして検索を行う*/
   @GetMapping("/users")
   public List<UserInformationDto> searchUsersByRequestParam(
-      @RequestParam(value = "account", required = false) String account,
+      @RequestParam(value = "userAccount", required = false) String account,
       @RequestParam(value = "name", required = false) String name,
       @RequestParam(value = "kana", required = false) String kana,
       @RequestParam(value = "email", required = false) String email) {

@@ -9,8 +9,8 @@ import lombok.Data;
 public class UserCreateRequest {
 
   @NotBlank(message = "空白は許可されていません")
-  @Pattern(regexp = "^[a-zA-Z0-9]{4,32}$", message = "アカウントは半角英数字4文字以上32文字以下で入力してください")
-  private String account;
+  @Pattern(regexp = "^[a-zA-Z0-9]{4,32}$", message = "ユーザーアカウントは半角英数字4文字以上32文字以下で入力してください")
+  private String userAccount;
   @NotBlank(message = "空白は許可されていません")
   @Email(message = "メールアドレスの形式が不正です")
   private String email;

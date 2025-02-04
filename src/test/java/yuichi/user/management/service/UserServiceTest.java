@@ -233,7 +233,7 @@ class UserServiceTest {
       UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> {
         userService.findUserInformationById(0);
       });
-      assertEquals("user not found with id: 0", exception.getMessage());
+      assertEquals("userAccount not found with id: 0", exception.getMessage());
     }
 
     @Test
@@ -268,7 +268,7 @@ class UserServiceTest {
         UserDetail expectedUserDetail,
         List<UserPayment> expectedUserPayments) {
       assertThat(actual.getUser().getId()).isEqualTo(expectedUser.getId());
-      assertThat(actual.getUser().getAccount()).isEqualTo(expectedUser.getAccount());
+      assertThat(actual.getUser().getUserAccount()).isEqualTo(expectedUser.getUserAccount());
       assertThat(actual.getUser().getEmail()).isEqualTo(expectedUser.getEmail());
 
       assertThat(actual.getUserDetail().getId()).isEqualTo(expectedUserDetail.getId());
@@ -323,7 +323,7 @@ class UserServiceTest {
 
       //検証
       assertThat(actual).isEqualTo(expectedUser);
-      assertThat(actual.getAccount()).isEqualTo(expectedUser.getAccount());
+      assertThat(actual.getUserAccount()).isEqualTo(expectedUser.getUserAccount());
       assertThat(actual.getEmail()).isEqualTo(expectedUser.getEmail());
       verify(userRepository, times(1)).createUser(expectedUser);
       verify(userRepository, times(1)).checkAlreadyExistByEmail(userCreateRequest.getEmail());
@@ -390,7 +390,7 @@ class UserServiceTest {
       });
 
       //検証
-      assertEquals("user not found with id: 0", exception.getMessage());
+      assertEquals("userAccount not found with id: 0", exception.getMessage());
       verify(userRepository, times(1)).findUserById(0);
     }
 
@@ -525,7 +525,7 @@ class UserServiceTest {
       });
 
       //検証
-      assertEquals("user not found with id: 0", exception.getMessage());
+      assertEquals("userAccount not found with id: 0", exception.getMessage());
       verify(userRepository, times(1)).findUserDetailById(0);
     }
 

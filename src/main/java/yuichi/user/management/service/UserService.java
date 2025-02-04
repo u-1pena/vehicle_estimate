@@ -48,7 +48,7 @@ public class UserService {
 
     //switch文でパラメーターの可読性アップ！確かに見やすいけど、if文のほうがコードが短くなるので、どちらがいいかは微妙かも・・
     return switch (pramName) {
-      case "account" -> findInformationByAccountName(account);
+      case "userAccount" -> findInformationByAccountName(account);
       case "name" -> findUserInformationByName(name);
       case "kana" -> findUserInformationByFullNameKana(kana);
       case "email" -> findUserInformationByEmail(email);
@@ -60,7 +60,7 @@ public class UserService {
    * 例：accountがnullでもなく空白でもなければ"accountを返す検索条件を判定するメソッド"*/
   private String defineSearchCriteria(String account, String name, String kana, String email) {
     if (account != null && !account.isBlank()) {
-      return "account";
+      return "userAccount";
     }
     if (name != null && !name.isBlank()) {
       return "name";
@@ -110,12 +110,12 @@ public class UserService {
 
   private User findUserById(int id) {
     return userRepository.findUserById(id)
-        .orElseThrow(() -> new UserNotFoundException("user not found with id: " + id));
+        .orElseThrow(() -> new UserNotFoundException("userAccount not found with id: " + id));
   }
 
   private UserDetail findUserDetailById(int id) {
     return userRepository.findUserDetailById(id)
-        .orElseThrow(() -> new UserNotFoundException("user not found with id: " + id));
+        .orElseThrow(() -> new UserNotFoundException("userAccount not found with id: " + id));
   }
 
   private List<UserPayment> findUserPaymentsById(int userId) {

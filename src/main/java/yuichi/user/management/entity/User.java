@@ -9,20 +9,20 @@ import lombok.Setter;
 public class User {
 
   private int id;
-  private String account;
+  private String userAccount;
   private String email;
 
   public User() {
   }
 
-  public User(int id, String account, String email) {
+  public User(int id, String userAccount, String email) {
     this.id = id;
-    this.account = account;
+    this.userAccount = userAccount;
     this.email = email;
   }
 
-  public User(String account, String email) {
-    this.account = account;
+  public User(String userAccount, String email) {
+    this.userAccount = userAccount;
     this.email = email;
   }
 
@@ -35,12 +35,12 @@ public class User {
       return false;
     }
     User user = (User) o;
-    return id == user.id && Objects.equals(account, user.account)
+    return id == user.id && Objects.equals(this.userAccount, user.userAccount)
         && Objects.equals(email, user.email);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, account, email);
+    return Objects.hash(id, userAccount, email);
   }
 }

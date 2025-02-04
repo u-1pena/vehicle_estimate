@@ -108,7 +108,7 @@ class UserControllerTest {
       doReturn(expected).when(userService).searchUsersByRequestParam("ganmo", null, null, null);
 
       MvcResult result = mockMvc.perform(get("/users")
-              .param("account", "ganmo")
+              .param("userAccount", "ganmo")
               .contentType(MediaType.APPLICATION_JSON))
           .andExpect(status().isOk())
           .andReturn();
@@ -122,7 +122,7 @@ class UserControllerTest {
           .searchUsersByRequestParam("l", null, null, null);
 
       mockMvc.perform(get("/users")
-              .param("account", "l")
+              .param("userAccount", "l")
               .contentType(MediaType.APPLICATION_JSON))
           .andExpect(status().isOk()).andExpect(content().string("[]"));
       verify(userService).searchUsersByRequestParam("l", null, null, null);
@@ -271,13 +271,13 @@ class UserControllerTest {
       // 準備
       User user = new User();
       user.setId(1);
-      user.setAccount("test");
+      user.setUserAccount("test");
       user.setEmail("test@example.co.jp");
       // モックの設定
       when(userService.registerUser(any(UserCreateRequest.class))).thenReturn(user);
       String requestBody = """
           {
-            "account": "test",
+            "userAccount": "test",
             "email": "test@example.co.jp"
           }
           """;
@@ -291,7 +291,7 @@ class UserControllerTest {
       ArgumentCaptor<UserCreateRequest> captor = ArgumentCaptor.forClass(UserCreateRequest.class);
       verify(userService).registerUser(captor.capture());
       UserCreateRequest actual = captor.getValue();
-      assertThat(actual.getAccount()).isEqualTo("test");
+      assertThat(actual.getUserAccount()).isEqualTo("test");
       assertThat(actual.getEmail()).isEqualTo("test@example.co.jp");
     }
 
@@ -300,7 +300,7 @@ class UserControllerTest {
       // 準備
       User user = new User();
       user.setId(1);
-      user.setAccount("test");
+      user.setUserAccount("test");
       user.setEmail("test@example.co.jp");
 
       UserDetail userDetail = new UserDetail();
@@ -384,7 +384,7 @@ class UserControllerTest {
     void ユーザー登録時にアカウント名やEmailが空の場合はエラーとなる() throws Exception {
       String requestBody = """
           {
-            "account": "",
+            "userAccount": "",
             "email": ""
           }
           """;
@@ -399,7 +399,7 @@ class UserControllerTest {
                       "message": "validation error",
                       "errors": [
                           {
-                              "field": "account",
+                              "field": "userAccount",
                               "message": "空白は許可されていません"
                           },
                           {
@@ -407,7 +407,7 @@ class UserControllerTest {
                               "message": "空白は許可されていません"
                           },
                           {
-                              "field": "account",
+                              "field": "userAccount",
                               "message": "アカウントは半角英数字4文字以上32文字以下で入力してください"
                           }
                       ]
@@ -420,7 +420,7 @@ class UserControllerTest {
     void ユーザー登録の際にアカウント名が4文字未満の場合はエラーとなる() throws Exception {
       String requestBody = """
           {
-            "account": "tes",
+            "userAccount": "tes",
             "email": "test@example.co.jp"
           }
           """;
@@ -435,7 +435,7 @@ class UserControllerTest {
                       "message": "validation error",
                       "errors": [
                           {
-                              "field": "account",
+                              "field": "userAccount",
                               "message": "アカウントは半角英数字4文字以上32文字以下で入力してください"
                           }
                       ]
@@ -448,7 +448,7 @@ class UserControllerTest {
     void ユーザー登録の際にアカウント名が32文字を超える場合はエラーとなる() throws Exception {
       String requestBody = """
           {
-            "account": "123456789012345678901234567890123",
+            "userAccount": "123456789012345678901234567890123",
             "email": "test@example.co.jp"
             }
           """;
@@ -463,7 +463,7 @@ class UserControllerTest {
                       "message": "validation error",
                       "errors": [
                           {
-                              "field": "account",
+                              "field": "userAccount",
                               "message": "アカウントは半角英数字4文字以上32文字以下で入力してください"
                           }
                       ]
@@ -476,7 +476,7 @@ class UserControllerTest {
     void ユーザー登録の際にメールアドレスの形式が不正な場合はエラーとなる() throws Exception {
       String requestBody = """
           {
-            "account": "test",
+            "userAccount": "test",
             "email": "testexample.co.jp"
           }
           """;

@@ -142,7 +142,7 @@ class UserRepositoryTest {
       int initialSize = userRepository.findAllUserDetails().size();
       User user = new User();
       user.setId(5);
-      user.setAccount("test");
+      user.setUserAccount("test");
       user.setEmail("test@exampel.ne.jp");
       UserDetail userDetail = testHelper.createUserDetailMock(user);
       //実行

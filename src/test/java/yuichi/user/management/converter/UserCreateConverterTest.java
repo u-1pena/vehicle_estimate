@@ -13,12 +13,12 @@ class UserCreateConverterTest {
   void UserCreateRequestをUserに変換できること() {
     // 準備
     UserCreateRequest userCreateRequest = new UserCreateRequest();
-    userCreateRequest.setAccount("test");
+    userCreateRequest.setUserAccount("test");
     userCreateRequest.setEmail("test@example.co.jp");
     // 実行
     User actual = UserCreateConverter.userConvertToEntity(userCreateRequest);
     // 検証
-    assertThat(actual.getAccount()).isEqualTo("test");
+    assertThat(actual.getUserAccount()).isEqualTo("test");
     assertThat(actual.getEmail()).isEqualTo("test@example.co.jp");
   }
 }

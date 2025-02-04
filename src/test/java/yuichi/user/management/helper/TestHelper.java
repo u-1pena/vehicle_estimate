@@ -56,14 +56,14 @@ public class TestHelper {
   }
 
   public User createUserMock() {
-    User user = new User(userCreateRequestMock().getAccount(),
+    User user = new User(userCreateRequestMock().getUserAccount(),
         userCreateRequestMock().getEmail());
     return user;
   }
 
   public UserCreateRequest userCreateRequestMock() {
     UserCreateRequest userCreateRequest = new UserCreateRequest();
-    userCreateRequest.setAccount("test");
+    userCreateRequest.setUserAccount("test");
     userCreateRequest.setEmail("test@example.ne.jp");
     return userCreateRequest;
   }
