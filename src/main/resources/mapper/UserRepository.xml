@@ -64,19 +64,19 @@
     SELECT * FROM user_payments WHERE card_number = #{cardNumber}
   </select>
 
-  <insert id="insertUser" useGeneratedKeys="true" keyProperty="id"
+  <insert id="createUser" useGeneratedKeys="true" keyProperty="id"
     parameterType="yuichi.user.management.entity.User">
     INSERT INTO users (account, email) VALUES (#{account}, #{email})
   </insert>
 
-  <insert id="insertUserDetail" parameterType="yuichi.user.management.entity.UserDetail">
+  <insert id="createUserDetail" parameterType="yuichi.user.management.entity.UserDetail">
     INSERT INTO user_details (id, last_name, first_name, last_name_kana, first_name_kana,
     birthday,mobile_phone_number,password) VALUES (#{id}, #{lastName},
     #{firstName}, #{lastNameKana}, #{firstNameKana}, #{birthday}, #{mobilePhoneNumber},
     #{password})
   </insert>
 
-  <insert id="insertUserPayment" useGeneratedKeys="true" keyProperty="id"
+  <insert id="createUserPayment" useGeneratedKeys="true" keyProperty="id"
     parameterType="yuichi.user.management.entity.UserPayment">
     INSERT INTO user_payments (user_id, card_number, card_brand, card_holder, expiration_date)
     VALUES (#{userId}, #{cardNumber},#{cardBrand}, #{cardHolder}, #{expirationDate})

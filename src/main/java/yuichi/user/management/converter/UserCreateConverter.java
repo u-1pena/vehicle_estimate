@@ -6,9 +6,6 @@ import yuichi.user.management.entity.User;
 public class UserCreateConverter {
 
   public static User userConvertToEntity(UserCreateRequest userCreateRequest) {
-    User user = new User();
-    user.setAccount(userCreateRequest.getAccount());
-    user.setEmail(userCreateRequest.getEmail());
-    return user;
+    return new User(userCreateRequest.getAccount(), userCreateRequest.getEmail());
   }
 }

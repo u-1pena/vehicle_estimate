@@ -11,6 +11,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import yuichi.user.management.controller.exception.UserDetailException.UserDetailAlreadyExistsException;
+import yuichi.user.management.controller.exception.UserException.AlreadyExistsEmailException;
 import yuichi.user.management.controller.exception.UserException.UserAlreadyExistsException;
 import yuichi.user.management.controller.exception.UserException.UserNotFoundException;
 import yuichi.user.management.controller.exception.UserPaymentException.NotExistCardBrandException;
@@ -44,6 +45,18 @@ public class GlobalExceptionHandler extends RuntimeException {
     ErrorResponse errorResponse =
         new ErrorResponse(HttpStatus.BAD_REQUEST, "validation error", errors);
     return ResponseEntity.badRequest().body(errorResponse);
+  }
+
+  @ExceptionHandler(AlreadyExistsEmailException.class)
+  public ResponseEntity<Map<String, String>> handleAlreadyExistsEmailException(
+      AlreadyExistsEmailException e, HttpServletRequest request) {
+    Map<String, String> body = Map.of(
+        "status", "422",
+        "error", "Unprocessable Entity",
+        "message", e.getMessage(),
+        "path", request.getRequestURI());
+
+    return new ResponseEntity<>(body, HttpStatus.UNPROCESSABLE_ENTITY);
   }
 
   @ExceptionHandler(UserAlreadyExistsException.class)

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import yuichi.user.management.controller.exception.UserDetailException.AlreadyExistsMobileNumberException;
 import yuichi.user.management.controller.exception.UserDetailException.BirthdayInvalidException;
 import yuichi.user.management.controller.exception.UserDetailException.UserDetailAlreadyExistsException;
-import yuichi.user.management.controller.exception.UserException.AlreadyExistsEmailException;
+import yuichi.user.management.controller.exception.UserException;
 import yuichi.user.management.controller.exception.UserException.UserNotFoundException;
 import yuichi.user.management.controller.exception.UserPaymentAlreadyExistsException;
 import yuichi.user.management.controller.exception.UserPaymentException.NotExistCardBrandException;
@@ -206,8 +206,7 @@ public class UserService {
   private void checkAlreadyExistEmail(String email) {
     userRepository.checkAlreadyExistByEmail(email)
         .ifPresent(user -> {
-          throw new AlreadyExistsEmailException(
-              "User already exists with email: " + email);
+          throw new UserException.AlreadyExistsEmailException();
         });
   }
 

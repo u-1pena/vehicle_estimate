@@ -7,17 +7,13 @@ import yuichi.user.management.entity.UserDetail;
 
 public class UserDetailCreateConverter {
 
+
   public static UserDetail userDetailConvertToEntity(User user,
       UserDetailCreateRequest userDetailCreateRequest) {
-    UserDetail userDetail = new UserDetail();
-    userDetail.setId(user.getId());
-    userDetail.setFirstName(userDetailCreateRequest.getFirstName());
-    userDetail.setLastName(userDetailCreateRequest.getLastName());
-    userDetail.setFirstNameKana(userDetailCreateRequest.getFirstNameKana());
-    userDetail.setLastNameKana(userDetailCreateRequest.getLastNameKana());
-    userDetail.setBirthday(LocalDate.parse(userDetailCreateRequest.getBirthday()));
-    userDetail.setMobilePhoneNumber(userDetailCreateRequest.getMobilePhoneNumber());
-    userDetail.setPassword(userDetailCreateRequest.getPassword());
-    return userDetail;
+    return new UserDetail(user.getId(), userDetailCreateRequest.getFirstName(),
+        userDetailCreateRequest.getLastName(), userDetailCreateRequest.getFirstNameKana(),
+        userDetailCreateRequest.getLastNameKana(),
+        LocalDate.parse(userDetailCreateRequest.getBirthday()),
+        userDetailCreateRequest.getMobilePhoneNumber(), userDetailCreateRequest.getPassword());
   }
 }
