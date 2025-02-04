@@ -270,76 +270,111 @@ public class UserService {
   }
 
   /*
-  カードブランドを識別するメソッド
-  国際ブランドのプレフィックスは以下の通り。
-  ダイナース　300-305、3095、36、38-39
-  アメリカンエクスプレス　34、37
-  JCB　3528-3589
-  Visa　4
-  MasterCard　5 追加のMasterCardの範囲は2221から2720
-  Discover　60110、60112-60114、601174-601179、601186-601199、644-649、65
-  中国銀聯　622126-622925, 624-626, 6282-6288
+   * クレジットカードのブランドを識別するメソッド
+   * 今後の修正で、クレジットカードのブランドが追加される可能性があるため、
+   * 修正をしやすくするためにもクラスを別に作成してもいいかもしれない
    */
+  private static final Map<String, String> cardBrand2digitsMax = Map.of(
+      "4", "VISA",
+      "5", "MasterCard",
+      "34", "AmericanExpress", "37", "AmericanExpress",
+      "36", "Diners", "38", "Diners", "39", "Diners",
+      "65", "Discover",
+      "62", "UnionPay"
+  );
+  private static final Map<String, String> cardBrandByDiners = Map.of(
+      "300", "Diners", "301", "Diners",
+      "302", "Diners", "303", "Diners",
+      "304", "Diners", "305", "Diners",
+      "3095", "Diners"
+  );
+
+  private static final Map<String, String> cardBrandByDiscover = Map.of(
+      "644", "Discover", "645", "Discover",
+      "646", "Discover", "647", "Discover",
+      "648", "Discover", "649", "Discover"
+  );
+
   public String identifyCardBrand(String cardNumber) {
-
-    //VISAは4から始まる
-    if (cardNumber.startsWith("4")) {
-      return "VISA";
-
-      //MasterCardは5から始まるが、51~55の範囲内であること
-    } else if (cardNumber.startsWith("5")) {
-      return "MasterCard";
-    }
-
-    //American Expressは34か37
-    if (cardNumber.startsWith("34") || cardNumber.startsWith("37")) {
-      return "AmericanExpress";
-
-      //Dinersは300,301,302,303,304,305,36,38から始まる
-    } else if (cardNumber.startsWith("300") || cardNumber.startsWith("301") ||
-        cardNumber.startsWith("302") || cardNumber.startsWith("303") ||
-        cardNumber.startsWith("304") || cardNumber.startsWith("305") ||
-        cardNumber.startsWith("36") || cardNumber.startsWith("38") ||
-        cardNumber.startsWith("39") || cardNumber.startsWith("3095")) {
-      return "Diners";
-
-      //UnionPayは62から始まる
-    } else if (cardNumber.startsWith("62")) {
-      return "UnionPay";
-    }
-
     /*
-    Discover　60110、60112-60114、601174-601179、601186-601199、644-649、65
+     * 6桁から1桁までの数字を取得し、ブランドを判定する
+     * 特定の文字列に対してはMapで定義したブランドを返す
+     * 範囲指定の場合は、範囲内に入っているかを判定し、範囲内に入っていればブランドを返す
      */
-    if (cardNumber.startsWith("65") || cardNumber.startsWith("644") ||
-        cardNumber.startsWith("645") || cardNumber.startsWith("646") ||
-        cardNumber.startsWith("647") || cardNumber.startsWith("648") ||
-        cardNumber.startsWith("649") || cardNumber.startsWith("6011")) {
-      return "Discover";
-    } else if (Integer.parseInt(cardNumber.substring(0, 5)) >= 60112
-        && Integer.parseInt(cardNumber.substring(0, 5)) <= 60114) {
-      return "Discover";
-    } else if (Integer.parseInt(cardNumber.substring(0, 6)) >= 601174
-        && Integer.parseInt(cardNumber.substring(0, 6)) <= 601179) {
-      return "Discover";
-    } else if (Integer.parseInt(cardNumber.substring(0, 6)) >= 601186
-        && Integer.parseInt(cardNumber.substring(0, 6)) <= 601199) {
-      return "Discover";
+    for (int length = Math.min(cardNumber.length(), 6); length >= 1; length--) {
+      String prefix = cardNumber.substring(0, length);
 
-      //JCBCardは3528から3589の範囲内であること
-    } else if (Integer.parseInt(cardNumber.substring(0, 4)) >= 3528
-        && Integer.parseInt(cardNumber.substring(0, 4)) <= 3589) {
-      return "JCB";
-    }
+      /*
+       *Discover
+       * ---------------------------------------------------------
+       * Discoverのプレフィックスは以下の通り
+       * 6桁の場合：601186-601199、601174-601179
+       * 5桁の場合：60112-60114、60110
+       * 3桁の場合：644-649 -> MapのcardBrandByDiscover
+       * 2桁の場合：65 -> MapのcardBrand2digits
+       */
+      if (Integer.parseInt(cardNumber.substring(0, 6)) >= 601186
+          && Integer.parseInt(cardNumber.substring(0, 6)) <= 601199) {
+        return "Discover";
 
-    //追加のMasterCardの範囲は2221から2720,4桁以上の場合
-    if (cardNumber.length() >= 4) {
-      int firstFourDigits = Integer.parseInt(cardNumber.substring(0, 4));
-      if (firstFourDigits >= 2221 && firstFourDigits <= 2720) {
+      } else if (Integer.parseInt(cardNumber.substring(0, 6)) >= 601174
+          && Integer.parseInt(cardNumber.substring(0, 6)) <= 601179) {
+        return "Discover";
+
+      } else if (Integer.parseInt(cardNumber.substring(0, 5)) >= 60112
+          && Integer.parseInt(cardNumber.substring(0, 5)) <= 60114) {
+        return "Discover";
+
+      } else if (Integer.parseInt(cardNumber.substring(0, 5)) == 60110) {
+        return "Discover";
+
+      } else if (cardBrandByDiscover.containsKey(prefix)) {
+        return cardBrandByDiscover.get(prefix);
+
+        /*
+         *JCB
+         * ---------------------------------------------------------
+         * JCBのプレフィックスは以下の通り
+         * 4桁のみ：3528-3589
+         */
+      } else if (Integer.parseInt(cardNumber.substring(0, 4)) >= 3528
+          && Integer.parseInt(cardNumber.substring(0, 4)) <= 3589) {
+        return "JCB";
+
+        /*
+         *MasterCard
+         * ---------------------------------------------------------
+         * MasterCardのプレフィックスは以下の通り
+         * 4桁の場合：2221-2720（こちらは追加された識別番号）
+         * 1桁：5 -> MapのcardBrand2digits
+         */
+      } else if (Integer.parseInt(cardNumber.substring(0, 4)) >= 2221
+          && Integer.parseInt(cardNumber.substring(0, 4)) <= 2720) {
         return "MasterCard";
+        /*
+         *Diners
+         * ---------------------------------------------------------
+         * Dinersのプレフィックスは以下の通り
+         * 3桁の場合：300-305、3095 -> MapのcardBrandByDiners
+         * 2桁のみ：36、38、39 -> MapのcardBrand2digits
+         */
+      } else if (cardBrandByDiners.containsKey(prefix)) {
+        return cardBrandByDiners.get(prefix);
+
+        /*
+         *UnionPay
+         * ---------------------------------------------------------
+         * UnionPayのプレフィックスは以下の通り
+         * 2桁のみ：62 -> MapのcardBrand2digits
+         *
+         * その他のブランドはプレフィックスが1桁から2桁のみのため、
+         * 1桁のプレフィックスがMapに登録されている場合は、
+         * そのブランドを返す(VISA、AmericanExpress)
+         */
+      } else if (cardBrand2digitsMax.containsKey(prefix)) {
+        return cardBrand2digitsMax.get(prefix);
       }
     }
-
     //何にも該当しない場合は登録できないブランドとしてエラーを返す
     throw new NotExistCardBrandException();
   }
