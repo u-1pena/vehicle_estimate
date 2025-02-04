@@ -326,7 +326,7 @@ class UserControllerTest {
               "password": "Test@12345"
           }
           """;
-      mockMvc.perform(MockMvcRequestBuilders.post("/details/1")
+      mockMvc.perform(MockMvcRequestBuilders.post("/user_details/1")
               .contentType(MediaType.APPLICATION_JSON)
               .content(requestBody))
           .andExpect(status().isCreated())
@@ -408,7 +408,7 @@ class UserControllerTest {
                           },
                           {
                               "field": "userAccount",
-                              "message": "アカウントは半角英数字4文字以上32文字以下で入力してください"
+                              "message": "ユーザーアカウントは半角英数字4文字以上32文字以下で入力してください"
                           }
                       ]
                   }
@@ -436,7 +436,7 @@ class UserControllerTest {
                       "errors": [
                           {
                               "field": "userAccount",
-                              "message": "アカウントは半角英数字4文字以上32文字以下で入力してください"
+                              "message": "ユーザーアカウントは半角英数字4文字以上32文字以下で入力してください"
                           }
                       ]
                   }
@@ -464,7 +464,7 @@ class UserControllerTest {
                       "errors": [
                           {
                               "field": "userAccount",
-                              "message": "アカウントは半角英数字4文字以上32文字以下で入力してください"
+                              "message": "ユーザーアカウントは半角英数字4文字以上32文字以下で入力してください"
                           }
                       ]
                   }
@@ -513,7 +513,7 @@ class UserControllerTest {
               "password": ""
           }
           """;
-      mockMvc.perform(MockMvcRequestBuilders.post("/details/1")
+      mockMvc.perform(MockMvcRequestBuilders.post("/user_details/1")
               .contentType(MediaType.APPLICATION_JSON)
               .content(requestBody))
           .andExpect(status().isBadRequest())
@@ -598,7 +598,7 @@ class UserControllerTest {
               "password": "てすと"
           }
           """;
-      mockMvc.perform(MockMvcRequestBuilders.post("/details/1")
+      mockMvc.perform(MockMvcRequestBuilders.post("/user_details/1")
               .contentType(MediaType.APPLICATION_JSON)
               .content(requestBody))
           .andExpect(status().isBadRequest())
@@ -647,7 +647,7 @@ class UserControllerTest {
               "password": "Test@12345"
           }
           """;
-      mockMvc.perform(MockMvcRequestBuilders.post("/details/1")
+      mockMvc.perform(MockMvcRequestBuilders.post("/user_details/1")
               .contentType(MediaType.APPLICATION_JSON)
               .content(requestBody))
           .andExpect(status().isBadRequest())
@@ -680,7 +680,7 @@ class UserControllerTest {
               "password": "test12345"
           }
           """;
-      mockMvc.perform(MockMvcRequestBuilders.post("/details/1")
+      mockMvc.perform(MockMvcRequestBuilders.post("/user_details/1")
               .contentType(MediaType.APPLICATION_JSON)
               .content(requestBody))
           .andExpect(status().isBadRequest())

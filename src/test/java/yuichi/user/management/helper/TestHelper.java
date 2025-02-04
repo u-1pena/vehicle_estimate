@@ -29,13 +29,13 @@ public class TestHelper {
    */
   public List<UserDetail> userDetailsMock() {
     return List.of(
-        new UserDetail(1, "yuichi", "shimada", "ﾕｳｲﾁ", "ｼﾏﾀﾞ",
+        new UserDetail(1, "yuichi", "shimada", "ユウイチ", "テスト",
             LocalDate.of(1984, 7, 3), "080-1379-0555", "Shimaichi@0703"),
-        new UserDetail(2, "kana", "nishida", "ｶﾅ", "ﾆｼﾀﾞ",
+        new UserDetail(2, "kana", "nishida", "カナ", "ナカムラ",
             LocalDate.of(1993, 12, 31), "090-1234-5678", "Kana@1231"),
-        new UserDetail(3, "yoshiyuki", "mine", "ﾖｼﾕｷ", "ﾐﾈ",
+        new UserDetail(3, "yoshiyuki", "mine", "ヨシユキ", "ミネ",
             LocalDate.of(1984, 7, 2), "070-1234-5678", "Yoshiyuki@0702"),
-        new UserDetail(4, "momoko", "tanaka", "ﾓﾓｺ", "ﾀﾅｶ",
+        new UserDetail(4, "momoko", "tanaka", "モモコ", "タナカ",
             LocalDate.of(2000, 11, 3), "080-1111-6660", "momoKo@1212"));
 
   }
@@ -45,13 +45,13 @@ public class TestHelper {
    */
   public List<UserPayment> userPaymentsMock() {
     return new ArrayList<>(List.of(
-        new UserPayment(1, 1, "4444123456789012", "visa", "YUICHI SHIMADA",
+        new UserPayment(1, 1, "4444123456789012", "VISA", "YUICHI TEST",
             YearMonth.of(2028, 1)),
-        new UserPayment(2, 2, "3530123456789012", "jcb", "KANA NISHIDA",
+        new UserPayment(2, 2, "3530123456789012", "JCB", "KANA NAKAMURA",
             YearMonth.of(2029, 1)),
-        new UserPayment(3, 3, "3412123412341234", "amex", "YOSHIYUKI MINE",
+        new UserPayment(3, 3, "3412123412341234", "AmericanExpress", "YOSHIYUKI MINE",
             YearMonth.of(2025, 4)),
-        new UserPayment(4, 3, "5112123412341234", "master", "YOSHIYUKI MINE",
+        new UserPayment(4, 3, "5112123412341234", "MasterCard", "YOSHIYUKI MINE",
             YearMonth.of(2027, 6))));
   }
 
@@ -84,8 +84,8 @@ public class TestHelper {
     UserDetailCreateRequest userDetailCreateRequest = new UserDetailCreateRequest();
     userDetailCreateRequest.setFirstName("test");
     userDetailCreateRequest.setLastName("test");
-    userDetailCreateRequest.setFirstNameKana("ﾃｽﾄ");
-    userDetailCreateRequest.setLastNameKana("ﾃｽﾄ");
+    userDetailCreateRequest.setFirstNameKana("テスト");
+    userDetailCreateRequest.setLastNameKana("テスト");
     userDetailCreateRequest.setBirthday("2000-01-01");
     userDetailCreateRequest.setMobilePhoneNumber("090-1111-9999");
     userDetailCreateRequest.setPassword("Test@0101");

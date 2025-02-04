@@ -1,7 +1,7 @@
 CREATE TABLE users
 (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    account VARCHAR(100) NOT NULL,
+    user_account VARCHAR(100) NOT NULL,
     email VARCHAR(254) NOT NULL UNIQUE
 );
 

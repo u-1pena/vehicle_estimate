@@ -31,7 +31,7 @@
 
   <select id="findByAccountName" parameterType="String"
     resultType="yuichi.user.management.entity.User">
-    SELECT * FROM users WHERE account LIKE CONCAT('%', #{account}, '%')
+    SELECT * FROM users WHERE user_account LIKE CONCAT('%', #{userAccount}, '%')
   </select>
 
   <select id="findByFullNameKana" parameterType="String"
@@ -66,7 +66,7 @@
 
   <insert id="createUser" useGeneratedKeys="true" keyProperty="id"
     parameterType="yuichi.user.management.entity.User">
-    INSERT INTO users (account, email) VALUES (#{account}, #{email})
+    INSERT INTO users (user_account, email) VALUES (#{userAccount}, #{email})
   </insert>
 
   <insert id="createUserDetail" parameterType="yuichi.user.management.entity.UserDetail">

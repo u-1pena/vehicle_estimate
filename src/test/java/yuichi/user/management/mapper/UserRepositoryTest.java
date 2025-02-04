@@ -98,7 +98,7 @@ class UserRepositoryTest {
 
     @Test
     void 読みがなでユーザー詳細情報を検索することができる() {
-      List<UserDetail> actual = userRepository.findByFullNameKana("ﾕｳｲﾁ");
+      List<UserDetail> actual = userRepository.findByFullNameKana("ユウイチ");
       UserDetail expected = testHelper.userDetailsMock().get(0);
       assertThat(actual).contains(expected);
       assertThat(actual.size()).isEqualTo(1);

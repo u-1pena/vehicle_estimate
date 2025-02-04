@@ -19,10 +19,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import yuichi.user.management.controller.exception.UserDetailException;
 import yuichi.user.management.controller.exception.UserDetailException.UserDetailAlreadyExistsException;
-import yuichi.user.management.controller.exception.UserException.UserAlreadyExistsException;
+import yuichi.user.management.controller.exception.UserException.AlreadyExistsEmailException;
 import yuichi.user.management.controller.exception.UserException.UserNotFoundException;
-import yuichi.user.management.controller.exception.UserPaymentAlreadyExistsException;
+import yuichi.user.management.controller.exception.UserPaymentException;
+import yuichi.user.management.controller.exception.UserPaymentException.NotExistCardBrandException;
 import yuichi.user.management.controller.exception.UserPaymentException.PaymentExpirationInvalidException;
 import yuichi.user.management.dto.Request.UserCreateRequest;
 import yuichi.user.management.dto.Request.UserDetailCreateRequest;
@@ -340,13 +342,13 @@ class UserServiceTest {
           Optional.of(expectedUser));
 
       //実行
-      UserAlreadyExistsException exception = assertThrows(UserAlreadyExistsException.class, () -> {
-        userService.registerUser(userCreateRequest);
-      });
+      AlreadyExistsEmailException exception = assertThrows(AlreadyExistsEmailException.class,
+          () -> {
+            userService.registerUser(userCreateRequest);
+          });
 
       //検証
-      assertEquals("User already exists with email: " + (expectedUser.getEmail()),
-          exception.getMessage());
+      assertEquals("Email already exists", exception.getMessage());
       verify(userRepository, times(1)).checkAlreadyExistByEmail(userCreateRequest.getEmail());
     }
 
@@ -409,14 +411,13 @@ class UserServiceTest {
           expectedUserDetail.getMobilePhoneNumber())).thenReturn(Optional.of(expectedUserDetail));
 
       //実行
-      UserDetailAlreadyExistsException exception = assertThrows(
-          UserDetailAlreadyExistsException.class, () -> {
+      UserDetailException.AlreadyExistsMobileNumberException exception = assertThrows(
+          UserDetailException.AlreadyExistsMobileNumberException.class, () -> {
             userService.registerUserDetail(expecteduser.getId(), userDetailCreateRequest);
           });
 
       //検証
-      assertEquals("UserDetail already exists with mobilePhoneNumber: "
-              + expectedUserDetail.getMobilePhoneNumber(),
+      assertEquals("Mobile number already exists",
           exception.getMessage());
       verify(userRepository, times(1)).findUserById(expecteduser.getId());
       verify(userRepository, times(1)).findUserDetailById(expecteduser.getId());
@@ -437,8 +438,8 @@ class UserServiceTest {
       doReturn(Optional.empty()).when(userRepository).findUserDetailById(expecteduser.getId());
 
       //実行
-      IllegalArgumentException exception = assertThrows(
-          IllegalArgumentException.class, () -> {
+      UserDetailException.BirthdayInvalidException exception = assertThrows(
+          UserDetailException.BirthdayInvalidException.class, () -> {
             userService.registerUserDetail(expecteduser.getId(), userDetailCreateRequest);
           });
 
@@ -571,14 +572,13 @@ class UserServiceTest {
           Optional.of(expectedUserPayment));
 
       //実行
-      UserPaymentAlreadyExistsException exception = assertThrows(
-          UserPaymentAlreadyExistsException.class, () -> {
+      UserPaymentException.UserPaymentAlreadyExistsException exception = assertThrows(
+          UserPaymentException.UserPaymentAlreadyExistsException.class, () -> {
             userService.registerUserPayment(expectedUserDetail.getId(), userPaymentCreateRequest);
           });
 
       //検証
-      assertEquals("UserPayment already exists with cardNumber: "
-              + expectedUserPayment.getCardNumber(),
+      assertEquals("User payment already exists",
           exception.getMessage());
     }
 
@@ -743,10 +743,11 @@ class UserServiceTest {
     @Test
     void クレジット番号がブランドの条件に当てはまらない場合エラーをかえすこと() {
       String cardNumber = "1234123412341234";
-      IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-        userService.identifyCardBrand(cardNumber);
-      });
-      assertEquals("Unknown card brand", exception.getMessage());
+      NotExistCardBrandException exception = assertThrows(
+          NotExistCardBrandException.class, () -> {
+            userService.identifyCardBrand(cardNumber);
+          });
+      assertEquals("Card brand is invalid", exception.getMessage());
     }
 
     @Test

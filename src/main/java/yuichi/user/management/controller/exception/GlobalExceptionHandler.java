@@ -16,6 +16,7 @@ import yuichi.user.management.controller.exception.UserException.UserAlreadyExis
 import yuichi.user.management.controller.exception.UserException.UserNotFoundException;
 import yuichi.user.management.controller.exception.UserPaymentException.NotExistCardBrandException;
 import yuichi.user.management.controller.exception.UserPaymentException.PaymentExpirationInvalidException;
+import yuichi.user.management.controller.exception.UserPaymentException.UserPaymentAlreadyExistsException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler extends RuntimeException {
