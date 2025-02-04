@@ -16,7 +16,7 @@ class UserInformationConverterTest {
   TestHelper testHelper = new TestHelper();
 
   @Test
-  void ユーザー情報をまとめて正常に変換できる() {
+  void ユーザー情報をユーザーとユーザー詳細と支払い情報を１つにまとめることができる() {
     User user = testHelper.usersMock().get(0);
     UserDetail userDetail = testHelper.userDetailsMock().get(0);
     List<UserPayment> userPayment = List.of(testHelper.userPaymentsMock().get(0));
