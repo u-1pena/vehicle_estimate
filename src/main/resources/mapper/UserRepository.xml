@@ -54,7 +54,7 @@
     SELECT * FROM user_details WHERE mobile_phone_number = #{MobilePhoneNumber}
   </select>
 
-  <select id="checkAlreadyExistByEmail" parameterType="String"
+  <select id="findExistByEmail" parameterType="String"
     resultType="yuichi.user.management.entity.User">
     SELECT * FROM users WHERE email = #{email}
   </select>

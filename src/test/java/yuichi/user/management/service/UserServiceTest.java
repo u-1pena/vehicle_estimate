@@ -316,7 +316,7 @@ class UserServiceTest {
       User expectedUser = testHelper.createUserMock();
 
       //モックの振る舞いを設定
-      when(userRepository.checkAlreadyExistByEmail(userCreateRequest.getEmail())).thenReturn(
+      when(userRepository.findExistByEmail(userCreateRequest.getEmail())).thenReturn(
           Optional.empty());
       doNothing().when(userRepository).createUser(expectedUser);
 
@@ -328,7 +328,7 @@ class UserServiceTest {
       assertThat(actual.getUserAccount()).isEqualTo(expectedUser.getUserAccount());
       assertThat(actual.getEmail()).isEqualTo(expectedUser.getEmail());
       verify(userRepository, times(1)).createUser(expectedUser);
-      verify(userRepository, times(1)).checkAlreadyExistByEmail(userCreateRequest.getEmail());
+      verify(userRepository, times(1)).findExistByEmail(userCreateRequest.getEmail());
     }
 
     @Test
@@ -338,7 +338,7 @@ class UserServiceTest {
       User expectedUser = testHelper.createUserMock();
 
       //モックの振る舞いを設定
-      when(userRepository.checkAlreadyExistByEmail(userCreateRequest.getEmail())).thenReturn(
+      when(userRepository.findExistByEmail(userCreateRequest.getEmail())).thenReturn(
           Optional.of(expectedUser));
 
       //実行
@@ -349,7 +349,7 @@ class UserServiceTest {
 
       //検証
       assertEquals("Email already exists", exception.getMessage());
-      verify(userRepository, times(1)).checkAlreadyExistByEmail(userCreateRequest.getEmail());
+      verify(userRepository, times(1)).findExistByEmail(userCreateRequest.getEmail());
     }
 
     @Test

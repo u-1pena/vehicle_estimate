@@ -32,7 +32,7 @@ public interface UserRepository {
 
   Optional<UserDetail> findByMobilePhoneNumber(String mobilePhoneNumber);
 
-  Optional<User> checkAlreadyExistByEmail(String email);
+  Optional<User> findExistByEmail(String email);
 
   Optional<UserPayment> findByCardNumber(String cardNumber);
 

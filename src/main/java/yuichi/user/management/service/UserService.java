@@ -204,7 +204,7 @@ public class UserService {
   }
 
   private void checkAlreadyExistEmail(String email) {
-    userRepository.checkAlreadyExistByEmail(email)
+    userRepository.findExistByEmail(email)
         .ifPresent(user -> {
           throw new UserException.AlreadyExistsEmailException();
         });
@@ -274,25 +274,82 @@ public class UserService {
    * 今後の修正で、クレジットカードのブランドが追加される可能性があるため、
    * 修正をしやすくするためにもクラスを別に作成してもいいかもしれない
    */
-  private static final Map<String, String> cardBrand2digitsMax = Map.of(
-      "4", "VISA",
-      "5", "MasterCard",
-      "34", "AmericanExpress", "37", "AmericanExpress",
-      "36", "Diners", "38", "Diners", "39", "Diners",
-      "65", "Discover",
-      "62", "UnionPay"
-  );
-  private static final Map<String, String> cardBrandByDiners = Map.of(
-      "300", "Diners", "301", "Diners",
-      "302", "Diners", "303", "Diners",
-      "304", "Diners", "305", "Diners",
-      "3095", "Diners"
+  private static final Map<String, String> cardBrands = Map.ofEntries(
+      /*
+       *VISA
+       * ---------------------------------------------------------
+       * VISAのプレフィックスは以下の通り
+       * 4桁のみ：4 -> MapのcardBrands
+       *
+       *MasterCard
+       * ---------------------------------------------------------
+       * MasterCardのプレフィックスは以下の通り
+       * 4桁の場合：2221-2720（こちらは追加された識別番号）
+       * 1桁：5 -> MapのcardBrands
+       *
+       *AmericanExpress
+       * ---------------------------------------------------------
+       * AmericanExpressのプレフィックスは以下の通り
+       * 2桁のみ：34、37 -> MapのcardBrands
+       *
+       *  *UnionPay
+       * ---------------------------------------------------------
+       * UnionPayのプレフィックスは以下の通り
+       * 2桁のみ：62 -> MapのcardBrands
+       *
+       * その他のブランドはプレフィックスが1桁から2桁のみのため、
+       * 1桁のプレフィックスがMapに登録されている場合は、
+       * そのブランドを返す(VISA、AmericanExpress)
+       *
+       */
+      Map.entry("4", "VISA"),
+      Map.entry("5", "MasterCard"),
+      Map.entry("34", "AmericanExpress"),
+      Map.entry("37", "AmericanExpress"),
+      Map.entry("62", "UnionPay")
   );
 
-  private static final Map<String, String> cardBrandByDiscover = Map.of(
-      "644", "Discover", "645", "Discover",
-      "646", "Discover", "647", "Discover",
-      "648", "Discover", "649", "Discover"
+  private static final Map<String, String> cardBrandByDiners = Map.ofEntries(
+      /*
+       *Diners
+       * ---------------------------------------------------------
+       * Dinersのプレフィックスは以下の通り
+       * 3桁の場合：300-305、3095 -> MapのcardBrandByDiners
+       * 2桁のみ：36、38、39 -> MapのcardBrand2digits
+       */
+      Map.entry("36", "Diners"),
+      Map.entry("38", "Diners"),
+      Map.entry("39", "Diners"),
+      Map.entry("300", "Diners"),
+      Map.entry("301", "Diners"),
+      Map.entry("302", "Diners"),
+      Map.entry("303", "Diners"),
+      Map.entry("304", "Diners"),
+      Map.entry("305", "Diners"),
+      Map.entry("3095", "Diners")
+  );
+
+  private static final Map<String, String> cardBrandByDiscover = Map.ofEntries(
+      /*
+       *Discover
+       * ---------------------------------------------------------
+       * Discoverのプレフィックスは以下の通り
+       * 6桁の場合：601186-601199、601174-601179
+       * 5桁の場合：60112-60114、60110
+       * 3桁の場合：644-649
+       * 2桁の場合：65
+       */
+      Map.entry("65", "Discover"),
+      Map.entry("644", "Discover"),
+      Map.entry("645", "Discover"),
+      Map.entry("646", "Discover"),
+      Map.entry("647", "Discover"),
+      Map.entry("648", "Discover"),
+      Map.entry("649", "Discover"),
+      Map.entry("60110", "Discover"),
+      Map.entry("60112", "Discover"),
+      Map.entry("60113", "Discover"),
+      Map.entry("60114", "Discover")
   );
 
   public String identifyCardBrand(String cardNumber) {
@@ -304,15 +361,6 @@ public class UserService {
     for (int length = Math.min(cardNumber.length(), 6); length >= 1; length--) {
       String prefix = cardNumber.substring(0, length);
 
-      /*
-       *Discover
-       * ---------------------------------------------------------
-       * Discoverのプレフィックスは以下の通り
-       * 6桁の場合：601186-601199、601174-601179
-       * 5桁の場合：60112-60114、60110
-       * 3桁の場合：644-649 -> MapのcardBrandByDiscover
-       * 2桁の場合：65 -> MapのcardBrand2digits
-       */
       if (Integer.parseInt(cardNumber.substring(0, 6)) >= 601186
           && Integer.parseInt(cardNumber.substring(0, 6)) <= 601199) {
         return "Discover";
@@ -346,33 +394,16 @@ public class UserService {
          * ---------------------------------------------------------
          * MasterCardのプレフィックスは以下の通り
          * 4桁の場合：2221-2720（こちらは追加された識別番号）
-         * 1桁：5 -> MapのcardBrand2digits
          */
       } else if (Integer.parseInt(cardNumber.substring(0, 4)) >= 2221
           && Integer.parseInt(cardNumber.substring(0, 4)) <= 2720) {
         return "MasterCard";
-        /*
-         *Diners
-         * ---------------------------------------------------------
-         * Dinersのプレフィックスは以下の通り
-         * 3桁の場合：300-305、3095 -> MapのcardBrandByDiners
-         * 2桁のみ：36、38、39 -> MapのcardBrand2digits
-         */
+
       } else if (cardBrandByDiners.containsKey(prefix)) {
         return cardBrandByDiners.get(prefix);
-
-        /*
-         *UnionPay
-         * ---------------------------------------------------------
-         * UnionPayのプレフィックスは以下の通り
-         * 2桁のみ：62 -> MapのcardBrand2digits
-         *
-         * その他のブランドはプレフィックスが1桁から2桁のみのため、
-         * 1桁のプレフィックスがMapに登録されている場合は、
-         * そのブランドを返す(VISA、AmericanExpress)
-         */
-      } else if (cardBrand2digitsMax.containsKey(prefix)) {
-        return cardBrand2digitsMax.get(prefix);
+        
+      } else if (cardBrands.containsKey(prefix)) {
+        return cardBrands.get(prefix);
       }
     }
     //何にも該当しない場合は登録できないブランドとしてエラーを返す
