@@ -12,9 +12,12 @@ public class UserPaymentCreateConverter {
 
   public static UserPayment userPaymentConvertToEntity(UserDetail userDetail,
       UserPaymentCreateRequest userPaymentCreateRequest, UserService userService) {
-    return new UserPayment(userDetail.getId(), userPaymentCreateRequest.getCardNumber(),
-        userService.identifyCardBrand(userPaymentCreateRequest.getCardNumber()),
-        userPaymentCreateRequest.getCardHolder(),
-        YearMonth.parse(userPaymentCreateRequest.getExpirationDate()));
+    return UserPayment.builder()
+        .userId(userDetail.getId())
+        .cardNumber(userPaymentCreateRequest.getCardNumber())
+        .cardBrand(userService.identifyCardBrand(userPaymentCreateRequest.getCardNumber()))
+        .cardHolder(userPaymentCreateRequest.getCardHolder())
+        .expirationDate(YearMonth.parse(userPaymentCreateRequest.getExpirationDate()))
+        .build();
   }
 }
