@@ -326,7 +326,7 @@ class UserControllerTest {
               "password": "Test@12345"
           }
           """;
-      mockMvc.perform(MockMvcRequestBuilders.post("/user_details/1")
+      mockMvc.perform(MockMvcRequestBuilders.post("/user-details/1")
               .contentType(MediaType.APPLICATION_JSON)
               .content(requestBody))
           .andExpect(status().isCreated())
@@ -513,7 +513,7 @@ class UserControllerTest {
               "password": ""
           }
           """;
-      mockMvc.perform(MockMvcRequestBuilders.post("/user_details/1")
+      mockMvc.perform(MockMvcRequestBuilders.post("/user-details/1")
               .contentType(MediaType.APPLICATION_JSON)
               .content(requestBody))
           .andExpect(status().isBadRequest())
@@ -598,7 +598,7 @@ class UserControllerTest {
               "password": "てすと"
           }
           """;
-      mockMvc.perform(MockMvcRequestBuilders.post("/user_details/1")
+      mockMvc.perform(MockMvcRequestBuilders.post("/user-details/1")
               .contentType(MediaType.APPLICATION_JSON)
               .content(requestBody))
           .andExpect(status().isBadRequest())
@@ -647,7 +647,7 @@ class UserControllerTest {
               "password": "Test@12345"
           }
           """;
-      mockMvc.perform(MockMvcRequestBuilders.post("/user_details/1")
+      mockMvc.perform(MockMvcRequestBuilders.post("/user-details/1")
               .contentType(MediaType.APPLICATION_JSON)
               .content(requestBody))
           .andExpect(status().isBadRequest())
@@ -680,7 +680,7 @@ class UserControllerTest {
               "password": "test12345"
           }
           """;
-      mockMvc.perform(MockMvcRequestBuilders.post("/user_details/1")
+      mockMvc.perform(MockMvcRequestBuilders.post("/user-details/1")
               .contentType(MediaType.APPLICATION_JSON)
               .content(requestBody))
           .andExpect(status().isBadRequest())
