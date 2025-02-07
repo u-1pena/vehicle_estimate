@@ -178,7 +178,8 @@ class UserServiceTest {
           .stream()
           .filter(userPayment -> userPayment.getUserId() == expectedUser.getId())
           .toList();
-      doReturn(List.of(expectedUser)).when(userRepository).findByEmail("shimaichi5973@gmail.com");
+      doReturn(Optional.of(expectedUser)).when(userRepository)
+          .findByEmail("shimaichi5973@gmail.com");
       doReturn(Optional.of(expectedUserDetail)).when(userRepository)
           .findUserDetailById(expectedUserDetail.getId());
       doReturn(expectedUserPayments).when(userRepository)
@@ -261,7 +262,7 @@ class UserServiceTest {
 
     @Test
     void 存在しないEmailで検索したとき空のリストをかえすこと() {
-      doReturn(Collections.emptyList()).when(userRepository).findByEmail("unknown@test.jp");
+      doReturn(Optional.empty()).when(userRepository).findByEmail("unknown@test.jp");
       assertThat(userService.searchUsersByRequestParam("", "", "", "unknown@test.jp"))
           .isEmpty();
     }
@@ -316,7 +317,7 @@ class UserServiceTest {
       User expectedUser = testHelper.createUserMock();
 
       //モックの振る舞いを設定
-      when(userRepository.findExistByEmail(userCreateRequest.getEmail())).thenReturn(
+      when(userRepository.findByEmail(userCreateRequest.getEmail())).thenReturn(
           Optional.empty());
       doNothing().when(userRepository).createUser(expectedUser);
 
@@ -328,7 +329,7 @@ class UserServiceTest {
       assertThat(actual.getUserAccount()).isEqualTo(expectedUser.getUserAccount());
       assertThat(actual.getEmail()).isEqualTo(expectedUser.getEmail());
       verify(userRepository, times(1)).createUser(expectedUser);
-      verify(userRepository, times(1)).findExistByEmail(userCreateRequest.getEmail());
+      verify(userRepository, times(1)).findByEmail(userCreateRequest.getEmail());
     }
 
     @Test
@@ -338,7 +339,7 @@ class UserServiceTest {
       User expectedUser = testHelper.createUserMock();
 
       //モックの振る舞いを設定
-      when(userRepository.findExistByEmail(userCreateRequest.getEmail())).thenReturn(
+      when(userRepository.findByEmail(userCreateRequest.getEmail())).thenReturn(
           Optional.of(expectedUser));
 
       //実行
@@ -349,7 +350,7 @@ class UserServiceTest {
 
       //検証
       assertEquals("Email already exists", exception.getMessage());
-      verify(userRepository, times(1)).findExistByEmail(userCreateRequest.getEmail());
+      verify(userRepository, times(1)).findByEmail(userCreateRequest.getEmail());
     }
 
     @Test

@@ -28,11 +28,9 @@ public interface UserRepository {
 
   List<UserDetail> findByDetailName(String name);
 
-  List<User> findByEmail(String email);
+  Optional<User> findByEmail(String email);
 
   Optional<UserDetail> findByMobilePhoneNumber(String mobilePhoneNumber);
-
-  Optional<User> findExistByEmail(String email);
 
   Optional<UserPayment> findByCardNumber(String cardNumber);
 

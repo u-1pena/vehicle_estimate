@@ -114,10 +114,10 @@ class UserRepositoryTest {
 
     @Test
     void メールアドレスでユーザー情報を検索することができる() {
-      List<User> actual = userRepository.findByEmail("shimaichi5973@gmail.com");
+      Optional<User> actual = userRepository.findByEmail("shimaichi5973@gmail.com");
       User expected = testHelper.usersMock().get(0);
       assertThat(actual).contains(expected);
-      assertThat(actual.size()).isEqualTo(1);
+      assertThat(actual).isPresent();
     }
   }
 

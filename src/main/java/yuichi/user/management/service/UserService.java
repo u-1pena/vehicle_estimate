@@ -5,6 +5,7 @@ import java.time.YearMonth;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import yuichi.user.management.controller.exception.UserDetailException.AlreadyExistsMobileNumberException;
@@ -144,7 +145,9 @@ public class UserService {
 
   //ユーザー情報を取得する処理 完全一致のEmailで検索しユーザー情報を照会します
   private List<UserInformationDto> findUserInformationByEmail(String email) {
-    List<User> users = findByEmail(email);
+    Optional<User> user = findByEmail(email);
+    List<User> users = user.map(Collections::singletonList)
+        .orElse(Collections.emptyList());
     return findUserByCriteria(users);
   }
 
@@ -159,8 +162,8 @@ public class UserService {
     return user;
   }
 
-  private List<User> findByEmail(String email) {
-    List<User> user = userRepository.findByEmail(email);
+  private Optional<User> findByEmail(String email) {
+    Optional<User> user = userRepository.findByEmail(email);
     return user;
   }
 
@@ -204,7 +207,7 @@ public class UserService {
   }
 
   private void checkAlreadyExistEmail(String email) {
-    userRepository.findExistByEmail(email)
+    userRepository.findByEmail(email)
         .ifPresent(user -> {
           throw new UserException.AlreadyExistsEmailException();
         });
@@ -401,7 +404,7 @@ public class UserService {
 
       } else if (cardBrandByDiners.containsKey(prefix)) {
         return cardBrandByDiners.get(prefix);
-        
+
       } else if (cardBrands.containsKey(prefix)) {
         return cardBrands.get(prefix);
       }

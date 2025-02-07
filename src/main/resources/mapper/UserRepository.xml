@@ -54,11 +54,6 @@
     SELECT * FROM user_details WHERE mobile_phone_number = #{MobilePhoneNumber}
   </select>
 
-  <select id="findExistByEmail" parameterType="String"
-    resultType="yuichi.user.management.entity.User">
-    SELECT * FROM users WHERE email = #{email}
-  </select>
-
   <select id="findByCardNumber" parameterType="String"
     resultType="yuichi.user.management.entity.UserPayment">
     SELECT * FROM user_payments WHERE card_number = #{cardNumber}
