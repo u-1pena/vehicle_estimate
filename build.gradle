@@ -34,6 +34,9 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     //Validation
     implementation 'org.springframework.boot:spring-boot-starter-validation'
+    //Javax Validation
+    implementation 'javax.validation:validation-api:2.0.1.Final'
+    annotationProcessor 'org.projectlombok:lombok'
     //Thymeleaf
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 

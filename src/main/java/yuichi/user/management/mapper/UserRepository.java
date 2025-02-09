@@ -10,18 +10,15 @@ import yuichi.user.management.entity.UserPayment;
 @Mapper
 public interface UserRepository {
 
-  //全件取得
   List<User> findAllUsers();
 
   List<UserDetail> findAllUserDetails();
 
   List<UserPayment> findAllUserPayments();
 
-  /*検索取得
-  idをキーにして取得*/
   Optional<User> findUserById(int id);
 
-  Optional<UserDetail> findUserDetailById(int userId);
+  Optional<UserDetail> findUserDetailById(int id);
 
   List<UserPayment> findUserPaymentsByUserId(int userId);
 
@@ -31,5 +28,15 @@ public interface UserRepository {
 
   List<UserDetail> findByDetailName(String name);
 
-  List<User> findByEmail(String email);
+  Optional<User> findByEmail(String email);
+
+  Optional<UserDetail> findByMobilePhoneNumber(String mobilePhoneNumber);
+
+  Optional<UserPayment> findByCardNumber(String cardNumber);
+
+  void createUser(User user);
+
+  void createUserDetail(UserDetail userDetail);
+
+  void createUserPayment(UserPayment userPayment);
 }

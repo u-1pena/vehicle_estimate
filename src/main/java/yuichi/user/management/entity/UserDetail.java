@@ -3,11 +3,13 @@ package yuichi.user.management.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDate;
 import java.util.Objects;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@Builder
 public class UserDetail {
 
   private int id;
@@ -30,6 +32,10 @@ public class UserDetail {
     this.birthday = birthday;
     this.mobilePhoneNumber = mobilePhoneNumber;
     this.password = password;
+  }
+
+  //引数なしのコンストラクタ
+  public UserDetail() {
   }
 
   @Override

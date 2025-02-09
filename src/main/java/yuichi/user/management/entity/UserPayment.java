@@ -2,11 +2,13 @@ package yuichi.user.management.entity;
 
 import java.time.YearMonth;
 import java.util.Objects;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@Builder
 public class UserPayment {
 
   private int id;
@@ -19,6 +21,19 @@ public class UserPayment {
   public UserPayment(int id, int userId, String cardNumber, String cardBrand, String cardHolder,
       YearMonth expirationDate) {
     this.id = id;
+    this.userId = userId;
+    this.cardNumber = cardNumber;
+    this.cardBrand = cardBrand;
+    this.cardHolder = cardHolder;
+    this.expirationDate = expirationDate;
+  }
+
+  //引数なしのコンストラクタ
+  public UserPayment() {
+  }
+
+  public UserPayment(int userId, String cardNumber, String cardBrand, String cardHolder,
+      YearMonth expirationDate) {
     this.userId = userId;
     this.cardNumber = cardNumber;
     this.cardBrand = cardBrand;
