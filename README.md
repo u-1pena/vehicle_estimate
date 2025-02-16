@@ -22,9 +22,9 @@
 
 # サービス概要
 
-### クライアントが利用できること
+### ユーザーが利用できること
 
-* クライアントがユーザー登録し、車検証アプリや車両情報を直接入力してユーザー情報と車両情報を登録します。
+* ユーザーがユーザー情報を登録し、車検証アプリや車両情報を直接入力してユーザー情報と車両情報を登録します。
 * 登録した車両情報をもとに車両に必要なメンテンナンスの情報が呼び出され登録されます。
 * 見積もりを作成時には、メンテナンス情報から適合のグレードや数量が自動で抽出されるので車両に適した商品で簡単に見積もりを作成することができます。
 * クレジット情報を登録することでその場で決済することができます。また、店頭での点検にて改めて購入したい場合は店頭支払いも可能です。
@@ -96,17 +96,30 @@
 <br>
 
 # 登録から支払いまでのフロー
+## ユーザーが見積もりから購入するまでのフローですが、ユーザー側もログイン機能を作成するか検討中
 
 ```mermaid
-flowchart LR
-    A(Start) --> B{UserRegister}
-    B --> C(Payment)
-    C --> D
-    B ---> D{Estimate}
-    B --> E["vehicle"]
-    E --> F(fa:fa-car MaintenanceInfo)
-    F --> D
-    D --> G("chage")
+
+---
+config:
+  look: handDrawn
+  layout: elk
+  theme: base
+---
+flowchart TD
+    A(["START"]) --> B(["ユーザー登録されている"])
+    B -- yes --> C(["車両情報が登録されている"])
+    C -- yes --> E(["見積もりを作成する"])
+    C -- No --> G(["車両情報を登録する"])
+    B -- No --> D(["ユーザーを登録する"])
+    D ---> C
+    G ---> E
+    E --> F(["支払い情報が登録されている"])
+    F -- Yes -----> H(["決済方法選択"])
+    F -- No --> I(["支払い情報を登録する"])
+    I -- Yes ----> H
+    H ---> K(["店頭決済"]) & J(["クレジット決済"])
+    I -- No ---> K
 
 ```
 
@@ -119,47 +132,48 @@ flowchart LR
 # ER図
 
 ```mermaid
-
+---
+config:
+  theme: forest
+---
 erDiagram
-    VehicleInspectionApp }o--|| Vehicle: ""
-    Customer ||--o{ Vehicle: ""
-    Customer ||--o{ Payment: ""
-    Vehicle ||--|| MaintenanceInfo: ""
-    EstimateBase ||--o{ OilChangeEstimate: ""
-    EstimateBase ||--o{ CarWashEstimate: ""
-    MaintenanceInfo ||--o{ EstimateBase: ""
-    OilChangeEstimate ||--o{ Product: ""
-    CarWashEstimate ||--o{ Product: ""
-    Product ||--o{ ProductCategory: ""
-
-    Customer {
+    Customer ||--o{ Vehicle : ""
+    Customer ||--o{ Payment : ""
+    Vehicle ||--|| MaintenanceInfo : ""
+    EstimateBase ||--o{ EstimateProduct : ""
+    MaintenanceInfo||--o{ EstimateBase : ""
+    EstimateProduct}o--o{ Product : ""
+    Product }o--|| ProductCategory : ""
+    login{
+        int loginId PK
+        String Password
+    }
+    Customer{
         int customerId PK
         String name
         String postalCode
         String address
-        String email
-        String phone
-    }
-    Payment {
-        int paymentId
-        String cardNumber
-        String cardBrand
-        String cardHolder
-        YearMonth ExpirationDate
-    }
+        String email 
+        String phone 
+        }
+    Payment{
+            int paymentId
+            String cardNumber
+            String cardBrand
+            String cardHolder
+            YearMonth ExpirationDate
+        }
 
-    VehicleInspectionApp {
-    }
-    Vehicle {
-        int VehicleId PK
-        int customerId FK
-        String make
-        String model
-        String year
-        String type
-        LocalDateTime inspectionDueDate
-    }
-    MaintenanceInfo {
+    Vehicle{
+         int VehicleId PK
+         int customerId FK
+         String make
+         String model
+         String year
+         String type
+         LocalDateTime inspectionDueDate
+         }
+    MaintenanceInfo{
         int maintenanceId PK
         int vehicleId FK
         String oilViscosity
@@ -167,37 +181,67 @@ erDiagram
         double OilQuantityWithoutFilter
         String oilFilterPartNumber
         String carWashSize
-    }
-    EstimateBase {
+        }
+    EstimateBase{
         int estimateId PK
         int maintenanceId FK
     }
-    OilChangeEstimate {
-        int estimateId PK
-        String oilGrade
-        String viscosity
-        decimal oilPricePerlitter
-        double oilQuantity
-        decimal oilPrice
-        decimal FilterPrice
-        decimal LaborCost
-    }
-    CarWashEstimate {
-        int estimateId PK
-        String carWashSize
-        decimal carWashPrice
-    }
-
-    Product {
+        EstimateProduct{
+            int estimateId PK
+            int productId FK
+            double quantity
+        }
+    Product{
         int productId PK
         String categoryId FK
         String name
         String description
         decimal price
-    }
-    ProductCategory {
-        int categoryId PK
-        String name
-    }
+    } 
+        ProductCategory{
+            int categoryId PK
+            String name
+        }
+
+
+```
+
+# ガントチャートにてスケジュール化
+
+```mermaid
+
+---
+config:
+  theme: forest
+---
+gantt
+    
+title 実装スケジュール
+dateFormat  YYYY-MM-DD
+excludes 02-18,02-20
+
+    section 改修
+            projectの修正:a2,02-16, 24h
+            users :after a2, 1d
+            payments :after a2, 1d
+
+    section vehicle
+    READ処理 :c1, 02-21, 4d
+    CREATE処 :after c1, 4d
+    section estimate
+     READ処理 :d1,03-04  , 8d
+     CREATE処理 :after d1, 8d
+    section maintenance
+     READ処理 :f1, 03-20  , 4d
+     CREATE処理 :after f1, 4d
+    section product
+     READ処理 :h1, 03-28, 4d
+     CREATE処 :after h1  , 4d
+    section productCategory
+     READ処理 :i1, 04-05  , 4d
+     CREATE処理 : after i1, 4d
+    section login
+     ログイン実装:e1, 04-13, 4d
+     CREATE処:after e1  , 4d
 
 ```
