@@ -31,6 +31,7 @@
 * 作成した見積もりはDBに保存されあとで見積もり情報を作成日時で取得し、確認することができます。
 
 ### 管理者が利用できること
+
 * メンテナンス情報を追加登録・更新・削除ができます。
 * 新しくメンテナンス情報を追加登録できます。
 * 各メンテナンス商品・商品カテゴリーを追加登録や修正・削除ができます。
@@ -46,7 +47,6 @@
 
 <br>
 <br>
-
 
 # API設計とエンドポイントについて
 
@@ -96,6 +96,7 @@
 <br>
 
 # 登録から支払いまでのフロー
+
 ## ユーザーが見積もりから購入するまでのフローですが、ユーザー側もログイン機能を作成するか検討中
 
 ```mermaid
@@ -107,19 +108,19 @@ config:
   theme: base
 ---
 flowchart TD
-    A(["START"]) --> B(["ユーザー登録されている"])
-    B -- yes --> C(["車両情報が登録されている"])
-    C -- yes --> E(["見積もりを作成する"])
-    C -- No --> G(["車両情報を登録する"])
-    B -- No --> D(["ユーザーを登録する"])
-    D ---> C
-    G ---> E
-    E --> F(["支払い情報が登録されている"])
-    F -- Yes -----> H(["決済方法選択"])
-    F -- No --> I(["支払い情報を登録する"])
-    I -- Yes ----> H
-    H ---> K(["店頭決済"]) & J(["クレジット決済"])
-    I -- No ---> K
+A(["START"]) --> B(["ユーザー登録されている"])
+B -- yes --> C(["車両情報が登録されている"])
+C -- yes --> E(["見積もりを作成する"])
+C -- No --> G(["車両情報を登録する"])
+B -- No --> D(["ユーザーを登録する"])
+D ---> C
+G ---> E
+E --> F(["支払い情報が登録されている"])
+F -- Yes -----> H(["決済方法選択"])
+F -- No --> I(["支払い情報を登録する"])
+I -- Yes ----> H
+H ---> K(["店頭決済"]) & J(["クレジット決済"])
+I -- No ---> K
 
 ```
 
@@ -137,43 +138,43 @@ config:
   theme: forest
 ---
 erDiagram
-    Customer ||--o{ Vehicle : ""
-    Customer ||--o{ Payment : ""
-    Vehicle ||--|| MaintenanceInfo : ""
-    EstimateBase ||--o{ EstimateProduct : ""
-    MaintenanceInfo||--o{ EstimateBase : ""
-    EstimateProduct}o--o{ Product : ""
-    Product }o--|| ProductCategory : ""
-    login{
+    Customer ||--o{ Vehicle: ""
+    Customer ||--o{ Payment: ""
+    Vehicle ||--|| MaintenanceInfo: ""
+    EstimateBase ||--o{ EstimateProduct: ""
+    MaintenanceInfo ||--o{ EstimateBase: ""
+    EstimateProduct }o--o{ Product: ""
+    Product }o--|| ProductCategory: ""
+    login {
         int loginId PK
         String Password
     }
-    Customer{
+    Customer {
         int customerId PK
         String name
         String postalCode
         String address
-        String email 
-        String phone 
-        }
-    Payment{
-            int paymentId
-            String cardNumber
-            String cardBrand
-            String cardHolder
-            YearMonth ExpirationDate
-        }
+        String email
+        String phone
+    }
+    Payment {
+        int paymentId
+        String cardNumber
+        String cardBrand
+        String cardHolder
+        YearMonth ExpirationDate
+    }
 
-    Vehicle{
-         int VehicleId PK
-         int customerId FK
-         String make
-         String model
-         String year
-         String type
-         LocalDateTime inspectionDueDate
-         }
-    MaintenanceInfo{
+    Vehicle {
+        int VehicleId PK
+        int customerId FK
+        String make
+        String model
+        String year
+        String type
+        LocalDateTime inspectionDueDate
+    }
+    MaintenanceInfo {
         int maintenanceId PK
         int vehicleId FK
         String oilViscosity
@@ -181,27 +182,27 @@ erDiagram
         double OilQuantityWithoutFilter
         String oilFilterPartNumber
         String carWashSize
-        }
-    EstimateBase{
+    }
+    EstimateBase {
         int estimateId PK
         int maintenanceId FK
     }
-        EstimateProduct{
-            int estimateId PK
-            int productId FK
-            double quantity
-        }
-    Product{
+    EstimateProduct {
+        int estimateId PK
+        int productId FK
+        double quantity
+    }
+    Product {
         int productId PK
         String categoryId FK
         String name
         String description
         decimal price
-    } 
-        ProductCategory{
-            int categoryId PK
-            String name
-        }
+    }
+    ProductCategory {
+        int categoryId PK
+        String name
+    }
 
 
 ```
@@ -209,39 +210,38 @@ erDiagram
 # ガントチャートにてスケジュール化
 
 ```mermaid
-
 ---
 config:
   theme: forest
 ---
+
 gantt
-    
-title 実装スケジュール
-dateFormat  YYYY-MM-DD
-excludes 02-18,02-20
+    title 実装スケジュール
+    dateFormat YYYY-MM-DD
+    excludes 02-18,02-20
 
     section 改修
-            projectの修正:a2,02-16, 24h
-            users :after a2, 1d
-            payments :after a2, 1d
+        projectの修正: a2, 02-16, 24h
+        users: after a2, 1d
+        payments: after a2, 1d
 
     section vehicle
-    READ処理 :c1, 02-21, 4d
-    CREATE処 :after c1, 4d
+        READ処理: c1, 02-21, 4d
+        CREATE処: after c1, 4d
     section estimate
-     READ処理 :d1,03-04  , 8d
-     CREATE処理 :after d1, 8d
+        READ処理: d1, 03-04, 8d
+        CREATE処理: after d1, 8d
     section maintenance
-     READ処理 :f1, 03-20  , 4d
-     CREATE処理 :after f1, 4d
+        READ処理: f1, 03-20, 4d
+        CREATE処理: after f1, 4d
     section product
-     READ処理 :h1, 03-28, 4d
-     CREATE処 :after h1  , 4d
+        READ処理: h1, 03-28, 4d
+        CREATE処: after h1, 4d
     section productCategory
-     READ処理 :i1, 04-05  , 4d
-     CREATE処理 : after i1, 4d
+        READ処理: i1, 04-05, 4d
+        CREATE処理: after i1, 4d
     section login
-     ログイン実装:e1, 04-13, 4d
-     CREATE処:after e1  , 4d
+        ログイン実装: e1, 04-13, 4d
+        CREATE処: after e1, 4d
 
 ```
