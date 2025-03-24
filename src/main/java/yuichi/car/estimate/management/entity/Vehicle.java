@@ -1,0 +1,86 @@
+package yuichi.car.estimate.management.entity;
+
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.Objects;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import yuichi.car.estimate.management.entity.enums.PlateRegion;
+
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+public class Vehicle {
+
+  private int vehicleId;
+  private int customerId;
+  private PlateRegion plateRegion;
+  private String plateCategoryNumber;
+  private String plateHiragana;
+  private String plateVehicleNumber;
+  private String make;
+  private String model;
+  private String type;
+  private YearMonth year;
+  private LocalDate inspectionDate;
+
+  public Vehicle(int vehicleId, int customerId, PlateRegion plateRegion, String plateCategoryNumber,
+      String plateHiragana, String plateVehicleNumber, String make, String model, String type,
+      YearMonth year, LocalDate inspectionDate) {
+    this.vehicleId = vehicleId;
+    this.customerId = customerId;
+    this.plateRegion = plateRegion;
+    this.plateCategoryNumber = plateCategoryNumber;
+    this.plateHiragana = plateHiragana;
+    this.plateVehicleNumber = plateVehicleNumber;
+    this.make = make;
+    this.model = model;
+    this.type = type;
+    this.year = year;
+    this.inspectionDate = inspectionDate;
+  }
+
+  public Vehicle(int customerId, PlateRegion plateRegion, String plateCategoryNumber,
+      String plateHiragana, String plateVehicleNumber, String make, String model, String type,
+      YearMonth year, LocalDate inspectionDate) {
+    this.customerId = customerId;
+    this.plateRegion = plateRegion;
+    this.plateCategoryNumber = plateCategoryNumber;
+    this.plateHiragana = plateHiragana;
+    this.plateVehicleNumber = plateVehicleNumber;
+    this.make = make;
+    this.model = model;
+    this.type = type;
+    this.year = year;
+    this.inspectionDate = inspectionDate;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof Vehicle vehicle)) {
+      return false;
+    }
+    return customerId == vehicle.customerId
+        && Objects.equals(plateRegion, vehicle.plateRegion)
+        && Objects.equals(plateCategoryNumber, vehicle.plateCategoryNumber)
+        && Objects.equals(plateHiragana, vehicle.plateHiragana)
+        && Objects.equals(plateVehicleNumber, vehicle.plateVehicleNumber)
+        && Objects.equals(make, vehicle.make)
+        && Objects.equals(model, vehicle.model)
+        && Objects.equals(type, vehicle.type)
+        && Objects.equals(year, vehicle.year)
+        && Objects.equals(inspectionDate, vehicle.inspectionDate);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(customerId, plateRegion, plateCategoryNumber, plateHiragana,
+        plateVehicleNumber, make, model, type, year, inspectionDate);
+  }
+}

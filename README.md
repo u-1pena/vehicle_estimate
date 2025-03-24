@@ -22,21 +22,19 @@
 
 # サービス概要
 
-### ユーザーが利用できること
-
-* ユーザーがユーザー情報を登録し、車検証アプリや車両情報を直接入力してユーザー情報と車両情報を登録します。
-* 登録した車両情報をもとに車両に必要なメンテンナンスの情報が呼び出され登録されます。
-* 見積もりを作成時には、メンテナンス情報から適合のグレードや数量が自動で抽出されるので車両に適した商品で簡単に見積もりを作成することができます。
-* クレジット情報を登録することでその場で決済することができます。また、店頭での点検にて改めて購入したい場合は店頭支払いも可能です。
-* 作成した見積もりはDBに保存されあとで見積もり情報を作成日時で取得し、確認することができます。
-
 ### 管理者が利用できること
 
+* 顧客情報を登録し、車検証アプリや車両情報を直接入力してユーザー情報と車両情報を登録します。
+* 登録した車両情報をもとに車両に必要なメンテンナンスの情報が呼び出され登録されます。
+* 見積もりを作成時には、メンテナンス情報から適合のグレードや数量が自動で抽出されるので車両に適した商品で簡単に見積もりを作成できます。
 * メンテナンス情報を追加登録・更新・削除ができます。
+* 作成した見積もりはDBに保存されあとで見積もり情報を作成日時で取得し、確認できます。
+
+### メンテナンス商品マスタを追加実装可能
+
 * 新しくメンテナンス情報を追加登録できます。
 * 各メンテナンス商品・商品カテゴリーを追加登録や修正・削除ができます。
 
-<br>
 <br>
 
 # 補足
@@ -50,32 +48,27 @@
 
 # API設計とエンドポイントについて
 
-## ユーザーがアクセスできるエンドポイント
+## 一般アカウントがアクセスできるエンドポイント
 
-| method |    end_point     |    description    |
-|:------:|:----------------:|:-----------------:|
-|  POST  |      /users      |    ユーザー情報を登録する    |
-|  GET   |      /users      |    ユーザー情報を取得する    |
-|  PUT   |      /users      |    ユーザー情報を更新する    |
-| DELETE |      /users      |    ユーザー情報を削除する    |
-|  POST  |     /vehicle     |     車両情報を登録する     |
-|  GET   |     /vehicle     |     車両情報を取得する     |
-| DELETE |     /vehicle     |     車両情報を削除する     |
-|  POST  |    /estimate     |  メンテナンス見積もりを登録する  |
-|  GET   |    /estimate     | メンテナンス見積もり情報を取得する |
-|  PUT   |    /estimate     | メンテナンス見積もり情報を修正する |
-| DELETE |    /estimate     | メンテナンス見積もり情報を削除する |
-|  POST  |     /payment     |    支払い情報を登録する     |
-|  GET   |     /payment     |    支払い情報を取得する     |
-| DELETE |     /payment     |    支払い情報を削除する     |
-|  POST  | /payment/confirm |       購入する        |
+| method | end_point  |    description    |
+|:------:|:----------:|:-----------------:|
+|  POST  | /customers |    ユーザー情報を登録する    |
+|  GET   | /customers |    ユーザー情報を取得する    |
+|  PUT   | /customers |    ユーザー情報を更新する    |
+| DELETE | /customers |    ユーザー情報を削除する    |
+|  POST  |  /vehicle  |     車両情報を登録する     |
+|  GET   |  /vehicle  |     車両情報を取得する     |
+| DELETE |  /vehicle  |     車両情報を削除する     |
+|  POST  | /estimate  |  メンテナンス見積もりを登録する  |
+|  GET   | /estimate  | メンテナンス見積もり情報を取得する |
+|  PUT   | /estimate  | メンテナンス見積もり情報を修正する |
+| DELETE | /estimate  | メンテナンス見積もり情報を削除する | 
 
 上記のエンドポイントはAdminユーザーもすべてアクセスできる。
 
 <br>
-<br>
 
-## Adminユーザーのみがアクセスできるエンドポイント
+## 管理者アカウントがアクセスできるエンドポイント
 
 | method |     end_point     |     description      |
 |:------:|:-----------------:|:--------------------:|
@@ -97,7 +90,7 @@
 
 # 登録から支払いまでのフロー
 
-## ユーザーが見積もりから購入するまでのフローですが、ユーザー側もログイン機能を作成するか検討中
+## ユーザーが見積もり作成までのフロー
 
 ```mermaid
 
@@ -115,20 +108,12 @@ C -- No --> G(["車両情報を登録する"])
 B -- No --> D(["ユーザーを登録する"])
 D ---> C
 G ---> E
-E --> F(["支払い情報が登録されている"])
-F -- Yes -----> H(["決済方法選択"])
-F -- No --> I(["支払い情報を登録する"])
-I -- Yes ----> H
-H ---> K(["店頭決済"]) & J(["クレジット決済"])
-I -- No ---> K
 
 ```
 
 1. ユーザー登録を行います
 2. 車両情報を登録します
 3. 希望のメンテナンスを見積もります。
-4. その場で購入したい場合は支払い情報を登録します。
-5. 店頭決済を希望される場合は支払い情報なしで確定できます。
 
 # ER図
 
@@ -139,7 +124,7 @@ config:
 ---
 erDiagram
     Customer ||--o{ Vehicle: ""
-    Customer ||--o{ Payment: ""
+    Customer ||--|| CustomerAddress: ""
     Vehicle ||--|| MaintenanceInfo: ""
     EstimateBase ||--o{ EstimateProduct: ""
     MaintenanceInfo ||--o{ EstimateBase: ""
@@ -151,18 +136,20 @@ erDiagram
     }
     Customer {
         int customerId PK
-        String name
-        String postalCode
-        String address
+        String lastName
+        String firstName
+        String lastNameKana
+        String firstNameKana
         String email
-        String phone
+        String phoneNumber
     }
-    Payment {
-        int paymentId
-        String cardNumber
-        String cardBrand
-        String cardHolder
-        YearMonth ExpirationDate
+    CustomerAddress {
+        int addressId PK
+        String postalCode
+        String prefecture
+        String city
+        String townAndNumber
+        String buildingNameAndRoomNumber
     }
 
     Vehicle {
@@ -222,9 +209,7 @@ gantt
 
     section 改修
         projectの修正: a2, 02-16, 24h
-        users: after a2, 1d
-        payments: after a2, 1d
-
+        customers: after a2, 1d
     section vehicle
         READ処理: c1, 02-21, 4d
         CREATE処: after c1, 4d

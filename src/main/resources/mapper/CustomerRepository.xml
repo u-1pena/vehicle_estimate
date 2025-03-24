@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="yuichi.car.estimate.management.mapper.CustomerRepository">
+
+  <select id="findCustomerById" parameterType="int"
+    resultType="yuichi.car.estimate.management.entity.Customer">
+    SELECT * FROM customers WHERE customer_id = #{customerId}
+  </select>
+
+  <select id="findCustomerAddressById" parameterType="int"
+    resultType="yuichi.car.estimate.management.entity.CustomerAddress">
+    SELECT * FROM customer_addresses WHERE address_id = #{addressId}
+  </select>
+
+  <select id="findVehicleByCustomerId" parameterType="int"
+    resultType="yuichi.car.estimate.management.entity.Vehicle">
+    SELECT * FROM vehicles WHERE customer_id = #{customerId}
+  </select>
+
+  <select id="findCustomerByName" parameterType="String"
+    resultType="yuichi.car.estimate.management.entity.Customer">
+    SELECT * FROM customers WHERE CONCAT(last_name, first_name) LIKE CONCAT('%', #{customerName},
+    '%')
+  </select>
+
+  <select id="findCustomerByNameKana" parameterType="String"
+    resultType="yuichi.car.estimate.management.entity.Customer">
+    SELECT * FROM customers WHERE CONCAT(last_name_kana, first_name_kana) LIKE CONCAT('%',
+    #{kana}, '%')
+  </select>
+
+  <select id="findCustomerByEmail" parameterType="String"
+    resultType="yuichi.car.estimate.management.entity.Customer">
+    SELECT * FROM customers WHERE email = #{email}
+  </select>
+
+  <select id="findCustomerByPlateVehicleNumber" parameterType="String"
+    resultType="yuichi.car.estimate.management.entity.Vehicle">
+    SELECT * FROM vehicles WHERE plate_vehicle_number = #{plateVehicleNumber}
+  </select>
+
+  <select id="findCustomerByPhoneNumber" parameterType="String"
+    resultType="yuichi.car.estimate.management.entity.Customer">
+    SELECT * FROM customers WHERE phone_number = #{phoneNumber}
+  </select>
+
+  <select id="findCustomerByLicensePlateExactMatch"
+    parameterType="yuichi.car.estimate.management.entity.Vehicle"
+    resultType="yuichi.car.estimate.management.entity.Vehicle">
+    SELECT * FROM vehicles WHERE plate_region = #{plateRegion} AND plate_category_number =
+    #{plateCategoryNumber} AND plate_hiragana = #{plateHiragana} AND plate_vehicle_number =
+    #{plateVehicleNumber}
+  </select>
+
+  <select id="findVehiclesByCustomerId" parameterType="int"
+    resultType="yuichi.car.estimate.management.entity.Vehicle">
+    SELECT * FROM vehicles WHERE customer_id = #{customerId}
+  </select>
+
+
+  <insert id="createCustomer" useGeneratedKeys="true" keyProperty="customerId"
+    parameterType="yuichi.car.estimate.management.entity.Customer">
+    INSERT INTO customers (last_name, first_name, last_name_kana, first_name_kana, email,
+    phone_number)
+    VALUES (#{lastName}, #{firstName}, #{lastNameKana}, #{firstNameKana}, #{email}, #{phoneNumber})
+  </insert>
+
+  <insert id="createCustomerAddress" useGeneratedKeys="true" keyProperty="addressId"
+    parameterType="yuichi.car.estimate.management.entity.CustomerAddress">
+    INSERT INTO customer_addresses (address_id,customer_id, postal_code, prefecture, city,
+    town_and_number,
+    building_name_and_room_number) VALUES (#{addressId}, #{customerId}, #{postalCode},
+    #{prefecture},
+    #{city}, #{townAndNumber}, #{buildingNameAndRoomNumber})
+  </insert>
+
+  <insert id="createVehicle" useGeneratedKeys="true" keyProperty="vehicleId"
+    parameterType="yuichi.car.estimate.management.entity.Vehicle">
+    INSERT INTO vehicles (customer_id, plate_region, plate_category_number,
+    plate_hiragana, plate_vehicle_number, make, model, type, year, inspection_date)
+    VALUES (#{customerId}, #{plateRegion}, #{plateCategoryNumber}, #{plateHiragana},
+    #{plateVehicleNumber}, #{make}, #{model}, #{type}, #{year}, #{inspectionDate})
+  </insert>
+
+  <select id="findAllCustomers" resultType="yuichi.car.estimate.management.entity.Customer">
+    SELECT * FROM customers
+  </select>
+
+  <select id="findAllCustomerAddresses"
+    resultType="yuichi.car.estimate.management.entity.CustomerAddress">
+    SELECT * FROM customer_addresses
+  </select>
+
+  <select id="findAllVehicles" resultType="yuichi.car.estimate.management.entity.Vehicle">
+    SELECT * FROM vehicles
+  </select>
+</mapper>
