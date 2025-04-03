@@ -121,7 +121,8 @@ class CustomerControllerTest {
                                   "model": "NZE141-123456",
                                   "type": "1AZ-FE",
                                   "year": "2020-12",
-                                  "inspectionDate": "2027-12-31"
+                                  "inspectionDate": "2027-12-31",
+                                  "active": true
                               }
                           ]
                       }
@@ -190,7 +191,8 @@ class CustomerControllerTest {
                                   "model": "NZE141-123456",
                                   "type": "1AZ-FE",
                                   "year": "2020-12",
-                                  "inspectionDate": "2027-12-31"
+                                  "inspectionDate": "2027-12-31",
+                                  "active": true
                               }
                           ]
                       }
@@ -258,7 +260,8 @@ class CustomerControllerTest {
                                   "model": "NZE141-123456",
                                   "type": "1AZ-FE",
                                   "year": "2020-12",
-                                  "inspectionDate": "2027-12-31"
+                                  "inspectionDate": "2027-12-31",
+                                  "active": true
                               }
                           ]
                       }
@@ -326,7 +329,8 @@ class CustomerControllerTest {
                                   "model": "NZE141-123456",
                                   "type": "1AZ-FE",
                                   "year": "2020-12",
-                                  "inspectionDate": "2027-12-31"
+                                  "inspectionDate": "2027-12-31",
+                                  "active": true
                               }
                           ]
                       }
@@ -468,7 +472,9 @@ class CustomerControllerTest {
     void 登録済みの顧客にIDで紐づけし車両情報が登録でき成功したメッセージが返されること() throws Exception {
       // 準備
       Customer customer = new Customer();
-      Vehicle vehicle = new Vehicle();
+      Vehicle vehicle = new Vehicle(3, 2, PlateRegion.渋谷, "789", "う", "7890", "honda",
+          "DEF456-789012",
+          "2EF-GH", YearMonth.of(2021, 6), LocalDate.of(2029, 10, 31), true);
       vehicle.setVehicleId(1);
       customer.setCustomerId(1);
       vehicle.setPlateRegion(PlateRegion.品川);
@@ -480,6 +486,7 @@ class CustomerControllerTest {
       vehicle.setType("1AZ-FE");
       vehicle.setYear(YearMonth.parse("2021-12"));
       vehicle.setInspectionDate(LocalDate.parse("2027-01-01"));
+      vehicle.setActive(true);
 
       when(customerService.registerVehicle(eq(1), any(VehicleCreateRequest.class))).thenReturn(
           vehicle);

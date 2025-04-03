@@ -32,14 +32,14 @@ class CustomerRepositoryTest {
 
     @Test
     void 指定したidで顧客情報を検索することができる() {
-      Optional<Customer> actual = customerRepository.findCustomerById(1);
+      Optional<Customer> actual = customerRepository.findCustomerByCustomerId(1);
       Customer expected = testHelper.customerMock().get(0);
       assertThat(actual).hasValue(expected);
     }
 
     @Test
     void 指定したidで顧客住所を検索することができる() {
-      Optional<CustomerAddress> actual = customerRepository.findCustomerAddressById(1);
+      Optional<CustomerAddress> actual = customerRepository.findCustomerAddressByCustomerId(1);
       CustomerAddress expected = testHelper.customerAddressMock().get(0);
       assertThat(actual).hasValue(expected);
     }
@@ -121,14 +121,8 @@ class CustomerRepositoryTest {
     void 顧客住所を登録することができる() {
       //準備
       int initialSize = customerRepository.findAllCustomerAddresses().size();
-      Customer customer = new Customer();
-      customer.setCustomerId(5);
-      customer.setLastName("test");
-      customer.setFirstName("example");
-      customer.setLastNameKana("テスト");
-      customer.setFirstNameKana("エクサンプル");
-      customer.setPhoneNumber("090-1234-5678");
-      customer.setEmail("test@example.ne.jp");
+      Customer customer = testHelper.customerCreateMock();
+      customerRepository.createCustomer(customer);
       CustomerAddress customerAddress = testHelper.customerAddressCreateMock(customer);
       //実行
       customerRepository.createCustomerAddress(customerAddress);
@@ -141,16 +135,9 @@ class CustomerRepositoryTest {
     void 車両情報を登録することができる() {
       //準備
       int initialSize = customerRepository.findAllVehicles().size();
-      Vehicle vehicle = testHelper.vehicleMock().get(0);
-      Customer customer = new Customer();
-      customer.setCustomerId(5);
-      customer.setLastName("test");
-      customer.setFirstName("example");
-      customer.setLastNameKana("テスト");
-      customer.setFirstNameKana("エクサンプル");
-      customer.setPhoneNumber("090-1234-5678");
-      customer.setEmail("test@example.ne.jp");
-
+      Customer customer = testHelper.customerCreateMock();
+      customerRepository.createCustomer(customer);
+      Vehicle vehicle = testHelper.vehicleCreateMock(customer);
       //実行
       customerRepository.createVehicle(vehicle);
       //検証

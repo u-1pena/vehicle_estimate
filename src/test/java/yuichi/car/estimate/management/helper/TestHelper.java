@@ -51,13 +51,13 @@ public class TestHelper {
     return new ArrayList<>(List.of(
         new Vehicle(1, 1, 品川, "123",
             "あ", "1234", "toyota", "NZE141-123456",
-            "1AZ-FE", YearMonth.of(2020, 12), LocalDate.of(2027, 12, 31)),
+            "1AZ-FE", YearMonth.of(2020, 12), LocalDate.of(2027, 12, 31), true),
         new Vehicle(2, 2, 練馬, "456",
             "い", "4567", "nissan", "ABC123-456789",
-            "1AB-CD", YearMonth.of(2022, 3), LocalDate.of(2028, 11, 30)),
-        new Vehicle(3, 2, 渋谷, "789", "う", "7890",
-            "honda", "DEF456-789012", "2EF-GH",
-            YearMonth.of(2021, 6), LocalDate.of(2029, 10, 31))));
+            "1AB-CD", YearMonth.of(2022, 3), LocalDate.of(2028, 11, 30), true),
+        new Vehicle(3, 2, 渋谷, "789", "う",
+            "7890", "honda", "DEF456-789012",
+            "1EF-GH", YearMonth.of(2021, 6), LocalDate.of(2029, 10, 31), true)));
   }
 
   public Customer customerCreateMock() {
@@ -114,7 +114,8 @@ public class TestHelper {
         vehicleCreateRequestMock().getModel(),
         vehicleCreateRequestMock().getType(),
         YearMonth.parse(vehicleCreateRequestMock().getYear()),
-        LocalDate.parse(vehicleCreateRequestMock().getInspectionDate()));
+        LocalDate.parse(vehicleCreateRequestMock().getInspectionDate()),
+        true);
     return vehicle;
   }
 

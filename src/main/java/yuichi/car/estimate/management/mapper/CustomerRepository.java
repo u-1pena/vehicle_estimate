@@ -11,10 +11,9 @@ import yuichi.car.estimate.management.entity.enums.PlateRegion;
 @Mapper
 public interface CustomerRepository {
 
-  Optional<Customer> findCustomerById(int id);
+  Optional<Customer> findCustomerByCustomerId(int customerId);
 
-  Optional<CustomerAddress>
-  findCustomerAddressById(int id);
+  Optional<CustomerAddress> findCustomerAddressByCustomerId(int customerId);
 
   List<Vehicle> findVehicleByCustomerId(int customerId);
 
@@ -31,11 +30,23 @@ public interface CustomerRepository {
   Optional<Vehicle> findCustomerByLicensePlateExactMatch(PlateRegion plateRegion,
       String plateCategoryNumber, String plateHiragana, String plateVehicleNumber);
 
+  Optional<Vehicle> findVehicleByVehicleId(int vehicleId);
+
   void createCustomer(Customer customer);
 
   void createCustomerAddress(CustomerAddress customerAddress);
 
   void createVehicle(Vehicle vehicle);
+
+  void deleteCustomer(int customerId);
+
+  void deleteVehicle(int vehicleId);
+
+  void updateCustomer(Customer customer);
+
+  void updateCustomerAddress(CustomerAddress customerAddress);
+
+  void updateVehicle(Vehicle vehicle);
 
   // 以下のメソッドは、テスト用に追加
   List<Customer> findAllCustomers();

@@ -11,13 +11,15 @@ CREATE TABLE customers
 
 CREATE TABLE customer_addresses
 (
-  address_id INT PRIMARY KEY NOT NULL,
+  address_id INT AUTO_INCREMENT PRIMARY KEY,
   customer_id INT NOT NULL,
   postal_code VARCHAR(8) NOT NULL,
   prefecture VARCHAR(10) NOT NULL,
   city VARCHAR(20) NOT NULL,
   town_and_number VARCHAR(50) NOT NULL,
-  building_name_and_room_number VARCHAR(50)
+  building_name_and_room_number VARCHAR(50),
+
+  CONSTRAINT fk_customer_addresses_customer_id FOREIGN KEY (customer_id) REFERENCES customers(customer_id) ON DELETE CASCADE
 );
 
 CREATE TABLE vehicles
@@ -33,7 +35,8 @@ CREATE TABLE vehicles
     type VARCHAR(32) NOT NULL,
     year VARCHAR(32) NOT NULL,
     inspection_date DATE NOT NULL,
-    CONSTRAINT fk_vehicles_customer_id FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
+    active BOOLEAN DEFAULT TRUE NOT NULL,
+    CONSTRAINT fk_vehicles_customer_id FOREIGN KEY (customer_id) REFERENCES customers(customer_id) ON DELETE CASCADE
 );
 
 CREATE TABLE maintenance_info
@@ -46,7 +49,7 @@ CREATE TABLE maintenance_info
     oil_quantity_without_filter DOUBLE NOT NULL,
     oil_filter_part_number VARCHAR(32) NOT NULL,
     car_wash_size VARCHAR(32) NOT NULL,
-    CONSTRAINT fk_maintenance_info_vehicle_id FOREIGN KEY (vehicle_id) REFERENCES vehicles(vehicle_id)
+    CONSTRAINT fk_maintenance_info_vehicle_id FOREIGN KEY (vehicle_id) REFERENCES vehicles(vehicle_id) ON DELETE CASCADE
 );
 
 CREATE TABLE estimate_base

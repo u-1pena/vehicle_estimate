@@ -22,6 +22,7 @@ public class VehicleCreateConverter {
         .type(vehicleCreateRequest.getType())
         .year(YearMonth.parse(vehicleCreateRequest.getYear()))
         .inspectionDate(LocalDate.parse(vehicleCreateRequest.getInspectionDate()))
+        .active(true)
         .build();
   }
 }

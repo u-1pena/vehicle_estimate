@@ -68,9 +68,9 @@ class CustomerServiceTest {
       doReturn(expectedVehicles).when(customerRepository)
           .findCustomerByPlateVehicleNumber("1234");
       doReturn(Optional.of(expectedCustomerAddress)).when(customerRepository)
-          .findCustomerAddressById(expectedCustomers.getCustomerId());
+          .findCustomerAddressByCustomerId(expectedCustomers.getCustomerId());
       doReturn(Optional.of(expectedCustomers)).when(customerRepository)
-          .findCustomerById(expectedCustomers.getCustomerId());
+          .findCustomerByCustomerId(expectedCustomers.getCustomerId());
 
       List<CustomerInformationDto> actualList = customerService.findInformationByPlateVehicleNumber(
           "1234");
@@ -92,7 +92,7 @@ class CustomerServiceTest {
       doReturn(List.of(expectedCustomer)).when(customerRepository)
           .findCustomerByName("suzuki");
       doReturn(Optional.of(expectedCustomerAddress)).when(customerRepository)
-          .findCustomerAddressById(expectedCustomer.getCustomerId());
+          .findCustomerAddressByCustomerId(expectedCustomer.getCustomerId());
       doReturn(expectedVehicles).when(customerRepository)
           .findVehicleByCustomerId(expectedCustomer.getCustomerId());
 
@@ -115,7 +115,7 @@ class CustomerServiceTest {
       doReturn(List.of(expectedCustomer)).when(customerRepository)
           .findCustomerByNameKana("スズキ");
       doReturn(Optional.of(expectedCustomerAddress)).when(customerRepository)
-          .findCustomerAddressById(expectedCustomer.getCustomerId());
+          .findCustomerAddressByCustomerId(expectedCustomer.getCustomerId());
       doReturn(expectedVehicles).when(customerRepository)
           .findVehicleByCustomerId(expectedCustomer.getCustomerId());
 
@@ -138,7 +138,7 @@ class CustomerServiceTest {
       doReturn(Optional.of(expectedCustomer)).when(customerRepository)
           .findCustomerByEmail("ichiro@example.ne.jp");
       doReturn(Optional.of(expectedCustomerAddress)).when(customerRepository)
-          .findCustomerAddressById(expectedCustomer.getCustomerId());
+          .findCustomerAddressByCustomerId(expectedCustomer.getCustomerId());
       doReturn(expectedVehicles).when(customerRepository)
           .findVehicleByCustomerId(expectedCustomer.getCustomerId());
 
@@ -158,9 +158,9 @@ class CustomerServiceTest {
           .stream()
           .filter(vehicle -> vehicle.getCustomerId() == expectedCustomer.getCustomerId())
           .toList();
-      doReturn(Optional.of(expectedCustomer)).when(customerRepository).findCustomerById(2);
+      doReturn(Optional.of(expectedCustomer)).when(customerRepository).findCustomerByCustomerId(2);
       doReturn(Optional.of(expectedCustomerAddress)).when(customerRepository)
-          .findCustomerAddressById(2);
+          .findCustomerAddressByCustomerId(2);
       doReturn(expectedVehicles).when(customerRepository).findVehicleByCustomerId(2);
 
       List<CustomerInformationDto> userInfoList = customerService.findCustomerInformationById(2);
@@ -175,9 +175,9 @@ class CustomerServiceTest {
       CustomerAddress expectedCustomerAddress = testHelper.customerAddressMock().get(2);
       List<Vehicle> expectedVehicles = Collections.emptyList();
 
-      doReturn(Optional.of(expectedCustomer)).when(customerRepository).findCustomerById(3);
+      doReturn(Optional.of(expectedCustomer)).when(customerRepository).findCustomerByCustomerId(3);
       doReturn(Optional.of(expectedCustomerAddress)).when(customerRepository)
-          .findCustomerAddressById(3);
+          .findCustomerAddressByCustomerId(3);
       doReturn(expectedVehicles).when(customerRepository).findVehicleByCustomerId(3);
 
       List<CustomerInformationDto> userInfoList = customerService.findCustomerInformationById(3);
@@ -366,9 +366,9 @@ class CustomerServiceTest {
 
       //モックの振る舞いを設定
       doReturn(Optional.of(customer)).when(customerRepository)
-          .findCustomerById(customer.getCustomerId());
+          .findCustomerByCustomerId(customer.getCustomerId());
       doReturn(Optional.empty()).when(customerRepository)
-          .findCustomerAddressById(customer.getCustomerId());
+          .findCustomerAddressByCustomerId(customer.getCustomerId());
 
       //実行
       CustomerAddress actual = customerService.registerCustomerAddress(customer.getCustomerId(),
@@ -384,8 +384,9 @@ class CustomerServiceTest {
           expectedCustomerAddress.getBuildingNameAndRoomNumber());
 
       assertCustomerAddress(actual, expectedCustomerAddress);
-      verify(customerRepository, times(1)).findCustomerById(customer.getCustomerId());
-      verify(customerRepository, times(1)).findCustomerAddressById(customer.getCustomerId());
+      verify(customerRepository, times(1)).findCustomerByCustomerId(customer.getCustomerId());
+      verify(customerRepository, times(1)).findCustomerAddressByCustomerId(
+          customer.getCustomerId());
       verify(customerRepository, times(1)).createCustomerAddress(expectedCustomerAddress);
     }
 
@@ -395,7 +396,7 @@ class CustomerServiceTest {
       CustomerAddressCreateRequest customerAddressCreateRequest = testHelper.customerAddressCreateRequestMock();
 
       //モックの振る舞いを設定
-      doReturn(Optional.empty()).when(customerRepository).findCustomerById(0);
+      doReturn(Optional.empty()).when(customerRepository).findCustomerByCustomerId(0);
 
       //実行
       CustomerNotFoundException exception = assertThrows(CustomerNotFoundException.class, () -> {
@@ -404,7 +405,7 @@ class CustomerServiceTest {
 
       //検証
       assertEquals("Not registered for customer ID:0", exception.getMessage());
-      verify(customerRepository, times(1)).findCustomerById(0);
+      verify(customerRepository, times(1)).findCustomerByCustomerId(0);
     }
 
     @Test
@@ -416,9 +417,9 @@ class CustomerServiceTest {
 
       //モックの振る舞いを設定
       doReturn(Optional.of(expectedUser)).when(customerRepository)
-          .findCustomerById(expectedUser.getCustomerId());
+          .findCustomerByCustomerId(expectedUser.getCustomerId());
       doReturn(Optional.of(expectedCustomerAddress)).when(customerRepository)
-          .findCustomerAddressById(expectedUser.getCustomerId());
+          .findCustomerAddressByCustomerId(expectedUser.getCustomerId());
 
       //実行
       CustomerAddressAlreadyException exception = assertThrows(
@@ -432,7 +433,7 @@ class CustomerServiceTest {
           "The customer with this ID has already completed address registration: "
               + expectedCustomerAddress.getCustomerId(),
           exception.getMessage());
-      verify(customerRepository, times(1)).findCustomerById(expectedUser.getCustomerId());
+      verify(customerRepository, times(1)).findCustomerByCustomerId(expectedUser.getCustomerId());
     }
 
     //CustomerAddressオブジェクトのフィールド値を検証するメソッド
@@ -457,7 +458,7 @@ class CustomerServiceTest {
 
       //モックの振る舞いを設定
       doReturn(Optional.of(expectedCustomer)).when(customerRepository)
-          .findCustomerById(expectedCustomer.getCustomerId());
+          .findCustomerByCustomerId(expectedCustomer.getCustomerId());
       doReturn(Optional.empty()).when(customerRepository)
           .findCustomerByLicensePlateExactMatch(
               expectedVehicle.getPlateRegion(),
@@ -488,7 +489,7 @@ class CustomerServiceTest {
 
       //モックの振る舞いを設定
       doReturn(Optional.of(expectedCustomer)).when(customerRepository)
-          .findCustomerById(expectedCustomer.getCustomerId());
+          .findCustomerByCustomerId(expectedCustomer.getCustomerId());
 
       //実行
       VehicleYearInvalidException exception = assertThrows(VehicleYearInvalidException.class,

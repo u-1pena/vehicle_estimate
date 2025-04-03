@@ -72,7 +72,7 @@ public class GlobalExceptionHandler extends RuntimeException {
     return new ResponseEntity<>(body, HttpStatus.UNPROCESSABLE_ENTITY);
   }
 
-  @ExceptionHandler(CustomerAddressAlreadyException.class)
+  @ExceptionHandler(CustomerAddressException.CustomerAddressAlreadyException.class)
   public ResponseEntity<Map<String, String>> handleUserAlreadyExistsException(
       CustomerAddressAlreadyException e, HttpServletRequest request) {
     Map<String, String> body = Map.of(
@@ -82,6 +82,30 @@ public class GlobalExceptionHandler extends RuntimeException {
         "path", request.getRequestURI());
 
     return new ResponseEntity<>(body, HttpStatus.UNPROCESSABLE_ENTITY);
+  }
+
+  @ExceptionHandler(CustomerAddressException.CustomerAddressNotFoundException.class)
+  public ResponseEntity<Map<String, String>> handleUserAddressNotFoundException(
+      CustomerAddressException.CustomerAddressNotFoundException e, HttpServletRequest request) {
+    Map<String, String> body = Map.of(
+        "status", "404",
+        "error", "Not Found",
+        "message", e.getMessage(),
+        "path", request.getRequestURI());
+
+    return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+  }
+
+  @ExceptionHandler(VehicleException.VehicleNotFoundException.class)
+  public ResponseEntity<Map<String, String>> handleVehicleNotFoundException(
+      VehicleException.VehicleNotFoundException e, HttpServletRequest request) {
+    Map<String, String> body = Map.of(
+        "status", "404",
+        "error", "Not Found",
+        "message", e.getMessage(),
+        "path", request.getRequestURI());
+
+    return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
   }
 
   @ExceptionHandler(AlreadyExistsVehicleException.class)

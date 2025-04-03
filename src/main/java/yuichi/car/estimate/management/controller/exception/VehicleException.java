@@ -2,6 +2,17 @@ package yuichi.car.estimate.management.controller.exception;
 
 public class VehicleException extends RuntimeException {
 
+  public static class VehicleNotFoundException extends RuntimeException {
+
+    public VehicleNotFoundException() {
+      super("Vehicle not found");
+    }
+
+    public VehicleNotFoundException(String message) {
+      super(message);
+    }
+  }
+
   public static class AlreadyExistsVehicleException extends RuntimeException {
 
     public AlreadyExistsVehicleException() {

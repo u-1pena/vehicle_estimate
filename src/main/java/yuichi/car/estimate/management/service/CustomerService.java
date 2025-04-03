@@ -10,20 +10,28 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import yuichi.car.estimate.management.controller.exception.CustomerAddressException.CustomerAddressAlreadyException;
+import yuichi.car.estimate.management.controller.exception.CustomerAddressException.CustomerAddressNotFoundException;
 import yuichi.car.estimate.management.controller.exception.CustomerException.AlreadyExistsEmailException;
 import yuichi.car.estimate.management.controller.exception.CustomerException.AlreadyExistsPhoneNumberException;
 import yuichi.car.estimate.management.controller.exception.CustomerException.CustomerNotFoundException;
 import yuichi.car.estimate.management.controller.exception.CustomerException.InvalidSearchParameterException;
 import yuichi.car.estimate.management.controller.exception.VehicleException.AlreadyExistsVehicleException;
+import yuichi.car.estimate.management.controller.exception.VehicleException.VehicleNotFoundException;
 import yuichi.car.estimate.management.controller.exception.VehicleException.VehicleYearInvalidException;
 import yuichi.car.estimate.management.converter.CustomerAddressCreateConverter;
+import yuichi.car.estimate.management.converter.CustomerAddressUpdateConverter;
 import yuichi.car.estimate.management.converter.CustomerCreateConverter;
 import yuichi.car.estimate.management.converter.CustomerInformationConverter;
+import yuichi.car.estimate.management.converter.CustomerUpdateConverter;
 import yuichi.car.estimate.management.converter.VehicleCreateConverter;
+import yuichi.car.estimate.management.converter.VehicleUpdateConverter;
 import yuichi.car.estimate.management.dto.CustomerInformationDto;
 import yuichi.car.estimate.management.dto.request.CustomerAddressCreateRequest;
+import yuichi.car.estimate.management.dto.request.CustomerAddressUpdateRequest;
 import yuichi.car.estimate.management.dto.request.CustomerCreateRequest;
+import yuichi.car.estimate.management.dto.request.CustomerUpdateRequest;
 import yuichi.car.estimate.management.dto.request.VehicleCreateRequest;
+import yuichi.car.estimate.management.dto.request.VehicleUpdateRequest;
 import yuichi.car.estimate.management.entity.Customer;
 import yuichi.car.estimate.management.entity.CustomerAddress;
 import yuichi.car.estimate.management.entity.Vehicle;
@@ -72,6 +80,52 @@ public class CustomerService {
     return "default";
   }
 
+  private List<CustomerInformationDto> findCustomerInformationByName(String name) {
+    List<Customer> customers = findCustomerByName(name);
+    return findCustomerByCriteria(customers);
+  }
+
+  private List<Customer> findCustomerByName(String name) {
+    List<Customer> customer = customerRepository.findCustomerByName(name);
+    return customer;
+  }
+
+  private List<CustomerInformationDto> findCustomerInformationByNameKana(String kana) {
+    List<Customer> customers = findByNameKana(kana);
+    return findCustomerByCriteria(customers);
+  }
+
+  private List<Customer> findByNameKana(String kana) {
+    List<Customer> Customers = customerRepository.findCustomerByNameKana(kana);
+    return Customers;
+  }
+
+  private List<CustomerInformationDto> findCustomerInformationByEmail(String email) {
+    Optional<Customer> customer = findCustomerByEmail(email);
+    List<Customer> customers = customer.map(Collections::singletonList)
+        .orElse(Collections.emptyList());
+    return findCustomerByCriteria(customers);
+  }
+
+  private Optional<Customer> findCustomerByEmail(String email) {
+    Optional<Customer> customer = customerRepository.findCustomerByEmail(email);
+    return customer;
+  }
+
+  private List<CustomerInformationDto> findCustomerByCriteria(List<Customer> customers) {
+    return customers.stream()
+        .map(this::convertToCustomerInformationDtoFromCustomer)
+        .collect(Collectors.toList());
+  }
+
+  private CustomerInformationDto convertToCustomerInformationDtoFromCustomer(Customer customer) {
+    CustomerAddress customerAddress = findCustomerAddressListByCustomerId(customer.getCustomerId());
+    List<Vehicle> vehicles = findVehicleByCustomerId(customer.getCustomerId());
+    return CustomerInformationConverter.convertToCustomerInformationDto(customer, customerAddress,
+        vehicles);
+  }
+
+
   //車両番号４桁で検索するメソッド
   public List<CustomerInformationDto> findInformationByPlateVehicleNumber(
       String plateVehicleNumber) {
@@ -89,8 +143,8 @@ public class CustomerService {
 
       // すでに `CustomerInformationDto` が作成されているか確認
       if (!customerInfoMap.containsKey(customerId)) {
-        Customer customer = findCustomerById(customerId);
-        CustomerAddress customerAddress = findCustomerAddressById(customerId);
+        Customer customer = findCustomerByCustomerId(customerId);
+        CustomerAddress customerAddress = findCustomerAddressListByCustomerId(customerId);
 
         //初回ならCustomerInformationDtoを作成し、マップに追加
         CustomerInformationDto dto = CustomerInformationConverter.convertToCustomerInformationDto(
@@ -111,23 +165,24 @@ public class CustomerService {
     return vehicles;
   }
 
-  public List<CustomerInformationDto> findCustomerInformationById(int id) {
-    Customer customer = findCustomerById(id);
-    CustomerAddress customerAddress = findCustomerAddressById(id);
-    List<Vehicle> vehicles = findVehicleByCustomerId(id);
-    return List.of(CustomerInformationConverter.convertToCustomerInformationDto(customer,
-        customerAddress, vehicles));
+  public List<CustomerInformationDto> findCustomerInformationById(int customerId) {
+    Customer customer = findCustomerByCustomerId(customerId);
+    CustomerAddress customerAddress = findCustomerAddressListByCustomerId(customerId);
+    List<Vehicle> vehicles = findVehicleByCustomerId(customerId);
+    return List.of(
+        CustomerInformationConverter.convertToCustomerInformationDto(customer, customerAddress,
+            vehicles));
   }
 
-  private Customer findCustomerById(int id) {
-    return customerRepository.findCustomerById(id)
-        .orElseThrow(
-            () -> new CustomerNotFoundException("Not registered for customer ID:" + id));
-  }
-
-  private CustomerAddress findCustomerAddressById(int id) {
-    return customerRepository.findCustomerAddressById(id)
+  private CustomerAddress findCustomerAddressListByCustomerId(int customerId) {
+    return customerRepository.findCustomerAddressByCustomerId(customerId)
         .orElse(new CustomerAddress());
+  }
+
+  private CustomerAddress validateCustomerAddressExistsByCustomerId(int customerId) {
+    return customerRepository.findCustomerAddressByCustomerId(customerId)
+        .orElseThrow(() -> new CustomerAddressNotFoundException(
+            "Not registered for customer address ID:" + customerId));
   }
 
   private List<Vehicle> findVehicleByCustomerId(int id) {
@@ -135,48 +190,6 @@ public class CustomerService {
         .stream()
         .filter(vehicle -> vehicle.getCustomerId() == id)
         .collect(Collectors.toList());
-  }
-
-
-  private List<CustomerInformationDto> findCustomerByCriteria(List<Customer> customers) {
-    return customers.stream()
-        .map(this::convertToCustomerInformationDtoFromCustomer)
-        .collect(Collectors.toList());
-  }
-
-  private CustomerInformationDto convertToCustomerInformationDtoFromCustomer(Customer customer) {
-    CustomerAddress customerAddress = findCustomerAddressById(customer.getCustomerId());
-    List<Vehicle> vehicles = findVehicleByCustomerId(customer.getCustomerId());
-    return CustomerInformationConverter.convertToCustomerInformationDto(customer, customerAddress,
-        vehicles);
-  }
-
-  private List<CustomerInformationDto> findCustomerInformationByName(String name) {
-    List<Customer> customers = findCustomerByName(name);
-    return findCustomerByCriteria(customers);
-  }
-
-  private List<Customer> findCustomerByName(String name) {
-    List<Customer> customer = customerRepository.findCustomerByName(name);
-    return customer;
-  }
-
-  private List<CustomerInformationDto> findCustomerInformationByNameKana(String kana) {
-    List<Customer> customers = findByNameKana(kana);
-    return findCustomerByCriteria(customers);
-  }
-
-  //ユーザー情報を取得する処理 完全一致のEmailで検索しユーザー情報を照会します
-  private List<CustomerInformationDto> findCustomerInformationByEmail(String email) {
-    Optional<Customer> customer = findCustomerByEmail(email);
-    List<Customer> customers = customer.map(Collections::singletonList)
-        .orElse(Collections.emptyList());
-    return findCustomerByCriteria(customers);
-  }
-
-  private Optional<Customer> findCustomerByEmail(String email) {
-    Optional<Customer> customer = customerRepository.findCustomerByEmail(email);
-    return customer;
   }
 
   public List<CustomerInformationDto> findCustomerInformationByPhoneNumber(String phoneNumber) {
@@ -189,11 +202,6 @@ public class CustomerService {
   private Optional<Customer> findCustomerByPhoneNumber(String phoneNumber) {
     Optional<Customer> customer = customerRepository.findCustomerByPhoneNumber(phoneNumber);
     return customer;
-  }
-
-  private List<Customer> findByNameKana(String kana) {
-    List<Customer> Customers = customerRepository.findCustomerByNameKana(kana);
-    return Customers;
   }
 
   public Customer registerCustomer(CustomerCreateRequest customerCreateRequest) {
@@ -223,10 +231,10 @@ public class CustomerService {
   }
 
 
-  public CustomerAddress registerCustomerAddress(int addressId,
+  public CustomerAddress registerCustomerAddress(int customerId,
       CustomerAddressCreateRequest customerAddressCreateRequest) {
-    Customer customer = findCustomerById(addressId);
-    checkAlreadyExistCustomerAddress(addressId);
+    Customer customer = findCustomerByCustomerId(customerId);
+    checkAlreadyExistCustomerAddress(customerId);
     CustomerAddress customerAddress = CustomerAddressCreateConverter.customerAddressConvertToEntity(
         customer, customerAddressCreateRequest);
     createCustomerAddress(customerAddress);
@@ -234,7 +242,7 @@ public class CustomerService {
   }
 
   private void checkAlreadyExistCustomerAddress(int id) {
-    customerRepository.findCustomerAddressById(id)
+    customerRepository.findCustomerAddressByCustomerId(id)
         .map(userDetail -> {
           throw new CustomerAddressAlreadyException(
               "The customer with this ID has already completed address registration: " + id);
@@ -243,7 +251,7 @@ public class CustomerService {
 
 
   public Vehicle registerVehicle(int customerId, VehicleCreateRequest vehicleCreateRequest) {
-    Customer customer = findCustomerById(customerId);
+    Customer customer = findCustomerByCustomerId(customerId);
     Vehicle vehicle = VehicleCreateConverter.vehicleConvertToEntity(customer, vehicleCreateRequest);
     checkVehiclesYearValid(String.valueOf(vehicle.getYear()));
     checkAlreadyExistVehicleByPlateNumber(vehicle);
@@ -274,5 +282,107 @@ public class CustomerService {
 
   private void createVehicle(Vehicle vehicle) {
     customerRepository.createVehicle(vehicle);
+  }
+
+  public void deleteCustomerByCustomerId(int customerId) {
+    findCustomerByCustomerId(customerId);
+    deleteCustomer(customerId);
+  }
+
+  public void deleteVehicleByVehicleId(int vehicleId) {
+    Vehicle vehicle = findVehicleByVehicleId(vehicleId);
+    customerRepository.deleteVehicle(vehicle.getVehicleId());
+  }
+
+  public void updateCustomerByCustomerId(int customerId,
+      CustomerUpdateRequest customerUpdateRequest) {
+    Customer customer = findCustomerByCustomerId(customerId);
+    CustomerUpdateConverter.customerUpdateConvertToEntity(customer, customerUpdateRequest);
+    duplicateCheckForUpdates(customer.getPhoneNumber(), customer.getEmail(), customerId);
+    updateCustomer(customer);
+  }
+
+  private void duplicateCheckForUpdates(String phoneNumber, String email, int customerId) {
+    updateCheckAlreadyExistPhoneNumber(phoneNumber, customerId);
+    updateCheckAlreadyExistEmail(email, customerId);
+  }
+
+  private void updateCheckAlreadyExistPhoneNumber(String phoneNumber, int customerId) {
+    customerRepository.findCustomerByPhoneNumber(phoneNumber)
+        .ifPresent(customer -> {
+          if (customer.getCustomerId() != customerId) {
+            throw new AlreadyExistsPhoneNumberException();
+          }
+        });
+  }
+
+  private void updateCheckAlreadyExistEmail(String email, int customerId) {
+    customerRepository.findCustomerByEmail(email)
+        .ifPresent(customer -> {
+          if (customer.getCustomerId() != customerId) {
+            throw new AlreadyExistsEmailException();
+          }
+        });
+  }
+
+  public void updateCustomerAddressByCustomerId(int customerId,
+      CustomerAddressUpdateRequest customerAddressUpdateRequest) {
+    Customer customer = findCustomerByCustomerId(customerId);
+    CustomerAddress customerAddress = validateCustomerAddressExistsByCustomerId(customerId);
+    CustomerAddressUpdateConverter.customerAddressUpdateConvertToEntity(customer,
+        customerAddress, customerAddressUpdateRequest);
+    updateCustomerAddress(customerAddress);
+  }
+
+  public void updateVehicleByVehicleId(int vehicleId,
+      VehicleUpdateRequest vehicleUpdateRequest) {
+    Vehicle vehicle = findVehicleByVehicleId(vehicleId);
+    VehicleUpdateConverter.vehicleUpdateConvertToEntity(vehicle, vehicleUpdateRequest);
+    checkVehiclesYearValid(String.valueOf(vehicle.getYear()));
+    updateCheckAlreadyExistVehicleByPlateNumber(vehicle);
+    updateVehicle(vehicle);
+  }
+
+  /*
+  更新時のナンバープレートの重複チェック
+  自身のナンバーを除外
+   */
+  private void updateCheckAlreadyExistVehicleByPlateNumber(Vehicle vehicle) {
+    customerRepository.findCustomerByLicensePlateExactMatch(vehicle.getPlateRegion(),
+            vehicle.getPlateCategoryNumber(), vehicle.getPlateHiragana(),
+            vehicle.getPlateVehicleNumber())
+        .ifPresent(vehicle1 -> {
+          if (vehicle1.getVehicleId() != vehicle.getVehicleId()) {
+            throw new AlreadyExistsVehicleException();
+          }
+        });
+  }
+
+  private Vehicle findVehicleByVehicleId(int vehicleId) {
+    return customerRepository.findVehicleByVehicleId(vehicleId)
+        .orElseThrow(
+            () -> new VehicleNotFoundException("Not registered for vehicle ID:" + vehicleId));
+  }
+
+  private void updateCustomer(Customer customer) {
+    customerRepository.updateCustomer(customer);
+  }
+
+  private void updateCustomerAddress(CustomerAddress customerAddress) {
+    customerRepository.updateCustomerAddress(customerAddress);
+  }
+
+  private void updateVehicle(Vehicle vehicle) {
+    customerRepository.updateVehicle(vehicle);
+  }
+
+  private Customer findCustomerByCustomerId(int customerId) {
+    return customerRepository.findCustomerByCustomerId(customerId)
+        .orElseThrow(
+            () -> new CustomerNotFoundException("Not registered for customer ID:" + customerId));
+  }
+
+  private void deleteCustomer(int customerId) {
+    customerRepository.deleteCustomer(customerId);
   }
 }

@@ -4,18 +4,23 @@ import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
-import yuichi.car.estimate.management.controller.Response.CreateResponse;
+import yuichi.car.estimate.management.controller.Response.GlobalResponse;
 import yuichi.car.estimate.management.dto.CustomerInformationDto;
 import yuichi.car.estimate.management.dto.request.CustomerAddressCreateRequest;
+import yuichi.car.estimate.management.dto.request.CustomerAddressUpdateRequest;
 import yuichi.car.estimate.management.dto.request.CustomerCreateRequest;
+import yuichi.car.estimate.management.dto.request.CustomerUpdateRequest;
 import yuichi.car.estimate.management.dto.request.VehicleCreateRequest;
+import yuichi.car.estimate.management.dto.request.VehicleUpdateRequest;
 import yuichi.car.estimate.management.entity.Customer;
 import yuichi.car.estimate.management.entity.CustomerAddress;
 import yuichi.car.estimate.management.entity.Vehicle;
@@ -71,13 +76,13 @@ public class CustomerController {
   顧客情報を登録する処理
    */
   @PostMapping("/customers")
-  public ResponseEntity<CreateResponse> createCustomer(
+  public ResponseEntity<GlobalResponse> createCustomer(
       @RequestBody @Valid CustomerCreateRequest customerCreateRequest,
       UriComponentsBuilder uriBuilder) {
     Customer customer = customerService.registerCustomer(customerCreateRequest);
     URI location = uriBuilder.path("/users/{addressId}").buildAndExpand(customer.getCustomerId())
         .toUri();
-    CreateResponse body = new CreateResponse("Customer created");
+    GlobalResponse body = new GlobalResponse("Customer created");
     return ResponseEntity.created(location).body(body);
   }
 
@@ -85,7 +90,7 @@ public class CustomerController {
   住所情報を登録する処理
    */
   @PostMapping("addresses/{addressId}")
-  public ResponseEntity<CreateResponse> createUserDetail(
+  public ResponseEntity<GlobalResponse> createUserDetail(
       @PathVariable("addressId") int addressId,
       @RequestBody @Valid CustomerAddressCreateRequest customerAddressCreateRequest, // 専用リクエストクラス
       UriComponentsBuilder uriBuilder) {
@@ -93,7 +98,7 @@ public class CustomerController {
         customerAddressCreateRequest);
     URI location = uriBuilder.path("/address/{addressId}")
         .buildAndExpand(customerAddress.getAddressId()).toUri();
-    CreateResponse body = new CreateResponse("CustomerAddress Created");
+    GlobalResponse body = new GlobalResponse("CustomerAddress Created");
     return ResponseEntity.created(location).body(body);
   }
 
@@ -101,14 +106,57 @@ public class CustomerController {
   車両情報を登録する処理
    */
   @PostMapping("vehicles/{customerId}")
-  public ResponseEntity<CreateResponse> createVehicle(
+  public ResponseEntity<GlobalResponse> createVehicle(
       @PathVariable("customerId") int customerId,
       @RequestBody @Valid VehicleCreateRequest vehicleCreateRequest,
       UriComponentsBuilder uriBuilder) {
     Vehicle vehicle = customerService.registerVehicle(customerId, vehicleCreateRequest);
     URI location = uriBuilder.path("/vehicles/{customerId}").buildAndExpand(vehicle.getVehicleId())
         .toUri();
-    CreateResponse body = new CreateResponse("Vehicle created");
+    GlobalResponse body = new GlobalResponse("Vehicle created");
     return ResponseEntity.created(location).body(body);
+  }
+
+  @DeleteMapping("customers/{customerId}")
+  public ResponseEntity<GlobalResponse> deleteCustomer(
+      @PathVariable("customerId") int customerId) {
+    customerService.deleteCustomerByCustomerId(customerId);
+    GlobalResponse body = new GlobalResponse("Customer deleted");
+    return ResponseEntity.ok(body);
+  }
+
+  @DeleteMapping("vehicles/{vehicleId}")
+  public ResponseEntity<GlobalResponse> deleteVehicle(
+      @PathVariable("vehicleId") int vehicleId) {
+    customerService.deleteVehicleByVehicleId(vehicleId);
+    GlobalResponse body = new GlobalResponse("Vehicle deleted");
+    return ResponseEntity.ok(body);
+  }
+
+  @PutMapping("customers/{customerId}")
+  public ResponseEntity<GlobalResponse> updateCustomer(
+      @PathVariable("customerId") int customerId,
+      @RequestBody @Valid CustomerUpdateRequest customerUpdateRequest) {
+    customerService.updateCustomerByCustomerId(customerId, customerUpdateRequest);
+    GlobalResponse body = new GlobalResponse("Customer updated");
+    return ResponseEntity.ok(body);
+  }
+
+  @PutMapping("addresses/{addressId}")
+  public ResponseEntity<GlobalResponse> updateCustomerAddress(
+      @PathVariable("addressId") int customerId,
+      @RequestBody @Valid CustomerAddressUpdateRequest customerAddressUpdateRequest) {
+    customerService.updateCustomerAddressByCustomerId(customerId, customerAddressUpdateRequest);
+    GlobalResponse body = new GlobalResponse("CustomerAddress updated");
+    return ResponseEntity.ok(body);
+  }
+
+  @PutMapping("vehicles/{vehicleId}")
+  public ResponseEntity<GlobalResponse> updateVehicle(
+      @PathVariable("vehicleId") int vehicleId,
+      @RequestBody @Valid VehicleUpdateRequest vehicleUpdateRequest) {
+    customerService.updateVehicleByVehicleId(vehicleId, vehicleUpdateRequest);
+    GlobalResponse body = new GlobalResponse("Vehicle updated");
+    return ResponseEntity.ok(body);
   }
 }

@@ -3,12 +3,12 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="yuichi.car.estimate.management.mapper.CustomerRepository">
 
-  <select id="findCustomerById" parameterType="int"
+  <select id="findCustomerByCustomerId" parameterType="int"
     resultType="yuichi.car.estimate.management.entity.Customer">
     SELECT * FROM customers WHERE customer_id = #{customerId}
   </select>
 
-  <select id="findCustomerAddressById" parameterType="int"
+  <select id="findCustomerAddressByCustomerId" parameterType="int"
     resultType="yuichi.car.estimate.management.entity.CustomerAddress">
     SELECT * FROM customer_addresses WHERE address_id = #{addressId}
   </select>
@@ -58,6 +58,11 @@
     SELECT * FROM vehicles WHERE customer_id = #{customerId}
   </select>
 
+  <select id="findVehicleByVehicleId" parameterType="int"
+    resultType="yuichi.car.estimate.management.entity.Vehicle">
+    SELECT * FROM vehicles WHERE vehicle_id = #{vehicleId}
+  </select>
+
 
   <insert id="createCustomer" useGeneratedKeys="true" keyProperty="customerId"
     parameterType="yuichi.car.estimate.management.entity.Customer">
@@ -82,6 +87,36 @@
     VALUES (#{customerId}, #{plateRegion}, #{plateCategoryNumber}, #{plateHiragana},
     #{plateVehicleNumber}, #{make}, #{model}, #{type}, #{year}, #{inspectionDate})
   </insert>
+
+  <delete id="deleteCustomer" parameterType="int">
+    DELETE FROM customers WHERE customer_id = #{customerId}
+  </delete>
+
+  <update id="deleteVehicle" parameterType="int">
+    UPDATE vehicles SET active = false WHERE vehicle_id = #{vehicleId}
+  </update>
+
+  <update id="updateCustomer" parameterType="yuichi.car.estimate.management.entity.Customer">
+    UPDATE customers SET last_name = #{lastName}, first_name = #{firstName}, last_name_kana =
+    #{lastNameKana}, first_name_kana = #{firstNameKana}, email = #{email}, phone_number =
+    #{phoneNumber} WHERE customer_id = #{customerId}
+  </update>
+
+  <update id="updateCustomerAddress"
+    parameterType="yuichi.car.estimate.management.entity.CustomerAddress">
+    UPDATE customer_addresses SET postal_code = #{postalCode}, prefecture = #{prefecture},
+    city = #{city}, town_and_number = #{townAndNumber},
+    building_name_and_room_number = #{buildingNameAndRoomNumber} WHERE address_id = #{addressId}
+  </update>
+
+  <update id="updateVehicle" parameterType="yuichi.car.estimate.management.entity.Vehicle">
+    UPDATE vehicles SET plate_region = #{plateRegion}, plate_category_number =
+    #{plateCategoryNumber},
+    plate_hiragana = #{plateHiragana}, plate_vehicle_number = #{plateVehicleNumber}, make = #{make},
+    model = #{model}, type = #{type}, year = #{year}, inspection_date = #{inspectionDate}, active
+    =#{active}
+    WHERE vehicle_id = #{vehicleId}
+  </update>
 
   <select id="findAllCustomers" resultType="yuichi.car.estimate.management.entity.Customer">
     SELECT * FROM customers

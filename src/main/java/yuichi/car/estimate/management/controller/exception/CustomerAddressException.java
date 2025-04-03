@@ -13,4 +13,15 @@ public class CustomerAddressException {
       super(message);
     }
   }
+
+  public static class CustomerAddressNotFoundException extends RuntimeException {
+
+    public CustomerAddressNotFoundException() {
+      super("Customer address not found");
+    }
+
+    public CustomerAddressNotFoundException(String message) {
+      super(message);
+    }
+  }
 }
