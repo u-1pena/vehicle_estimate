@@ -34,4 +34,15 @@ public class VehicleException extends RuntimeException {
       super(message);
     }
   }
+
+  public static class VehicleInactiveException extends RuntimeException {
+
+    public VehicleInactiveException() {
+      super("Vehicle is inactive.");
+    }
+
+    public VehicleInactiveException(String message) {
+      super(message);
+    }
+  }
 }

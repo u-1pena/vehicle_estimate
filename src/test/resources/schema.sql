@@ -39,24 +39,26 @@ CREATE TABLE vehicles
     CONSTRAINT fk_vehicles_customer_id FOREIGN KEY (customer_id) REFERENCES customers(customer_id) ON DELETE CASCADE
 );
 
-CREATE TABLE maintenance_info
+CREATE TABLE maintenance_guide
 (
     maintenance_id INT AUTO_INCREMENT PRIMARY KEY,
-    vehicle_id INT NOT NULL,
-    car_name VARCHAR(32) NOT NULL,
+    make VARCHAR(32) NOT NULL,
+    model VARCHAR(32) NOT NULL,
+    type VARCHAR(32) NOT NULL,
+    start_year VARCHAR(7) NOT NULL,
+    end_year VARCHAR(7) NOT NULL,
     oil_viscosity VARCHAR(32) NOT NULL,
     oil_quantity_with_filter DOUBLE NOT NULL,
     oil_quantity_without_filter DOUBLE NOT NULL,
     oil_filter_part_number VARCHAR(32) NOT NULL,
-    car_wash_size VARCHAR(32) NOT NULL,
-    CONSTRAINT fk_maintenance_info_vehicle_id FOREIGN KEY (vehicle_id) REFERENCES vehicles(vehicle_id) ON DELETE CASCADE
+    car_wash_size VARCHAR(32) NOT NULL
 );
 
 CREATE TABLE estimate_base
 (
     estimate_id INT AUTO_INCREMENT PRIMARY KEY,
     maintenance_id INT NOT NULL,
-    CONSTRAINT fk_estimate_base_maintenance_id FOREIGN KEY (maintenance_id) REFERENCES maintenance_info(maintenance_id)
+    CONSTRAINT fk_estimate_base_maintenance_id FOREIGN KEY (maintenance_id) REFERENCES maintenance_guide(maintenance_id)
 );
 
 CREATE TABLE product_category

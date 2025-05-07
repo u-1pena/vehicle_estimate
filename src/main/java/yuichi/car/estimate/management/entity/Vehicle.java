@@ -1,8 +1,5 @@
 package yuichi.car.estimate.management.entity;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.Objects;
@@ -30,16 +27,6 @@ public class Vehicle {
   private YearMonth year;
   private LocalDate inspectionDate;
   private boolean active;
-
-  public Vehicle(int customerId, PlateRegion plateRegion,
-      @NotNull @NotBlank @Pattern(regexp = "^\\d{3}$", message = "plateCategoryNumberは半角数字で3文字で入力してください") String plateCategoryNumber,
-      @NotNull @NotBlank @Pattern(regexp = "^[\\u3040-\\u309F]+$", message = "plateHiraganaはひらがなで入力してください") String plateHiragana,
-      @NotNull @NotBlank(message = "空白は許可されていません") String plateVehicleNumber,
-      @Pattern(regexp = "^[a-z]+$", message = "メーカーは半角英小文字で入力してください") String make,
-      @Pattern(regexp = "^[A-Za-z0-9-]+$", message = "車体番号は半角英小文字とハイフンで入力してください") String model,
-      @Pattern(regexp = "^[A-Za-z0-9-]+$", message = "型式は半角英小文字とハイフンで入力してください") String type,
-      YearMonth parse, LocalDate parsed) {
-  }
 
   public Vehicle(int vehicleId, int customerId, PlateRegion plateRegion, String plateCategoryNumber,
       String plateHiragana, String plateVehicleNumber, String make, String model, String type,

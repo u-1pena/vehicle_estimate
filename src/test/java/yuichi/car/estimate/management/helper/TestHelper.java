@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import yuichi.car.estimate.management.dto.request.CustomerAddressCreateRequest;
 import yuichi.car.estimate.management.dto.request.CustomerCreateRequest;
+import yuichi.car.estimate.management.dto.request.CustomerUpdateRequest;
 import yuichi.car.estimate.management.dto.request.VehicleCreateRequest;
 import yuichi.car.estimate.management.entity.Customer;
 import yuichi.car.estimate.management.entity.CustomerAddress;
@@ -50,8 +51,8 @@ public class TestHelper {
   public List<Vehicle> vehicleMock() {
     return new ArrayList<>(List.of(
         new Vehicle(1, 1, 品川, "123",
-            "あ", "1234", "toyota", "NZE141-123456",
-            "1AZ-FE", YearMonth.of(2020, 12), LocalDate.of(2027, 12, 31), true),
+            "あ", "1234", "toyota", "DBA-NZE141",
+            "1NZ", YearMonth.of(2010, 12), LocalDate.of(2027, 12, 31), true),
         new Vehicle(2, 2, 練馬, "456",
             "い", "4567", "nissan", "ABC123-456789",
             "1AB-CD", YearMonth.of(2022, 3), LocalDate.of(2028, 11, 30), true),
@@ -126,10 +127,34 @@ public class TestHelper {
     vehicleCreateRequest.setPlateHiragana("あ");
     vehicleCreateRequest.setPlateVehicleNumber("1234");
     vehicleCreateRequest.setMake("toyota");
-    vehicleCreateRequest.setModel("NZE141-123456");
-    vehicleCreateRequest.setType("1AZ-FE");
-    vehicleCreateRequest.setYear("2020-12");
+    vehicleCreateRequest.setModel("DBA-NZE141");
+    vehicleCreateRequest.setType("1NZ");
+    vehicleCreateRequest.setYear("2010-12");
     vehicleCreateRequest.setInspectionDate("2027-12-31");
     return vehicleCreateRequest;
+  }
+
+  public Customer customerUpdateMock(Customer customer) {
+    Customer customer1 = new Customer(
+        customerUpdateRequestMock().getLastName(),
+        customerUpdateRequestMock().getFirstName(),
+        customerUpdateRequestMock().getLastNameKana(),
+        customerUpdateRequestMock().getFirstNameKana(),
+        customerUpdateRequestMock().getEmail(),
+        customerUpdateRequestMock().getPhoneNumber());
+    return customer1;
+  }
+
+  public CustomerUpdateRequest customerUpdateRequestMock() {
+    CustomerUpdateRequest customerUpdateRequestMock = new CustomerUpdateRequest();
+    customerUpdateRequestMock.setLastName("yamada");
+    customerUpdateRequestMock.setFirstName("hanako");
+    customerUpdateRequestMock.setLastNameKana("ヤマダ");
+    customerUpdateRequestMock.setFirstNameKana("ハナコ");
+    customerUpdateRequestMock.setEmail("hanako@example.com");
+    customerUpdateRequestMock.setPhoneNumber("090-1111-9999");
+    return customerUpdateRequestMock;
+
+
   }
 }

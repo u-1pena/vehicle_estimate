@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import yuichi.car.estimate.management.entity.Customer;
 import yuichi.car.estimate.management.entity.CustomerAddress;
 import yuichi.car.estimate.management.entity.Vehicle;
+import yuichi.car.estimate.management.entity.enums.Prefecture;
 import yuichi.car.estimate.management.helper.TestHelper;
 
 @MybatisTest
@@ -143,6 +144,88 @@ class CustomerRepositoryTest {
       //検証
       List<Vehicle> actual = customerRepository.findAllVehicles();
       assertThat(actual).hasSize(initialSize + 1);
+    }
+  }
+
+  @Nested
+  class DeleteClass {
+
+
+    @Test
+    void 顧客情報を削除できる() {
+      //準備
+      int initialSize = customerRepository.findAllCustomers().size();
+      //実行
+      customerRepository.deleteCustomer(1);
+      //検証
+      List<Customer> actual = customerRepository.findAllCustomers();
+      assertThat(actual).hasSize(initialSize - 1);
+    }
+
+    @Test
+    void 車両情報を削除できる() {
+      //準備
+      Vehicle vehicle = testHelper.vehicleMock().get(0);
+      //実行
+      customerRepository.deleteVehicle(1);
+      //検証
+      Optional<Vehicle> actual = customerRepository.findVehicleByVehicleId(1);
+      assertThat(actual.get().isActive()).isEqualTo(false);
+    }
+  }
+
+  @Nested
+  class UpdateClass {
+
+    @Test
+    void IDで指定した顧客情報が更新できること() {
+      //準備
+      Customer customer = testHelper.customerMock().get(0);
+      customer.setPhoneNumber("090-1111-1111");
+
+      Customer expected = testHelper.customerMock().get(0);
+      expected.setPhoneNumber("090-1111-1111");
+      //実行
+      customerRepository.updateCustomer(customer);
+      //検証
+      Optional<Customer> actual = customerRepository.findCustomerByCustomerId(1);
+      assertThat(actual).hasValue(expected);
+    }
+
+    @Test
+    void IDで指定した顧客住所が更新されること() {
+      CustomerAddress customerAddress = testHelper.customerAddressMock().get(0);
+      customerAddress.setPrefecture(Prefecture.神奈川県);
+      customerAddress.setCity("横浜市");
+      customerAddress.setTownAndNumber("みなとみらい1-1-1");
+      customerAddress.setBuildingNameAndRoomNumber("ランドマークタワー101");
+
+      CustomerAddress expected = testHelper.customerAddressMock().get(0);
+      expected.setPrefecture(Prefecture.神奈川県);
+      expected.setCity("横浜市");
+      expected.setTownAndNumber("みなとみらい1-1-1");
+      expected.setBuildingNameAndRoomNumber("ランドマークタワー101");
+      //実行
+      customerRepository.updateCustomerAddress(customerAddress);
+      //検証
+      Optional<CustomerAddress> actual = customerRepository.findCustomerAddressByCustomerId(1);
+      assertThat(actual).hasValue(expected);
+    }
+
+    @Test
+    void IDで更新した車両情報が更新されること() {
+      Vehicle vehicle = testHelper.vehicleMock().get(0);
+      vehicle.setPlateHiragana("か");
+      vehicle.setPlateVehicleNumber("1111");
+
+      Vehicle expected = testHelper.vehicleMock().get(0);
+      expected.setPlateHiragana("か");
+      expected.setPlateVehicleNumber("1111");
+      //実行
+      customerRepository.updateVehicle(vehicle);
+      //検証
+      Optional<Vehicle> actual = customerRepository.findVehicleByVehicleId(1);
+      assertThat(actual).hasValue(expected);
     }
   }
 }

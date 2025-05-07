@@ -3,7 +3,9 @@ package yuichi.car.estimate.management.controller;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -30,15 +32,20 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import yuichi.car.estimate.management.controller.exception.CustomerException;
 import yuichi.car.estimate.management.controller.exception.CustomerException.AlreadyExistsEmailException;
 import yuichi.car.estimate.management.controller.exception.CustomerException.AlreadyExistsPhoneNumberException;
 import yuichi.car.estimate.management.controller.exception.CustomerException.CustomerNotFoundException;
 import yuichi.car.estimate.management.controller.exception.CustomerException.InvalidSearchParameterException;
+import yuichi.car.estimate.management.controller.exception.VehicleException;
 import yuichi.car.estimate.management.controller.exception.VehicleException.AlreadyExistsVehicleException;
 import yuichi.car.estimate.management.dto.CustomerInformationDto;
 import yuichi.car.estimate.management.dto.request.CustomerAddressCreateRequest;
+import yuichi.car.estimate.management.dto.request.CustomerAddressUpdateRequest;
 import yuichi.car.estimate.management.dto.request.CustomerCreateRequest;
+import yuichi.car.estimate.management.dto.request.CustomerUpdateRequest;
 import yuichi.car.estimate.management.dto.request.VehicleCreateRequest;
+import yuichi.car.estimate.management.dto.request.VehicleUpdateRequest;
 import yuichi.car.estimate.management.entity.Customer;
 import yuichi.car.estimate.management.entity.CustomerAddress;
 import yuichi.car.estimate.management.entity.Vehicle;
@@ -118,9 +125,9 @@ class CustomerControllerTest {
                                   "plateHiragana": "あ",
                                   "plateVehicleNumber": "1234",
                                   "make": "toyota",
-                                  "model": "NZE141-123456",
-                                  "type": "1AZ-FE",
-                                  "year": "2020-12",
+                                  "model": "DBA-NZE141",
+                                  "type": "1NZ",
+                                  "year": "2010-12",
                                   "inspectionDate": "2027-12-31",
                                   "active": true
                               }
@@ -188,11 +195,11 @@ class CustomerControllerTest {
                                   "plateHiragana": "あ",
                                   "plateVehicleNumber": "1234",
                                   "make": "toyota",
-                                  "model": "NZE141-123456",
-                                  "type": "1AZ-FE",
-                                  "year": "2020-12",
+                                  "model": "DBA-NZE141",
+                                  "type": "1NZ",
+                                  "year": "2010-12",
                                   "inspectionDate": "2027-12-31",
-                                  "active": true
+                                  "active": true                                  
                               }
                           ]
                       }
@@ -257,9 +264,9 @@ class CustomerControllerTest {
                                   "plateHiragana": "あ",
                                   "plateVehicleNumber": "1234",
                                   "make": "toyota",
-                                  "model": "NZE141-123456",
-                                  "type": "1AZ-FE",
-                                  "year": "2020-12",
+                                  "model": "DBA-NZE141",
+                                  "type": "1NZ",
+                                  "year": "2010-12",
                                   "inspectionDate": "2027-12-31",
                                   "active": true
                               }
@@ -326,9 +333,9 @@ class CustomerControllerTest {
                                   "plateHiragana": "あ",
                                   "plateVehicleNumber": "1234",
                                   "make": "toyota",
-                                  "model": "NZE141-123456",
-                                  "type": "1AZ-FE",
-                                  "year": "2020-12",
+                                  "model": "DBA-NZE141",
+                                  "type": "1NZ",
+                                  "year": "2010-12",
                                   "inspectionDate": "2027-12-31",
                                   "active": true
                               }
@@ -1162,6 +1169,401 @@ class CustomerControllerTest {
                     }
                   """, true
           ));
+    }
+  }
+
+  @Nested
+  class DeleteClass {
+
+    @Test
+    void 指定したIDの顧客情報を削除できること() throws Exception {
+      doNothing().when(customerService).deleteCustomerByCustomerId(1);
+      mockMvc.perform(MockMvcRequestBuilders.delete("/customers/{customerId}", 1))
+          .andExpect(status().isOk())
+          .andExpect(MockMvcResultMatchers.content().json(
+              """
+                  {
+                      "message": "Customer deleted"
+                  }
+                  """, true
+          ));
+      verify(customerService).deleteCustomerByCustomerId(1);
+    }
+
+    @Test
+    void 存在しないIDで顧客情報を削除しようとした場合エラーになること() throws Exception {
+      doThrow(
+          new CustomerException.CustomerNotFoundException("Not registered for customer ID:999"))
+          .when(customerService).deleteCustomerByCustomerId(999);
+      mockMvc.perform(MockMvcRequestBuilders.delete("/customers/{customerId}", 999))
+          .andExpect(status().isNotFound())
+          .andExpect(MockMvcResultMatchers.content().json(
+              """
+                  {
+                      "message": "Not registered for customer ID:999",
+                      "error": "Not Found",
+                      "status": "404",
+                      "path": "/customers/999"
+                  }
+                  """, true
+          ));
+    }
+
+    @Test
+    void 指定したIDの車両情報を非アクティブにする() throws Exception {
+      doNothing().when(customerService).deleteVehicleByVehicleId(1);
+      mockMvc.perform(MockMvcRequestBuilders.delete("/vehicles/{vehicleId}", 1))
+          .andExpect(status().isOk())
+          .andExpect(MockMvcResultMatchers.content().json(
+              """
+                  {
+                      "message": "Vehicle deleted"
+                  }
+                  """, true
+          ));
+    }
+
+    @Test
+    void 指定したIDの車両情報がすでに非アクティブの場合はエラーとなる() throws Exception {
+      doThrow(new VehicleException.VehicleInactiveException("Vehicle is already inactive."))
+          .when(customerService).deleteVehicleByVehicleId(1);
+      mockMvc.perform(MockMvcRequestBuilders.delete("/vehicles/{vehicleId}", 1))
+          .andExpect(status().isBadRequest())
+          .andExpect(MockMvcResultMatchers.content().json(
+              """
+                  {
+                      "message": "Vehicle is already inactive.",
+                      "error": "Bad Request",
+                      "status": "400",
+                      "path": "/vehicles/1"
+                  }
+                  """, true
+          ));
+    }
+  }
+
+  @Nested
+  class UpdateClass {
+
+    @Test
+    void 顧客情報を更新できること() throws Exception {
+      String requestBody = """
+          {
+                      "lastName": "test",
+                      "firstName": "example",
+                      "lastNameKana": "テスト",
+                      "firstNameKana": "エグザンプル",
+                      "email": "test@example.ne.jp",
+                      "phoneNumber": "080-1111-5678"
+          }
+          """;
+      mockMvc.perform(MockMvcRequestBuilders.put("/customers/{customerId}", 1)
+              .contentType(MediaType.APPLICATION_JSON)
+              .content(requestBody))
+          .andExpect(status().isOk())
+          .andExpect(MockMvcResultMatchers.content().json(
+              """
+                  {
+                      "message": "Customer updated"
+                  }
+                  """, true
+          ));
+      verify(customerService).updateCustomerByCustomerId(eq(1),
+          any(CustomerUpdateRequest.class));
+    }
+
+    @Test
+    void 顧客住所が更新できること() throws Exception {
+      String requestBody = """
+          {
+              "postalCode": "123-4567",
+              "prefecture": "東京都",
+              "city": "港区",
+              "townAndNumber": "六本木1-1-1",
+              "buildingNameAndRoomNumber": "都心ビル101"
+          }
+          """;
+      mockMvc.perform(MockMvcRequestBuilders.put("/addresses/{addressId}", 1)
+              .contentType(MediaType.APPLICATION_JSON)
+              .content(requestBody))
+          .andExpect(status().isOk())
+          .andExpect(MockMvcResultMatchers.content().json(
+              """
+                  {
+                      "message": "CustomerAddress updated"
+                  }
+                  """, true
+          ));
+      verify(customerService).updateCustomerAddressByCustomerId(eq(1),
+          any(CustomerAddressUpdateRequest.class));
+    }
+
+    @Test
+    void 車両情報を更新すること() throws Exception {
+      String requestBody = """
+          {
+            "plateRegion": "品川",
+            "plateCategoryNumber":"300",
+            "plateHiragana":"あ",
+            "plateVehicleNumber": "1234",
+            "make": "toyota",
+            "model": "NZE-141",
+            "type": "1AZ-FE",
+            "year": "2021-12",
+            "inspectionDate": "2027-01-01"
+          }
+          """;
+      mockMvc.perform(MockMvcRequestBuilders.put("/vehicles/{vehicleId}", 1)
+              .contentType(MediaType.APPLICATION_JSON)
+              .content(requestBody))
+          .andExpect(status().isOk())
+          .andExpect(MockMvcResultMatchers.content().json(
+              """
+                  {
+                      "message": "Vehicle updated"
+                  }
+                  """, true
+          ));
+      verify(customerService).updateVehicleByVehicleId(eq(1),
+          any(VehicleUpdateRequest.class));
+    }
+
+    @Test
+    void 存在しない顧客IDで更新するとエラーとなること() throws Exception {
+      doThrow(new CustomerException.CustomerNotFoundException("Not registered for customer ID:0"))
+          .when(customerService)
+          .updateCustomerByCustomerId(eq(0), any(CustomerUpdateRequest.class));
+      String requestBody = """
+          {
+              "lastName": "test",
+              "firstName": "example",
+              "lastNameKana": "テスト",
+              "firstNameKana": "エグザンプル",
+              "email": "test@example.ne.jp",
+              "phoneNumber": "080-1111-5678"
+          }
+          """;
+      mockMvc.perform(MockMvcRequestBuilders.put("/customers/{customerId}", 0)
+              .contentType(MediaType.APPLICATION_JSON)
+              .content(requestBody))
+          .andExpect(status().isNotFound())
+          .andExpect(MockMvcResultMatchers.content().json(
+              """
+                  {
+                      "message": "Not registered for customer ID:0",
+                      "error": "Not Found",
+                      "status": "404",
+                      "path": "/customers/0"
+                  }
+                  """, true
+          ));
+      verify(customerService).updateCustomerByCustomerId(eq(0), any(CustomerUpdateRequest.class));
+    }
+
+    @Test
+    void 顧客住所を更新する際IDが存在しない場合エラーとなること() throws Exception {
+      doThrow(new CustomerException.CustomerNotFoundException("Not registered for customer ID:0"))
+          .when(customerService)
+          .updateCustomerAddressByCustomerId(eq(0), any(CustomerAddressUpdateRequest.class));
+      String requestBody = """
+          {
+              "postalCode": "123-4567",
+              "prefecture": "東京都",
+              "city": "港区",
+              "townAndNumber": "六本木1-1-1",
+              "buildingNameAndRoomNumber": "都心ビル101"
+          }
+          """;
+      mockMvc.perform(MockMvcRequestBuilders.put("/addresses/{addressId}", 0)
+              .contentType(MediaType.APPLICATION_JSON)
+              .content(requestBody))
+          .andExpect(status().isNotFound())
+          .andExpect(MockMvcResultMatchers.content().json(
+              """
+                  {
+                      "message": "Not registered for customer ID:0",
+                      "error": "Not Found",
+                      "status": "404",
+                      "path": "/addresses/0"
+                  }
+                  """, true
+          ));
+      verify(customerService).updateCustomerAddressByCustomerId(eq(0),
+          any(CustomerAddressUpdateRequest.class));
+    }
+
+    @Test
+    void 車両情報更新の際車両IDが存在しない場合エラーとなること() throws Exception {
+      doThrow(new VehicleException.VehicleNotFoundException("Not registered for vehicle ID:0"))
+          .when(customerService)
+          .updateVehicleByVehicleId(eq(0), any(VehicleUpdateRequest.class));
+      String requestBody = """
+          {
+            "plateRegion": "品川",
+            "plateCategoryNumber":"300",
+            "plateHiragana":"あ",
+            "plateVehicleNumber": "1234",
+            "make": "toyota",
+            "model": "NZE-141",
+            "type": "1AZ-FE",
+            "year": "2021-12",
+            "inspectionDate": "2027-01-01"
+          }
+          """;
+      mockMvc.perform(MockMvcRequestBuilders.put("/vehicles/{vehicleId}", 0)
+              .contentType(MediaType.APPLICATION_JSON)
+              .content(requestBody))
+          .andExpect(status().isNotFound())
+          .andExpect(MockMvcResultMatchers.content().json(
+              """
+                  {
+                      "message": "Not registered for vehicle ID:0",
+                      "error": "Not Found",
+                      "status": "404",
+                      "path": "/vehicles/0"
+                  }
+                  """, true
+          ));
+      verify(customerService).updateVehicleByVehicleId(eq(0), any(VehicleUpdateRequest.class));
+    }
+
+    @Test
+    void 顧客情報を更新する際電話番号がすでに登録されていた場合エラーとなること() throws Exception {
+      doThrow(
+          new AlreadyExistsPhoneNumberException("Phone number already exists"))
+          .when(customerService)
+          .updateCustomerByCustomerId(eq(1), any(CustomerUpdateRequest.class));
+      String requestBody = """
+          {
+                      "lastName": "test",
+                      "firstName": "example",
+                      "lastNameKana": "テスト",
+                      "firstNameKana": "エグザンプル",
+                      "email": "test@example.ne.jp",
+                      "phoneNumber": "080-1111-5678"
+          }
+          """;
+      mockMvc.perform(MockMvcRequestBuilders.put("/customers/{customerId}", 1)
+              .contentType(MediaType.APPLICATION_JSON)
+              .content(requestBody))
+          .andExpect(status().isUnprocessableEntity())
+          .andExpect(MockMvcResultMatchers.content().json(
+              """
+                  {
+                      "message": "Phone number already exists",
+                      "error": "Unprocessable Entity",
+                      "status": "422",
+                      "path": "/customers/1"
+                  }
+                  """, true
+          ));
+      verify(customerService).updateCustomerByCustomerId(eq(1),
+          any(CustomerUpdateRequest.class));
+    }
+
+    @Test
+    void 顧客情報を更新する際Emailがすでに登録済みの場合エラーをかえすこと() throws Exception {
+      doThrow(
+          new AlreadyExistsEmailException("Email already exists"))
+          .when(customerService)
+          .updateCustomerByCustomerId(eq(1), any(CustomerUpdateRequest.class));
+      String requestBody = """
+          {
+                      "lastName": "test",
+                      "firstName": "example",
+                      "lastNameKana": "テスト",
+                      "firstNameKana": "エグザンプル",
+                      "email": "test@example.ne.jp",
+                      "phoneNumber": "080-1111-5678"
+          }
+          """;
+      mockMvc.perform(MockMvcRequestBuilders.put("/customers/{customerId}", 1)
+              .contentType(MediaType.APPLICATION_JSON)
+              .content(requestBody))
+          .andExpect(status().isUnprocessableEntity())
+          .andExpect(MockMvcResultMatchers.content().json(
+              """
+                  {
+                      "message": "Email already exists",
+                      "error": "Unprocessable Entity",
+                      "status": "422",
+                      "path": "/customers/1"
+                  }
+                  """, true
+          ));
+      verify(customerService).updateCustomerByCustomerId(eq(1), any(CustomerUpdateRequest.class));
+    }
+
+    @Test
+    void 車両情報を更新する際車両番号がすでに登録されていた場合エラーとなること() throws Exception {
+      doThrow(
+          new AlreadyExistsVehicleException("Vehicle already exists"))
+          .when(customerService)
+          .updateVehicleByVehicleId(eq(1), any(VehicleUpdateRequest.class));
+      String requestBody = """
+          {
+            "plateRegion": "品川",
+            "plateCategoryNumber":"300",
+            "plateHiragana":"あ",
+            "plateVehicleNumber": "1234",
+            "make": "toyota",
+            "model": "NZE-141",
+            "type": "1AZ-FE",
+            "year": "2021-12",
+            "inspectionDate": "2027-01-01"
+          }
+          """;
+      mockMvc.perform(MockMvcRequestBuilders.put("/vehicles/{vehicleId}", 1)
+              .contentType(MediaType.APPLICATION_JSON)
+              .content(requestBody))
+          .andExpect(status().isUnprocessableEntity())
+          .andExpect(MockMvcResultMatchers.content().json(
+              """
+                  {
+                      "message": "Vehicle already exists",
+                      "error": "Unprocessable Entity",
+                      "status": "422",
+                      "path": "/vehicles/1"
+                  }
+                  """, true
+          ));
+      verify(customerService).updateVehicleByVehicleId(eq(1), any(VehicleUpdateRequest.class));
+    }
+
+    @Test
+    void 車両情報を更新する初年度が未来の場合エラーをかえすこと() throws Exception {
+      doThrow(
+          new VehicleException.VehicleYearInvalidException())
+          .when(customerService)
+          .updateVehicleByVehicleId(eq(1), any(VehicleUpdateRequest.class));
+      String requestBody = """
+          {
+            "plateRegion": "品川",
+            "plateCategoryNumber":"300",
+            "plateHiragana":"あ",
+            "plateVehicleNumber": "1234",
+            "make": "toyota",
+            "model": "NZE-141",
+            "type": "1AZ-FE",
+            "year": "2028-12",
+            "inspectionDate": "2026-01-01"
+          }
+          """;
+      mockMvc.perform(MockMvcRequestBuilders.put("/vehicles/{vehicleId}", 1)
+              .contentType(MediaType.APPLICATION_JSON)
+              .content(requestBody))
+          .andExpect(status().isBadRequest())
+          .andExpect(MockMvcResultMatchers.content().json(
+              """
+                  {
+                      "message": "Vehicle year is invalid.",
+                      "error": "Bad Request",
+                      "status": "400",
+                      "path": "/vehicles/1"
+                  }
+                  """, true
+          ));
+      verify(customerService).updateVehicleByVehicleId(eq(1), any(VehicleUpdateRequest.class));
     }
   }
 }

@@ -9,6 +9,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -25,14 +27,19 @@ import yuichi.car.estimate.management.controller.exception.CustomerException.Alr
 import yuichi.car.estimate.management.controller.exception.CustomerException.AlreadyExistsPhoneNumberException;
 import yuichi.car.estimate.management.controller.exception.CustomerException.CustomerNotFoundException;
 import yuichi.car.estimate.management.controller.exception.CustomerException.InvalidSearchParameterException;
+import yuichi.car.estimate.management.controller.exception.VehicleException;
 import yuichi.car.estimate.management.controller.exception.VehicleException.VehicleYearInvalidException;
 import yuichi.car.estimate.management.dto.CustomerInformationDto;
 import yuichi.car.estimate.management.dto.request.CustomerAddressCreateRequest;
+import yuichi.car.estimate.management.dto.request.CustomerAddressUpdateRequest;
 import yuichi.car.estimate.management.dto.request.CustomerCreateRequest;
+import yuichi.car.estimate.management.dto.request.CustomerUpdateRequest;
 import yuichi.car.estimate.management.dto.request.VehicleCreateRequest;
+import yuichi.car.estimate.management.dto.request.VehicleUpdateRequest;
 import yuichi.car.estimate.management.entity.Customer;
 import yuichi.car.estimate.management.entity.CustomerAddress;
 import yuichi.car.estimate.management.entity.Vehicle;
+import yuichi.car.estimate.management.entity.enums.PlateRegion;
 import yuichi.car.estimate.management.helper.TestHelper;
 import yuichi.car.estimate.management.mapper.CustomerRepository;
 
@@ -516,6 +523,204 @@ class CustomerServiceTest {
       assertThat(actual.getType()).isEqualTo(expectedVehicle.getType());
       assertThat(actual.getYear()).isEqualTo(expectedVehicle.getYear());
       assertThat(actual.getInspectionDate()).isEqualTo(expectedVehicle.getInspectionDate());
+    }
+  }
+
+  @Nested
+  class DeleteClass {
+
+    @Test
+    void 顧客情報を削除できること() {
+      //準備
+      Customer expectedCustomer = testHelper.customerMock().get(0);
+      doReturn(Optional.of(expectedCustomer)).when(customerRepository)
+          .findCustomerByCustomerId(expectedCustomer.getCustomerId());
+      doNothing().when(customerRepository).deleteCustomer(expectedCustomer.getCustomerId());
+
+      //実行
+      customerService.deleteCustomerByCustomerId(expectedCustomer.getCustomerId());
+
+      //検証
+      verify(customerRepository, times(1)).deleteCustomer(expectedCustomer.getCustomerId());
+      verify(customerRepository, times(1)).findCustomerByCustomerId(
+          expectedCustomer.getCustomerId());
+    }
+
+    @Test
+    void 車両情報を非アクティブにして削除できること() {
+      //準備
+      Vehicle expectedVehicle = testHelper.vehicleMock().get(0);
+      doReturn(Optional.of(expectedVehicle)).when(customerRepository)
+          .findVehicleByVehicleId(expectedVehicle.getVehicleId());
+      doNothing().when(customerRepository).deleteVehicle(expectedVehicle.getVehicleId());
+
+      //実行
+      customerService.deleteVehicleByVehicleId(expectedVehicle.getVehicleId());
+
+      //検証
+      verify(customerRepository, times(1)).deleteVehicle(expectedVehicle.getVehicleId());
+      verify(customerRepository, times(1)).findVehicleByVehicleId(
+          expectedVehicle.getVehicleId());
+    }
+
+    @Test
+    void 車両情報がすでに非アクティブの場合エラーが発生すること() {
+      //準備
+      Vehicle expectedVehicle = new Vehicle();
+      expectedVehicle.setVehicleId(1);
+      expectedVehicle.setActive(false);
+      doReturn(Optional.of(expectedVehicle)).when(customerRepository)
+          .findVehicleByVehicleId(expectedVehicle.getVehicleId());
+
+      //実行
+      VehicleException.VehicleInactiveException exception = assertThrows(
+          VehicleException.VehicleInactiveException.class, () -> {
+            customerService.deleteVehicleByVehicleId(expectedVehicle.getVehicleId());
+          });
+
+      //検証
+      assertEquals("Vehicle is already inactive.", exception.getMessage());
+    }
+  }
+
+  @Nested
+  class UpdateClass {
+
+
+    @Test
+    void 指定したIDで顧客情報を更新できること() {
+      //準備
+      Customer customer = new Customer();
+      customer.setCustomerId(1);
+      customer.setPhoneNumber("090-1234-5678");
+      customer.setEmail("test@example.com");
+
+      CustomerUpdateRequest customerUpdateRequest = new CustomerUpdateRequest();
+      customerUpdateRequest.setPhoneNumber("090-9876-5432");
+      customerUpdateRequest.setEmail("new@example.com");
+
+      //モックの振る舞いを設定
+      doReturn(Optional.of(customer)).when(customerRepository).findCustomerByCustomerId(1);
+      // 重複なし
+      doReturn(Optional.empty()).when(
+          customerRepository).findCustomerByPhoneNumber("090-9876-5432");
+      doReturn(Optional.empty()).when(customerRepository).findCustomerByEmail("new@example.com");
+
+      // 実行
+      customerService.updateCustomerByCustomerId(1, customerUpdateRequest);
+
+      // 検証
+      verify(customerRepository).updateCustomer(customer);
+    }
+
+    @Test
+    void 顧客住所を更新できること() {
+      //準備
+      Customer customer = new Customer();
+      customer.setCustomerId(1);
+
+      CustomerAddress customerAddress = new CustomerAddress();
+
+      CustomerAddressUpdateRequest customerAddressUpdateRequest = new CustomerAddressUpdateRequest();
+      customerAddressUpdateRequest.setPostalCode("987-6543");
+      customerAddressUpdateRequest.setPrefecture("大阪府");
+      customerAddressUpdateRequest.setCity("大阪市");
+      customerAddressUpdateRequest.setTownAndNumber("梅田1-1-1");
+      customerAddressUpdateRequest.setBuildingNameAndRoomNumber("梅田ビル202");
+
+      doReturn(Optional.of(customer)).when(customerRepository)
+          .findCustomerByCustomerId(customer.getCustomerId());
+      doReturn(Optional.of(customerAddress)).when(customerRepository)
+          .findCustomerAddressByCustomerId(customer.getCustomerId());
+
+      customerService.updateCustomerAddressByCustomerId(1, customerAddressUpdateRequest);
+      //検証
+      verify(customerRepository, times(1)).updateCustomerAddress(customerAddress);
+    }
+
+    @Test
+    void 車両情報を更新できること() {
+      //準備
+      Vehicle vehicle = new Vehicle();
+      vehicle.setVehicleId(1);
+      vehicle.setPlateRegion(PlateRegion.相模);
+      vehicle.setPlateCategoryNumber("500");
+      vehicle.setPlateHiragana("あ");
+      vehicle.setPlateVehicleNumber("1234");
+      vehicle.setMake("toyota");
+      vehicle.setModel("NZE141");
+      vehicle.setType("EF-NZE141");
+      vehicle.setYear(YearMonth.of(2020, 10));
+      vehicle.setInspectionDate(LocalDate.parse("2023-10-01"));
+
+      VehicleUpdateRequest vehicleUpdateRequest = new VehicleUpdateRequest();
+      vehicleUpdateRequest.setPlateRegion("湘南");
+      vehicleUpdateRequest.setPlateCategoryNumber("500");
+      vehicleUpdateRequest.setPlateHiragana("あ");
+      vehicleUpdateRequest.setPlateVehicleNumber("1234");
+      vehicleUpdateRequest.setYear("2020-10");
+      vehicleUpdateRequest.setMake("toyota");
+      vehicleUpdateRequest.setModel("NZE141");
+      vehicleUpdateRequest.setType("EF-NZE141");
+      vehicleUpdateRequest.setInspectionDate("2025-10-01");
+
+      //モックの振る舞いを設定
+      doReturn(Optional.of(vehicle)).when(customerRepository)
+          .findVehicleByVehicleId(1);
+      doReturn(Optional.of(vehicle)).when(customerRepository)
+          .findCustomerByLicensePlateExactMatch(
+              PlateRegion.valueOf(vehicleUpdateRequest.getPlateRegion()),
+              vehicleUpdateRequest.getPlateCategoryNumber(),
+              vehicleUpdateRequest.getPlateHiragana(),
+              vehicleUpdateRequest.getPlateVehicleNumber());
+      //実行
+      customerService.updateVehicleByVehicleId(1, vehicleUpdateRequest);
+      //検証
+      verify(customerRepository, times(1)).updateVehicle(vehicle);
+    }
+
+    @Test
+    void 更新時に車両番号が重複している場合エラーが発生すること() {
+      //準備
+      Vehicle vehicle = new Vehicle();
+      vehicle.setVehicleId(99);
+      vehicle.setPlateRegion(PlateRegion.湘南);
+      vehicle.setPlateCategoryNumber("500");
+      vehicle.setPlateHiragana("あ");
+      vehicle.setPlateVehicleNumber("1234");
+
+      Vehicle selfVehicle = new Vehicle();
+      selfVehicle.setVehicleId(1);
+
+      VehicleUpdateRequest vehicleUpdateRequest = new VehicleUpdateRequest();
+      vehicleUpdateRequest.setPlateRegion("湘南");
+      vehicleUpdateRequest.setPlateCategoryNumber("500");
+      vehicleUpdateRequest.setPlateHiragana("あ");
+      vehicleUpdateRequest.setPlateVehicleNumber("1234");
+      vehicleUpdateRequest.setYear("2020-10");
+      vehicleUpdateRequest.setMake("toyota");
+      vehicleUpdateRequest.setModel("NZE141");
+      vehicleUpdateRequest.setType("EF-NZE141");
+      vehicleUpdateRequest.setInspectionDate("2025-10-01");
+
+      //モックの振る舞い
+      doReturn(Optional.of(selfVehicle)).when(customerRepository)
+          .findVehicleByVehicleId(1);
+      doReturn(Optional.of(vehicle)).when(customerRepository)
+          .findCustomerByLicensePlateExactMatch(
+              PlateRegion.valueOf(vehicleUpdateRequest.getPlateRegion()),
+              vehicleUpdateRequest.getPlateCategoryNumber(),
+              vehicleUpdateRequest.getPlateHiragana(),
+              vehicleUpdateRequest.getPlateVehicleNumber());
+
+      //実行
+      VehicleException.AlreadyExistsVehicleException exception = assertThrows(
+          VehicleException.AlreadyExistsVehicleException.class, () -> {
+            customerService.updateVehicleByVehicleId(1, vehicleUpdateRequest);
+          });
+
+      //検証
+      assertEquals("Vehicle already exists", exception.getMessage());
     }
   }
 }

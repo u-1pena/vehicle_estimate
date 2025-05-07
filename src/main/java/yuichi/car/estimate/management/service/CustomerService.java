@@ -11,11 +11,12 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import yuichi.car.estimate.management.controller.exception.CustomerAddressException.CustomerAddressAlreadyException;
 import yuichi.car.estimate.management.controller.exception.CustomerAddressException.CustomerAddressNotFoundException;
+import yuichi.car.estimate.management.controller.exception.CustomerException;
 import yuichi.car.estimate.management.controller.exception.CustomerException.AlreadyExistsEmailException;
 import yuichi.car.estimate.management.controller.exception.CustomerException.AlreadyExistsPhoneNumberException;
-import yuichi.car.estimate.management.controller.exception.CustomerException.CustomerNotFoundException;
 import yuichi.car.estimate.management.controller.exception.CustomerException.InvalidSearchParameterException;
 import yuichi.car.estimate.management.controller.exception.VehicleException.AlreadyExistsVehicleException;
+import yuichi.car.estimate.management.controller.exception.VehicleException.VehicleInactiveException;
 import yuichi.car.estimate.management.controller.exception.VehicleException.VehicleNotFoundException;
 import yuichi.car.estimate.management.controller.exception.VehicleException.VehicleYearInvalidException;
 import yuichi.car.estimate.management.converter.CustomerAddressCreateConverter;
@@ -58,6 +59,7 @@ public class CustomerService {
       case "name" -> findCustomerInformationByName(name);
       case "kana" -> findCustomerInformationByNameKana(kana);
       case "email" -> findCustomerInformationByEmail(email);
+      //例外をスローする
       default -> throw new InvalidSearchParameterException();
     };
   }
@@ -291,6 +293,9 @@ public class CustomerService {
 
   public void deleteVehicleByVehicleId(int vehicleId) {
     Vehicle vehicle = findVehicleByVehicleId(vehicleId);
+    if (!vehicle.isActive()) {
+      throw new VehicleInactiveException("Vehicle is already inactive.");
+    }
     customerRepository.deleteVehicle(vehicle.getVehicleId());
   }
 
@@ -379,7 +384,8 @@ public class CustomerService {
   private Customer findCustomerByCustomerId(int customerId) {
     return customerRepository.findCustomerByCustomerId(customerId)
         .orElseThrow(
-            () -> new CustomerNotFoundException("Not registered for customer ID:" + customerId));
+            () -> new CustomerException.CustomerNotFoundException(
+                "Not registered for customer ID:" + customerId));
   }
 
   private void deleteCustomer(int customerId) {

@@ -84,7 +84,6 @@
 
 | method |     end_point     |     description      |
 |:------:|:-----------------:|:--------------------:|
-|  POST  |   /admin/login    |    Adminユーザーのログイン    |
 |  POST  |   /maintenance    |   車両メンテナンス情報を登録する    |
 |  PUT   |   /maintenance    |   車両メンテナンス情報を更新する    |
 | DELETE |   /maintenance    |   車両メンテナンス情報を削除する    |
@@ -136,11 +135,13 @@ config:
 erDiagram
     Customer ||--o{ Vehicle: ""
     Customer ||--|| CustomerAddress: ""
-    Vehicle ||--|| MaintenanceInfo: ""
-    EstimateBase ||--o{ EstimateProduct: ""
-    MaintenanceInfo ||--o{ EstimateBase: ""
-    EstimateProduct }o--o{ Product: ""
+    Vehicle }o--|| MaintenanceGuide: ""
+    MaintenanceGuide ||--o{ GuideProductPermission: ""
+    GuideProductPermission }o--|| Product: ""
+    Vehicle ||--o{ EstimateBase: ""
+    MaintenanceGuide ||--o{ EstimateBase: ""
     Product }o--|| ProductCategory: ""
+    EstimateBase ||--o{ EstimateProduct: ""
     login {
         int loginId PK
         String Password
@@ -164,35 +165,55 @@ erDiagram
     }
 
     Vehicle {
-        int VehicleId PK
+        int vehicleId PK
         int customerId FK
+        String make
+        String model
+        String startYear
+        String endYear
+        String type
+        LocalDateTime inspectionDueDate
+    }
+    MaintenanceGuide {
+        int maintenanceGuideId PK
         String make
         String model
         String year
         String type
-        LocalDateTime inspectionDueDate
-    }
-    MaintenanceInfo {
-        int maintenanceId PK
-        int vehicleId FK
         String oilViscosity
         double OilQuantityWithFilter
         double OilQuantityWithoutFilter
         String oilFilterPartNumber
         String carWashSize
     }
+    GuideProductPermission {
+        int maintenanceGuideId FK
+        int productId FK
+        String categoryCode
+    }
     EstimateBase {
-        int estimateId PK
-        int maintenanceId FK
+        int estimateBaseId PK
+        int customerId FK
+        int customerAddressId FK
+        int vehicleId FK
+        LocalDateTime estimateDate
+        String oilViscosity
+        double oilQuantityWithFilter
+        double oilQuantityWithoutFilter
+        String oilFilterPartNumber
+        String carWashSize
     }
     EstimateProduct {
-        int estimateId PK
+        int estimateProductId PK
+        int estimateBaseId FK
         int productId FK
         double quantity
+        decimal unitPrice
+        decimal totalPrice
     }
     Product {
         int productId PK
-        String categoryId FK
+        int categoryId FK
         String name
         String description
         decimal price
@@ -218,7 +239,7 @@ gantt
     dateFormat YYYY-MM-DD
     excludes 02-18,02-20
 
-    section 改修
+    section 顧客情報
         projectの修正: a2, 02-16, 24h
         customers: after a2, 1d
     section vehicle

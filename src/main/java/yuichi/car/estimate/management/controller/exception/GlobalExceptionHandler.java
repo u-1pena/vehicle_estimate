@@ -22,7 +22,7 @@ import yuichi.car.estimate.management.controller.exception.VehicleException.Vehi
 public class GlobalExceptionHandler extends RuntimeException {
 
   @ExceptionHandler(CustomerNotFoundException.class)
-  public ResponseEntity<Map<String, String>> handleUserNotFoundException(
+  public ResponseEntity<Map<String, String>> handleCustomerNotFoundException(
       CustomerNotFoundException e, HttpServletRequest request) {
     Map<String, String> body = Map.of(
         "status", "404",
@@ -135,6 +135,18 @@ public class GlobalExceptionHandler extends RuntimeException {
   @ExceptionHandler(InvalidSearchParameterException.class)
   public ResponseEntity<Map<String, String>> handleInvalidSearchParameterException(
       InvalidSearchParameterException e, HttpServletRequest request) {
+    Map<String, String> body = Map.of(
+        "status", "400",
+        "error", "Bad Request",
+        "message", e.getMessage(),
+        "path", request.getRequestURI());
+
+    return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler(Exception.class)
+  public ResponseEntity<Map<String, String>> VehicleInactiveException(
+      Exception e, HttpServletRequest request) {
     Map<String, String> body = Map.of(
         "status", "400",
         "error", "Bad Request",
