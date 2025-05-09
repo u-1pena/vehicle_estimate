@@ -1,78 +1,78 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="yuichi.car.estimate.management.mapper.CustomerRepository">
+<mapper namespace="example.maintenance.estimate.customer.mapper.CustomerRepository">
 
   <select id="findCustomerByCustomerId" parameterType="int"
-    resultType="yuichi.car.estimate.management.entity.Customer">
+    resultType="example.maintenance.estimate.customer.entity.Customer">
     SELECT * FROM customers WHERE customer_id = #{customerId}
   </select>
 
   <select id="findCustomerAddressByCustomerId" parameterType="int"
-    resultType="yuichi.car.estimate.management.entity.CustomerAddress">
+    resultType="example.maintenance.estimate.customer.entity.CustomerAddress">
     SELECT * FROM customer_addresses WHERE address_id = #{addressId}
   </select>
 
   <select id="findVehicleByCustomerId" parameterType="int"
-    resultType="yuichi.car.estimate.management.entity.Vehicle">
+    resultType="example.maintenance.estimate.customer.entity.Vehicle">
     SELECT * FROM vehicles WHERE customer_id = #{customerId}
   </select>
 
   <select id="findCustomerByName" parameterType="String"
-    resultType="yuichi.car.estimate.management.entity.Customer">
+    resultType="example.maintenance.estimate.customer.entity.Customer">
     SELECT * FROM customers WHERE CONCAT(last_name, first_name) LIKE CONCAT('%', #{customerName},
     '%')
   </select>
 
   <select id="findCustomerByNameKana" parameterType="String"
-    resultType="yuichi.car.estimate.management.entity.Customer">
+    resultType="example.maintenance.estimate.customer.entity.Customer">
     SELECT * FROM customers WHERE CONCAT(last_name_kana, first_name_kana) LIKE CONCAT('%',
     #{kana}, '%')
   </select>
 
   <select id="findCustomerByEmail" parameterType="String"
-    resultType="yuichi.car.estimate.management.entity.Customer">
+    resultType="example.maintenance.estimate.customer.entity.Customer">
     SELECT * FROM customers WHERE email = #{email}
   </select>
 
   <select id="findCustomerByPlateVehicleNumber" parameterType="String"
-    resultType="yuichi.car.estimate.management.entity.Vehicle">
+    resultType="example.maintenance.estimate.customer.entity.Vehicle">
     SELECT * FROM vehicles WHERE plate_vehicle_number = #{plateVehicleNumber}
   </select>
 
   <select id="findCustomerByPhoneNumber" parameterType="String"
-    resultType="yuichi.car.estimate.management.entity.Customer">
+    resultType="example.maintenance.estimate.customer.entity.Customer">
     SELECT * FROM customers WHERE phone_number = #{phoneNumber}
   </select>
 
   <select id="findCustomerByLicensePlateExactMatch"
-    parameterType="yuichi.car.estimate.management.entity.Vehicle"
-    resultType="yuichi.car.estimate.management.entity.Vehicle">
+    parameterType="example.maintenance.estimate.customer.entity.Vehicle"
+    resultType="example.maintenance.estimate.customer.entity.Vehicle">
     SELECT * FROM vehicles WHERE plate_region = #{plateRegion} AND plate_category_number =
     #{plateCategoryNumber} AND plate_hiragana = #{plateHiragana} AND plate_vehicle_number =
     #{plateVehicleNumber}
   </select>
 
   <select id="findVehiclesByCustomerId" parameterType="int"
-    resultType="yuichi.car.estimate.management.entity.Vehicle">
+    resultType="example.maintenance.estimate.customer.entity.Vehicle">
     SELECT * FROM vehicles WHERE customer_id = #{customerId}
   </select>
 
   <select id="findVehicleByVehicleId" parameterType="int"
-    resultType="yuichi.car.estimate.management.entity.Vehicle">
+    resultType="example.maintenance.estimate.customer.entity.Vehicle">
     SELECT * FROM vehicles WHERE vehicle_id = #{vehicleId}
   </select>
 
 
   <insert id="createCustomer" useGeneratedKeys="true" keyProperty="customerId"
-    parameterType="yuichi.car.estimate.management.entity.Customer">
+    parameterType="example.maintenance.estimate.customer.entity.Customer">
     INSERT INTO customers (last_name, first_name, last_name_kana, first_name_kana, email,
     phone_number)
     VALUES (#{lastName}, #{firstName}, #{lastNameKana}, #{firstNameKana}, #{email}, #{phoneNumber})
   </insert>
 
   <insert id="createCustomerAddress" useGeneratedKeys="true" keyProperty="addressId"
-    parameterType="yuichi.car.estimate.management.entity.CustomerAddress">
+    parameterType="example.maintenance.estimate.customer.entity.CustomerAddress">
     INSERT INTO customer_addresses (address_id,customer_id, postal_code, prefecture, city,
     town_and_number,
     building_name_and_room_number) VALUES (#{addressId}, #{customerId}, #{postalCode},
@@ -81,7 +81,7 @@
   </insert>
 
   <insert id="createVehicle" useGeneratedKeys="true" keyProperty="vehicleId"
-    parameterType="yuichi.car.estimate.management.entity.Vehicle">
+    parameterType="example.maintenance.estimate.customer.entity.Vehicle">
     INSERT INTO vehicles (customer_id, plate_region, plate_category_number,
     plate_hiragana, plate_vehicle_number, make, model, type, year, inspection_date)
     VALUES (#{customerId}, #{plateRegion}, #{plateCategoryNumber}, #{plateHiragana},
@@ -96,20 +96,21 @@
     UPDATE vehicles SET active = false WHERE vehicle_id = #{vehicleId}
   </update>
 
-  <update id="updateCustomer" parameterType="yuichi.car.estimate.management.entity.Customer">
+  <update id="updateCustomer"
+    parameterType="example.maintenance.estimate.customer.entity.Customer">
     UPDATE customers SET last_name = #{lastName}, first_name = #{firstName}, last_name_kana =
     #{lastNameKana}, first_name_kana = #{firstNameKana}, email = #{email}, phone_number =
     #{phoneNumber} WHERE customer_id = #{customerId}
   </update>
 
   <update id="updateCustomerAddress"
-    parameterType="yuichi.car.estimate.management.entity.CustomerAddress">
+    parameterType="example.maintenance.estimate.customer.entity.CustomerAddress">
     UPDATE customer_addresses SET postal_code = #{postalCode}, prefecture = #{prefecture},
     city = #{city}, town_and_number = #{townAndNumber},
     building_name_and_room_number = #{buildingNameAndRoomNumber} WHERE address_id = #{addressId}
   </update>
 
-  <update id="updateVehicle" parameterType="yuichi.car.estimate.management.entity.Vehicle">
+  <update id="updateVehicle" parameterType="example.maintenance.estimate.customer.entity.Vehicle">
     UPDATE vehicles SET plate_region = #{plateRegion}, plate_category_number =
     #{plateCategoryNumber},
     plate_hiragana = #{plateHiragana}, plate_vehicle_number = #{plateVehicleNumber}, make = #{make},
@@ -118,16 +119,17 @@
     WHERE vehicle_id = #{vehicleId}
   </update>
 
-  <select id="findAllCustomers" resultType="yuichi.car.estimate.management.entity.Customer">
+  <select id="findAllCustomers"
+    resultType="example.maintenance.estimate.customer.entity.Customer">
     SELECT * FROM customers
   </select>
 
   <select id="findAllCustomerAddresses"
-    resultType="yuichi.car.estimate.management.entity.CustomerAddress">
+    resultType="example.maintenance.estimate.customer.entity.CustomerAddress">
     SELECT * FROM customer_addresses
   </select>
 
-  <select id="findAllVehicles" resultType="yuichi.car.estimate.management.entity.Vehicle">
+  <select id="findAllVehicles" resultType="example.maintenance.estimate.customer.entity.Vehicle">
     SELECT * FROM vehicles
   </select>
 </mapper>
