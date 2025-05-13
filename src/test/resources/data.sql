@@ -1,16 +1,21 @@
+INSERT INTO customers VALUES (1, 'suzuki', 'ichiro', 'スズキ','イチロウ', 'ichiro@example.ne.jp', '090-1234-5678');
 
-INSERT INTO users VALUES (1, 'ganmo', 'shimaichi5973@gmail.com');
-INSERT INTO users VALUES (2, 'yurina', 'kana1231@gmail.com');
-INSERT INTO users VALUES (3, 'jyun', 'jyun0702@ymail.com');
-INSERT INTO users VALUES (4, 'momo', 'momonga1103@docomo.ne.jp');
+INSERT INTO customers VALUES (2, 'sato', 'hanako', 'サトウ', 'ハナコ','hanako@example.ne.jp', '080-1234-5678');
 
-INSERT INTO user_details VALUES (1, 'yuichi', 'shimada', 'ユウイチ','テスト', '1984-07-03', '080-1379-0555', 'Shimaichi@0703');
-INSERT INTO user_details VALUES (2, 'kana', 'nishida', 'カナ','ナカムラ', '1993-12-31', '090-1234-5678', 'Kana@1231');
-INSERT INTO user_details VALUES (3, 'yoshiyuki', 'mine', 'ヨシユキ','ミネ', '1984-07-02', '070-1234-5678', 'Yoshiyuki@0702');
-INSERT INTO user_details VALUES (4, 'momoko', 'tanaka', 'モモコ','タナカ', '2000-11-03', '080-1111-6660', 'momoKo@1212');
+INSERT INTO customer_addresses VALUES (1, 1, '123-4567', '東京都', '港区', '六本木1-1-1', '都心ビル101');
 
+INSERT INTO vehicles VALUES (1, 1, '品川', '123', 'あ', '1234', 'toyota', 'DBA-NZE141', '1NZ', '2010-12', '2027-12-31',true);
 
-INSERT INTO user_payments VALUES (1, 1, '4444123456789012', 'VISA', 'YUICHI TEST', '2028-01');
-INSERT INTO user_payments VALUES (2, 2, '3530123456789012', 'JCB', 'KANA NAKAMURA', '2029-01');
-INSERT INTO user_payments VALUES (3, 3, '3412123412341234', 'AmericanExpress', 'YOSHIYUKI MINE', '2025-04');
-INSERT INTO user_payments VALUES (4, 3, '5112123412341234', 'MasterCard', 'YOSHIYUKI MINE', '2027-06');
+INSERT INTO vehicles VALUES (2, 2, '練馬', '456', 'い', '4567', 'nissan', 'ABC123-456789', '1AB-CD', '2022-03', '2028-11-30',true);
+
+INSERT INTO vehicles VALUES (3, 2, '渋谷', '789', 'う', '7890','honda', 'DEF456-789012', '1EF-GH','2021-06', '2029-10-31',true);
+
+INSERT INTO maintenance_guide VALUES (1, 'カローラアクシオ', 'DBA-NZE141', '1NZ', '2006-10', '2012-05', '0w-20', 3.7, 3.4, '90915-10003', 'M');
+
+INSERT INTO product_category VALUES (1, 'motor_oil');
+
+INSERT INTO products VALUES (1, 1, 'high_grade_Oil 0W-20', '化学合成油', 2800.0);
+
+INSERT INTO estimate_base VALUES (1, 1);
+
+INSERT INTO estimate_product VALUES (1, 1, 3.4);
