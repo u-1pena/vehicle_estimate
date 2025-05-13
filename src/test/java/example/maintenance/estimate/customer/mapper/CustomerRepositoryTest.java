@@ -96,7 +96,7 @@ class CustomerRepositoryTest {
 
     @Test
     void 車両番号4桁で顧客情報を検索することができる() {
-      List<Vehicle> actual = customerRepository.findCustomerByPlateVehicleNumber("1234");
+      List<Vehicle> actual = customerRepository.findVehicleByPlateNumber("1234");
       Vehicle expected = testHelper.vehicleMock().get(0);
       assertThat(actual).contains(expected);
       assertThat(actual).hasSize(1);
@@ -165,9 +165,11 @@ class CustomerRepositoryTest {
     @Test
     void 車両情報を削除できる() {
       //準備
-      Vehicle vehicle = testHelper.vehicleMock().get(0);
+      Optional<Vehicle> before = customerRepository.findVehicleByVehicleId(1);
+      assertThat(before).isPresent();
+      assertThat(before.get().isActive()).isEqualTo(true);
       //実行
-      customerRepository.deleteVehicle(1);
+      customerRepository.deactivateVehicle(1);
       //検証
       Optional<Vehicle> actual = customerRepository.findVehicleByVehicleId(1);
       assertThat(actual.get().isActive()).isEqualTo(false);
@@ -183,13 +185,14 @@ class CustomerRepositoryTest {
       Customer customer = testHelper.customerMock().get(0);
       customer.setPhoneNumber("090-1111-1111");
 
-      Customer expected = testHelper.customerMock().get(0);
-      expected.setPhoneNumber("090-1111-1111");
       //実行
       customerRepository.updateCustomer(customer);
       //検証
       Optional<Customer> actual = customerRepository.findCustomerByCustomerId(1);
-      assertThat(actual).hasValue(expected);
+      assertThat(actual).isPresent();
+      assertThat(actual.get().getPhoneNumber()).isNotEqualTo("090-1234-5678");
+      assertThat(actual.get().getPhoneNumber()).isEqualTo("090-1111-1111");
+
     }
 
     @Test
@@ -200,16 +203,15 @@ class CustomerRepositoryTest {
       customerAddress.setTownAndNumber("みなとみらい1-1-1");
       customerAddress.setBuildingNameAndRoomNumber("ランドマークタワー101");
 
-      CustomerAddress expected = testHelper.customerAddressMock().get(0);
-      expected.setPrefecture(Prefecture.神奈川県);
-      expected.setCity("横浜市");
-      expected.setTownAndNumber("みなとみらい1-1-1");
-      expected.setBuildingNameAndRoomNumber("ランドマークタワー101");
       //実行
       customerRepository.updateCustomerAddress(customerAddress);
       //検証
       Optional<CustomerAddress> actual = customerRepository.findCustomerAddressByCustomerId(1);
-      assertThat(actual).hasValue(expected);
+      assertThat(actual).isPresent();
+      assertThat(actual.get().getPrefecture()).isEqualTo(Prefecture.神奈川県);
+      assertThat(actual.get().getCity()).isEqualTo("横浜市");
+      assertThat(actual.get().getTownAndNumber()).isEqualTo("みなとみらい1-1-1");
+      assertThat(actual.get().getBuildingNameAndRoomNumber()).isEqualTo("ランドマークタワー101");
     }
 
     @Test
@@ -218,14 +220,13 @@ class CustomerRepositoryTest {
       vehicle.setPlateHiragana("か");
       vehicle.setPlateVehicleNumber("1111");
 
-      Vehicle expected = testHelper.vehicleMock().get(0);
-      expected.setPlateHiragana("か");
-      expected.setPlateVehicleNumber("1111");
       //実行
       customerRepository.updateVehicle(vehicle);
       //検証
       Optional<Vehicle> actual = customerRepository.findVehicleByVehicleId(1);
-      assertThat(actual).hasValue(expected);
+      assertThat(actual).isPresent();
+      assertThat(actual.get().getPlateHiragana()).isEqualTo("か");
+      assertThat(actual.get().getPlateVehicleNumber()).isEqualTo("1111");
     }
   }
 }

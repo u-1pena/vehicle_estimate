@@ -6,6 +6,7 @@ import example.maintenance.estimate.customer.controller.exception.CustomerExcept
 import example.maintenance.estimate.customer.controller.exception.CustomerException.CustomerNotFoundException;
 import example.maintenance.estimate.customer.controller.exception.CustomerException.InvalidSearchParameterException;
 import example.maintenance.estimate.customer.controller.exception.VehicleException.AlreadyExistsVehicleException;
+import example.maintenance.estimate.customer.controller.exception.VehicleException.VehicleInactiveException;
 import example.maintenance.estimate.customer.controller.exception.VehicleException.VehicleYearInvalidException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -19,18 +20,13 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
-public class GlobalExceptionHandler extends RuntimeException {
+public class GlobalExceptionHandler {
 
   @ExceptionHandler(CustomerNotFoundException.class)
   public ResponseEntity<Map<String, String>> handleCustomerNotFoundException(
       CustomerNotFoundException e, HttpServletRequest request) {
-    Map<String, String> body = Map.of(
-        "status", "404",
-        "error", "Not Found",
-        "message", e.getMessage(),
-        "path", request.getRequestURI());
-
-    return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+    return new ResponseEntity<>(
+        createErrorResponse(HttpStatus.NOT_FOUND, e, request), HttpStatus.NOT_FOUND);
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -51,101 +47,65 @@ public class GlobalExceptionHandler extends RuntimeException {
   @ExceptionHandler(AlreadyExistsEmailException.class)
   public ResponseEntity<Map<String, String>> handleAlreadyExistsEmailException(
       AlreadyExistsEmailException e, HttpServletRequest request) {
-    Map<String, String> body = Map.of(
-        "status", "422",
-        "error", "Unprocessable Entity",
-        "message", e.getMessage(),
-        "path", request.getRequestURI());
-
-    return new ResponseEntity<>(body, HttpStatus.UNPROCESSABLE_ENTITY);
+    return new ResponseEntity<>(
+        createErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY, e, request),
+        HttpStatus.UNPROCESSABLE_ENTITY);
   }
 
   @ExceptionHandler(AlreadyExistsPhoneNumberException.class)
   public ResponseEntity<Map<String, String>> handleAlreadyExistsPhoneNumberException(
       AlreadyExistsPhoneNumberException e, HttpServletRequest request) {
-    Map<String, String> body = Map.of(
-        "status", "422",
-        "error", "Unprocessable Entity",
-        "message", e.getMessage(),
-        "path", request.getRequestURI());
-
-    return new ResponseEntity<>(body, HttpStatus.UNPROCESSABLE_ENTITY);
+    return new ResponseEntity<>(
+        createErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY, e, request),
+        HttpStatus.UNPROCESSABLE_ENTITY);
   }
 
   @ExceptionHandler(CustomerAddressException.CustomerAddressAlreadyException.class)
   public ResponseEntity<Map<String, String>> handleUserAlreadyExistsException(
       CustomerAddressAlreadyException e, HttpServletRequest request) {
-    Map<String, String> body = Map.of(
-        "status", "422",
-        "error", "Unprocessable Entity",
-        "message", e.getMessage(),
-        "path", request.getRequestURI());
-
-    return new ResponseEntity<>(body, HttpStatus.UNPROCESSABLE_ENTITY);
+    return new ResponseEntity<>(
+        createErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY, e, request),
+        HttpStatus.UNPROCESSABLE_ENTITY);
   }
 
   @ExceptionHandler(CustomerAddressException.CustomerAddressNotFoundException.class)
   public ResponseEntity<Map<String, String>> handleUserAddressNotFoundException(
       CustomerAddressException.CustomerAddressNotFoundException e, HttpServletRequest request) {
-    Map<String, String> body = Map.of(
-        "status", "404",
-        "error", "Not Found",
-        "message", e.getMessage(),
-        "path", request.getRequestURI());
-
-    return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+    return new ResponseEntity<>(
+        createErrorResponse(HttpStatus.NOT_FOUND, e, request), HttpStatus.NOT_FOUND);
   }
 
   @ExceptionHandler(VehicleException.VehicleNotFoundException.class)
   public ResponseEntity<Map<String, String>> handleVehicleNotFoundException(
       VehicleException.VehicleNotFoundException e, HttpServletRequest request) {
-    Map<String, String> body = Map.of(
-        "status", "404",
-        "error", "Not Found",
-        "message", e.getMessage(),
-        "path", request.getRequestURI());
-
-    return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+    return new ResponseEntity<>(
+        createErrorResponse(HttpStatus.NOT_FOUND, e, request), HttpStatus.NOT_FOUND);
   }
 
   @ExceptionHandler(AlreadyExistsVehicleException.class)
   public ResponseEntity<Map<String, String>> handleAlreadyExistsVehicleException(
       AlreadyExistsVehicleException e, HttpServletRequest request) {
-    Map<String, String> body = Map.of(
-        "status", "422",
-        "error", "Unprocessable Entity",
-        "message", e.getMessage(),
-        "path", request.getRequestURI());
-
-    return new ResponseEntity<>(body, HttpStatus.UNPROCESSABLE_ENTITY);
+    return new ResponseEntity<>(
+        createErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY, e, request),
+        HttpStatus.UNPROCESSABLE_ENTITY);
   }
 
   @ExceptionHandler(VehicleYearInvalidException.class)
   public ResponseEntity<Map<String, String>> VehicleYearInvalidException(
       VehicleYearInvalidException e, HttpServletRequest request) {
-    Map<String, String> body = Map.of(
-        "status", "400",
-        "error", "Bad Request",
-        "message", e.getMessage(),
-        "path", request.getRequestURI());
-
-    return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    return new ResponseEntity<>(
+        createErrorResponse(HttpStatus.BAD_REQUEST, e, request), HttpStatus.BAD_REQUEST);
   }
 
   @ExceptionHandler(InvalidSearchParameterException.class)
   public ResponseEntity<Map<String, String>> handleInvalidSearchParameterException(
       InvalidSearchParameterException e, HttpServletRequest request) {
-    Map<String, String> body = Map.of(
-        "status", "400",
-        "error", "Bad Request",
-        "message", e.getMessage(),
-        "path", request.getRequestURI());
-
-    return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    return new ResponseEntity<>(
+        createErrorResponse(HttpStatus.BAD_REQUEST, e, request), HttpStatus.BAD_REQUEST);
   }
 
-  @ExceptionHandler(Exception.class)
-  public ResponseEntity<Map<String, String>> VehicleInactiveException(
+  @ExceptionHandler(VehicleInactiveException.class)
+  public ResponseEntity<Map<String, String>> handleVehicleInactiveException(
       Exception e, HttpServletRequest request) {
     Map<String, String> body = Map.of(
         "status", "400",
@@ -154,6 +114,15 @@ public class GlobalExceptionHandler extends RuntimeException {
         "path", request.getRequestURI());
 
     return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+  }
+
+  private Map<String, String> createErrorResponse(
+      HttpStatus status, Exception e, HttpServletRequest request) {
+    return Map.of(
+        "status", String.valueOf(status.value()),
+        "error", status.getReasonPhrase(),
+        "message", e.getMessage(),
+        "path", request.getRequestURI());
   }
 
   public static final class ErrorResponse {
@@ -180,4 +149,5 @@ public class GlobalExceptionHandler extends RuntimeException {
       return errors;
     }
   }
+
 }

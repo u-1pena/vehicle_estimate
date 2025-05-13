@@ -61,8 +61,8 @@ class CustomerInformationConverterTest {
         customerAddress, vehicles);
 
     assertThat(actual.getCustomer()).isEqualTo(customer);
-    Assertions.assertThat(actual.getCustomerAddress()).isEqualTo(customerAddress);
-    Assertions.assertThat(actual.getVehicles()).isEqualTo(vehicles);
+    assertThat(actual.getCustomerAddress()).isEqualTo(customerAddress);
+    assertThat(actual.getVehicles()).isEqualTo(vehicles);
     assertThat(actual.getVehicles().size()).isEqualTo(0);
   }
 }

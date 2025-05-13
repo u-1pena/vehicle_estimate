@@ -1,7 +1,10 @@
 package example.maintenance.estimate.customer.controller.exception;
 
-public class CustomerAddressException {
+public final class CustomerAddressException {
 
+  private CustomerAddressException() {
+    // Prevent instantiation
+  }
 
   public static class CustomerAddressAlreadyException extends RuntimeException {
 

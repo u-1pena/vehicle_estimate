@@ -1,6 +1,10 @@
 package example.maintenance.estimate.customer.controller.exception;
 
-public class CustomerException {
+public final class CustomerException {
+
+  private CustomerException() {
+    // Prevent instantiation
+  }
 
   public static class CustomerNotFoundException extends RuntimeException {
 

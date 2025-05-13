@@ -80,7 +80,8 @@ public class CustomerController {
       @RequestBody @Valid CustomerCreateRequest customerCreateRequest,
       UriComponentsBuilder uriBuilder) {
     Customer customer = customerService.registerCustomer(customerCreateRequest);
-    URI location = uriBuilder.path("/users/{addressId}").buildAndExpand(customer.getCustomerId())
+    URI location = uriBuilder.path("/customers/{customerId}")
+        .buildAndExpand(customer.getCustomerId())
         .toUri();
     GlobalResponse body = new GlobalResponse("Customer created");
     return ResponseEntity.created(location).body(body);
@@ -89,15 +90,15 @@ public class CustomerController {
   /*
   住所情報を登録する処理
    */
-  @PostMapping("addresses/{addressId}")
+  @PostMapping("customers/{customerId}/addresses")
   public ResponseEntity<GlobalResponse> createUserDetail(
-      @PathVariable("addressId") int addressId,
+      @PathVariable("customerId") int customerId,
       @RequestBody @Valid CustomerAddressCreateRequest customerAddressCreateRequest, // 専用リクエストクラス
       UriComponentsBuilder uriBuilder) {
-    CustomerAddress customerAddress = customerService.registerCustomerAddress(addressId,
+    CustomerAddress customerAddress = customerService.registerCustomerAddress(customerId,
         customerAddressCreateRequest);
-    URI location = uriBuilder.path("/address/{addressId}")
-        .buildAndExpand(customerAddress.getAddressId()).toUri();
+    URI location = uriBuilder.path("customers/{customerId}/addresses/{addressId}")
+        .buildAndExpand(customerId, customerAddress.getAddressId()).toUri();
     GlobalResponse body = new GlobalResponse("CustomerAddress Created");
     return ResponseEntity.created(location).body(body);
   }
@@ -144,9 +145,9 @@ public class CustomerController {
 
   @PutMapping("addresses/{addressId}")
   public ResponseEntity<GlobalResponse> updateCustomerAddress(
-      @PathVariable("addressId") int customerId,
+      @PathVariable("addressId") int addressId,
       @RequestBody @Valid CustomerAddressUpdateRequest customerAddressUpdateRequest) {
-    customerService.updateCustomerAddressByCustomerId(customerId, customerAddressUpdateRequest);
+    customerService.updateCustomerAddressByCustomerId(addressId, customerAddressUpdateRequest);
     GlobalResponse body = new GlobalResponse("CustomerAddress updated");
     return ResponseEntity.ok(body);
   }

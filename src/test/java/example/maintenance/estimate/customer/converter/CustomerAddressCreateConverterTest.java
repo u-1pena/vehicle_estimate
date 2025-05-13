@@ -25,7 +25,7 @@ class CustomerAddressCreateConverterTest {
     CustomerAddress actual = CustomerAddressCreateConverter.customerAddressConvertToEntity(customer,
         customerAddressCreateRequest);
     // 検証
-    assertThat(actual.getAddressId()).isEqualTo(customer.getCustomerId());
+    assertThat(actual.getCustomerId()).isEqualTo(customer.getCustomerId());
     assertThat(actual.getPostalCode()).isEqualTo("123-4567");
     assertThat(actual.getPrefecture()).isEqualTo(Prefecture.東京都);
     assertThat(actual.getCity()).isEqualTo("渋谷区");

@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 class CustomerUpdateConverterTest {
 
   @Test
-  void customerUpdateRequestをcustmerに変換できること() {
+  void customerUpdateRequestをCustomerに変換できること() {
     // 準備
     Customer customer = new Customer();
     CustomerUpdateRequest customerUpdateRequest = new CustomerUpdateRequest();

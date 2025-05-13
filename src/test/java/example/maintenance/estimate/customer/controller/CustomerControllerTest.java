@@ -457,7 +457,7 @@ class CustomerControllerTest {
               "buildingNameAndRoomNumber": "都心ビル101"
           }
           """;
-      mockMvc.perform(MockMvcRequestBuilders.post("/addresses/1")
+      mockMvc.perform(MockMvcRequestBuilders.post("/customers/1/addresses")
               .contentType(MediaType.APPLICATION_JSON)
               .content(requestBody))
           .andExpect(status().isCreated())
@@ -752,7 +752,7 @@ class CustomerControllerTest {
               "buildingNameAndRoomNumber": ""
           }
           """;
-      mockMvc.perform(MockMvcRequestBuilders.post("/addresses/1")
+      mockMvc.perform(MockMvcRequestBuilders.post("/customers/1/addresses")
               .contentType(MediaType.APPLICATION_JSON)
               .content(requestBody))
           .andExpect(status().isBadRequest())
@@ -1089,7 +1089,7 @@ class CustomerControllerTest {
               "buildingNameAndRoomNumber": "都心ビル101"
           }
           """;
-      mockMvc.perform(MockMvcRequestBuilders.post("/addresses/999")
+      mockMvc.perform(MockMvcRequestBuilders.post("/customers/999/addresses")
               .contentType(MediaType.APPLICATION_JSON)
               .content(requestBody))
           .andExpect(status().isNotFound())
@@ -1099,7 +1099,7 @@ class CustomerControllerTest {
                       "status": "404",
                       "error": "Not Found",
                       "message": "Not registered for customer ID:999",
-                      "path": "/addresses/999"
+                      "path": "/customers/999/addresses"
                   }
                   """, true
           ));

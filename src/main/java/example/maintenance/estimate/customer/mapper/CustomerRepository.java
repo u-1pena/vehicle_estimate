@@ -23,11 +23,11 @@ public interface CustomerRepository {
 
   Optional<Customer> findCustomerByEmail(String email);
 
-  List<Vehicle> findCustomerByPlateVehicleNumber(String plateVehicleNumber);
+  List<Vehicle> findVehicleByPlateNumber(String plateNumber);
 
   Optional<Customer> findCustomerByPhoneNumber(String phoneNumber);
 
-  Optional<Vehicle> findCustomerByLicensePlateExactMatch(PlateRegion plateRegion,
+  Optional<Vehicle> findVehicleByLicensePlateExactMatch(PlateRegion plateRegion,
       String plateCategoryNumber, String plateHiragana, String plateVehicleNumber);
 
   Optional<Vehicle> findVehicleByVehicleId(int vehicleId);
@@ -36,11 +36,11 @@ public interface CustomerRepository {
 
   void createCustomerAddress(CustomerAddress customerAddress);
 
-  void createVehicle(Vehicle vehicle);
+  void createVehicle(Vehicle vehicle);//理論削除
 
   void deleteCustomer(int customerId);
 
-  void deleteVehicle(int vehicleId);
+  void deactivateVehicle(int vehicleId);
 
   void updateCustomer(Customer customer);
 
@@ -48,7 +48,7 @@ public interface CustomerRepository {
 
   void updateVehicle(Vehicle vehicle);
 
-  // 以下のメソッドは、テスト用に追加
+  //@test用
   List<Customer> findAllCustomers();
 
   List<CustomerAddress> findAllCustomerAddresses();

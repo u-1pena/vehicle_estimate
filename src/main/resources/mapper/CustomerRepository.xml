@@ -10,7 +10,7 @@
 
   <select id="findCustomerAddressByCustomerId" parameterType="int"
     resultType="example.maintenance.estimate.customer.entity.CustomerAddress">
-    SELECT * FROM customer_addresses WHERE address_id = #{addressId}
+    SELECT * FROM customer_addresses WHERE customer_id = #{customerId}
   </select>
 
   <select id="findVehicleByCustomerId" parameterType="int"
@@ -35,9 +35,9 @@
     SELECT * FROM customers WHERE email = #{email}
   </select>
 
-  <select id="findCustomerByPlateVehicleNumber" parameterType="String"
+  <select id="findVehicleByPlateNumber" parameterType="String"
     resultType="example.maintenance.estimate.customer.entity.Vehicle">
-    SELECT * FROM vehicles WHERE plate_vehicle_number = #{plateVehicleNumber}
+    SELECT * FROM vehicles WHERE plate_vehicle_number = #{plateNumber}
   </select>
 
   <select id="findCustomerByPhoneNumber" parameterType="String"
@@ -45,7 +45,7 @@
     SELECT * FROM customers WHERE phone_number = #{phoneNumber}
   </select>
 
-  <select id="findCustomerByLicensePlateExactMatch"
+  <select id="findVehicleByLicensePlateExactMatch"
     parameterType="example.maintenance.estimate.customer.entity.Vehicle"
     resultType="example.maintenance.estimate.customer.entity.Vehicle">
     SELECT * FROM vehicles WHERE plate_region = #{plateRegion} AND plate_category_number =
@@ -92,7 +92,7 @@
     DELETE FROM customers WHERE customer_id = #{customerId}
   </delete>
 
-  <update id="deleteVehicle" parameterType="int">
+  <update id="deactivateVehicle" parameterType="int">
     UPDATE vehicles SET active = false WHERE vehicle_id = #{vehicleId}
   </update>
 

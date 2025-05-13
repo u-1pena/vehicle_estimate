@@ -84,7 +84,11 @@ public class CustomerService {
 
   private List<CustomerInformationDto> findCustomerInformationByName(String name) {
     List<Customer> customers = findCustomerByName(name);
-    return findCustomerByCriteria(customers);
+    return CustomerInformationConverter.convertToCustomerInformationDtoList(
+        customers,
+        this::findCustomerAddressListByCustomerId,
+        this::findVehicleByCustomerId
+    );
   }
 
   private List<Customer> findCustomerByName(String name) {
@@ -94,7 +98,11 @@ public class CustomerService {
 
   private List<CustomerInformationDto> findCustomerInformationByNameKana(String kana) {
     List<Customer> customers = findByNameKana(kana);
-    return findCustomerByCriteria(customers);
+    return CustomerInformationConverter.convertToCustomerInformationDtoList(
+        customers,
+        this::findCustomerAddressListByCustomerId,
+        this::findVehicleByCustomerId
+    );
   }
 
   private List<Customer> findByNameKana(String kana) {
@@ -106,18 +114,16 @@ public class CustomerService {
     Optional<Customer> customer = findCustomerByEmail(email);
     List<Customer> customers = customer.map(Collections::singletonList)
         .orElse(Collections.emptyList());
-    return findCustomerByCriteria(customers);
+    return CustomerInformationConverter.convertToCustomerInformationDtoList(
+        customers,
+        this::findCustomerAddressListByCustomerId,
+        this::findVehicleByCustomerId
+    );
   }
 
   private Optional<Customer> findCustomerByEmail(String email) {
     Optional<Customer> customer = customerRepository.findCustomerByEmail(email);
     return customer;
-  }
-
-  private List<CustomerInformationDto> findCustomerByCriteria(List<Customer> customers) {
-    return customers.stream()
-        .map(this::convertToCustomerInformationDtoFromCustomer)
-        .collect(Collectors.toList());
   }
 
   private CustomerInformationDto convertToCustomerInformationDtoFromCustomer(Customer customer) {
@@ -162,7 +168,7 @@ public class CustomerService {
   }
 
   private List<Vehicle> findCustomerByPlateVehicleNumber(String plateVehicleNumber) {
-    List<Vehicle> vehicles = customerRepository.findCustomerByPlateVehicleNumber(
+    List<Vehicle> vehicles = customerRepository.findVehicleByPlateNumber(
         plateVehicleNumber);
     return vehicles;
   }
@@ -198,7 +204,11 @@ public class CustomerService {
     Optional<Customer> customer = findCustomerByPhoneNumber(phoneNumber);
     List<Customer> customers = customer.map(Collections::singletonList)
         .orElse(Collections.emptyList());
-    return findCustomerByCriteria(customers);
+    return CustomerInformationConverter.convertToCustomerInformationDtoList(
+        customers,
+        this::findCustomerAddressListByCustomerId,
+        this::findVehicleByCustomerId
+    );
   }
 
   private Optional<Customer> findCustomerByPhoneNumber(String phoneNumber) {
@@ -245,7 +255,7 @@ public class CustomerService {
 
   private void checkAlreadyExistCustomerAddress(int id) {
     customerRepository.findCustomerAddressByCustomerId(id)
-        .map(userDetail -> {
+        .ifPresent(userDetail -> {
           throw new CustomerAddressAlreadyException(
               "The customer with this ID has already completed address registration: " + id);
         });
@@ -270,7 +280,7 @@ public class CustomerService {
   }
 
   private void checkAlreadyExistVehicleByPlateNumber(Vehicle vehicle) {
-    customerRepository.findCustomerByLicensePlateExactMatch(vehicle.getPlateRegion(),
+    customerRepository.findVehicleByLicensePlateExactMatch(vehicle.getPlateRegion(),
             vehicle.getPlateCategoryNumber(), vehicle.getPlateHiragana(),
             vehicle.getPlateVehicleNumber())
         .ifPresent(vehicle1 -> {
@@ -296,7 +306,7 @@ public class CustomerService {
     if (!vehicle.isActive()) {
       throw new VehicleInactiveException("Vehicle is already inactive.");
     }
-    customerRepository.deleteVehicle(vehicle.getVehicleId());
+    customerRepository.deactivateVehicle(vehicle.getVehicleId());
   }
 
   public void updateCustomerByCustomerId(int customerId,
@@ -353,7 +363,7 @@ public class CustomerService {
   自身のナンバーを除外
    */
   private void updateCheckAlreadyExistVehicleByPlateNumber(Vehicle vehicle) {
-    customerRepository.findCustomerByLicensePlateExactMatch(vehicle.getPlateRegion(),
+    customerRepository.findVehicleByLicensePlateExactMatch(vehicle.getPlateRegion(),
             vehicle.getPlateCategoryNumber(), vehicle.getPlateHiragana(),
             vehicle.getPlateVehicleNumber())
         .ifPresent(vehicle1 -> {

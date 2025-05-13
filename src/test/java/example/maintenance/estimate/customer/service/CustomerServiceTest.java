@@ -73,7 +73,7 @@ class CustomerServiceTest {
           .toList();
 
       doReturn(expectedVehicles).when(customerRepository)
-          .findCustomerByPlateVehicleNumber("1234");
+          .findVehicleByPlateNumber("1234");
       doReturn(Optional.of(expectedCustomerAddress)).when(customerRepository)
           .findCustomerAddressByCustomerId(expectedCustomers.getCustomerId());
       doReturn(Optional.of(expectedCustomers)).when(customerRepository)
@@ -196,7 +196,7 @@ class CustomerServiceTest {
     @Test
     void 存在しない車両番号でユーザー検索をしたとき空のリストを返すこと() {
       doReturn(Collections.emptyList()).when(customerRepository)
-          .findCustomerByPlateVehicleNumber("0000");
+          .findVehicleByPlateNumber("0000");
       Assertions.assertThat(customerService.findInformationByPlateVehicleNumber("0000"))
           .isEmpty();
     }
@@ -339,7 +339,7 @@ class CustomerServiceTest {
           });
 
       //検証
-      assertEquals("Email already exists", exception.getMessage());
+      assertThat(exception.getMessage()).isEqualTo("Email already exists");
       verify(customerRepository, times(1)).findCustomerByEmail(customerCreateRequest.getEmail());
     }
 
@@ -360,7 +360,7 @@ class CustomerServiceTest {
           });
 
       //検証
-      assertEquals("Phone number already exists", exception.getMessage());
+      assertThat(exception.getMessage()).isEqualTo("Phone number already exists");
       verify(customerRepository, times(1)).findCustomerByPhoneNumber(
           customerCreateRequest.getPhoneNumber());
     }
@@ -411,7 +411,7 @@ class CustomerServiceTest {
       });
 
       //検証
-      assertEquals("Not registered for customer ID:0", exception.getMessage());
+      assertThat(exception.getMessage()).isEqualTo("Not registered for customer ID:0");
       verify(customerRepository, times(1)).findCustomerByCustomerId(0);
     }
 
@@ -436,10 +436,9 @@ class CustomerServiceTest {
           });
 
       //検証
-      assertEquals(
+      assertThat(exception.getMessage()).isEqualTo(
           "The customer with this ID has already completed address registration: "
-              + expectedCustomerAddress.getCustomerId(),
-          exception.getMessage());
+              + expectedCustomerAddress.getCustomerId());
       verify(customerRepository, times(1)).findCustomerByCustomerId(expectedUser.getCustomerId());
     }
 
@@ -467,7 +466,7 @@ class CustomerServiceTest {
       doReturn(Optional.of(expectedCustomer)).when(customerRepository)
           .findCustomerByCustomerId(expectedCustomer.getCustomerId());
       doReturn(Optional.empty()).when(customerRepository)
-          .findCustomerByLicensePlateExactMatch(
+          .findVehicleByLicensePlateExactMatch(
               expectedVehicle.getPlateRegion(),
               expectedVehicle.getPlateCategoryNumber(),
               expectedVehicle.getPlateHiragana(),
@@ -479,7 +478,7 @@ class CustomerServiceTest {
 
       //検証
       assertVehicle(actual, expectedVehicle);
-      verify(customerRepository, times(1)).findCustomerByLicensePlateExactMatch(
+      verify(customerRepository, times(1)).findVehicleByLicensePlateExactMatch(
           expectedVehicle.getPlateRegion(),
           expectedVehicle.getPlateCategoryNumber(),
           expectedVehicle.getPlateHiragana(),
@@ -505,7 +504,7 @@ class CustomerServiceTest {
           });
 
       //検証
-      assertEquals("Vehicle year is invalid.", exception.getMessage());
+      assertThat(exception.getMessage()).isEqualTo("Vehicle year is invalid.");
     }
 
     //Vehicleオブジェクトのフィールド値を検証するメソッド
@@ -552,13 +551,13 @@ class CustomerServiceTest {
       Vehicle expectedVehicle = testHelper.vehicleMock().get(0);
       doReturn(Optional.of(expectedVehicle)).when(customerRepository)
           .findVehicleByVehicleId(expectedVehicle.getVehicleId());
-      doNothing().when(customerRepository).deleteVehicle(expectedVehicle.getVehicleId());
+      doNothing().when(customerRepository).deactivateVehicle(expectedVehicle.getVehicleId());
 
       //実行
       customerService.deleteVehicleByVehicleId(expectedVehicle.getVehicleId());
 
       //検証
-      verify(customerRepository, times(1)).deleteVehicle(expectedVehicle.getVehicleId());
+      verify(customerRepository, times(1)).deactivateVehicle(expectedVehicle.getVehicleId());
       verify(customerRepository, times(1)).findVehicleByVehicleId(
           expectedVehicle.getVehicleId());
     }
@@ -579,7 +578,7 @@ class CustomerServiceTest {
           });
 
       //検証
-      assertEquals("Vehicle is already inactive.", exception.getMessage());
+      assertThat(exception.getMessage()).isEqualTo("Vehicle is already inactive.");
     }
   }
 
@@ -668,7 +667,7 @@ class CustomerServiceTest {
       doReturn(Optional.of(vehicle)).when(customerRepository)
           .findVehicleByVehicleId(1);
       doReturn(Optional.of(vehicle)).when(customerRepository)
-          .findCustomerByLicensePlateExactMatch(
+          .findVehicleByLicensePlateExactMatch(
               PlateRegion.valueOf(vehicleUpdateRequest.getPlateRegion()),
               vehicleUpdateRequest.getPlateCategoryNumber(),
               vehicleUpdateRequest.getPlateHiragana(),
@@ -707,7 +706,7 @@ class CustomerServiceTest {
       doReturn(Optional.of(selfVehicle)).when(customerRepository)
           .findVehicleByVehicleId(1);
       doReturn(Optional.of(vehicle)).when(customerRepository)
-          .findCustomerByLicensePlateExactMatch(
+          .findVehicleByLicensePlateExactMatch(
               PlateRegion.valueOf(vehicleUpdateRequest.getPlateRegion()),
               vehicleUpdateRequest.getPlateCategoryNumber(),
               vehicleUpdateRequest.getPlateHiragana(),
@@ -720,7 +719,7 @@ class CustomerServiceTest {
           });
 
       //検証
-      assertEquals("Vehicle already exists", exception.getMessage());
+      assertThat(exception.getMessage()).isEqualTo("Vehicle already exists");
     }
   }
 }

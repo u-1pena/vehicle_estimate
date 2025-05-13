@@ -1,6 +1,10 @@
 package example.maintenance.estimate.customer.controller.exception;
 
-public class VehicleException extends RuntimeException {
+public final class VehicleException {
+
+  private VehicleException() {
+    // Prevent instantiation
+  }
 
   public static class VehicleNotFoundException extends RuntimeException {
 
