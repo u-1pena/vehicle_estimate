@@ -121,7 +121,7 @@ public class GlobalExceptionHandler {
   }
 
   @ExceptionHandler(MaintenanceGuideAlreadyExistsException.class)
-  public ResponseEntity<Map<String, String>> handleExistAlreadyMasterException(
+  public ResponseEntity<Map<String, String>> handleMaintenanceGuideAlreadyExistsException(
       MaintenanceGuideAlreadyExistsException e, HttpServletRequest request) {
     return new ResponseEntity<>(
         createErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY, e, request),

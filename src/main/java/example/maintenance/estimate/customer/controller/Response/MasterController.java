@@ -43,7 +43,7 @@ public class MasterController {
       , UriComponentsBuilder uriComponentsBuilder) {
     ProductCategory productCategory = maintenanceGuideService.registerProductCategory(
         productCategoryCreateRequest);
-    URI location = uriComponentsBuilder.path("/product-category/{id}")
+    URI location = uriComponentsBuilder.path("/product-categories/{id}")
         .buildAndExpand(productCategory.getCategoryId())
         .toUri();
     GlobalResponse body = new GlobalResponse("Product category created successfully");
@@ -56,7 +56,7 @@ public class MasterController {
       , UriComponentsBuilder uriComponentsBuilder) {
     Product product = maintenanceGuideService.registerProduct(
         productCreateRequest);
-    URI location = uriComponentsBuilder.path("/product/{id}")
+    URI location = uriComponentsBuilder.path("/products/{id}")
         .buildAndExpand(product.getProductId())
         .toUri();
     GlobalResponse body = new GlobalResponse("Product created successfully");

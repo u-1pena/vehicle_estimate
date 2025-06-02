@@ -1,6 +1,6 @@
 package example.maintenance.estimate.customer.controller.exception;
 
-public class MasterException extends RuntimeException {
+public final class MasterException {
 
   private MasterException() {
 

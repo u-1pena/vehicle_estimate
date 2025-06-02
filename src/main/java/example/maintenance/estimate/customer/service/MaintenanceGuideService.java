@@ -122,7 +122,7 @@ public class MaintenanceGuideService {
    */
   public Product registerProduct(ProductCreateRequest productCreateRequest) {
     Product product = ProductCreateConverter
-        .toEntity(productCreateRequest);
+        .productCreateConvertToEntity(productCreateRequest);
     createProduct(product);
     return product;
   }
