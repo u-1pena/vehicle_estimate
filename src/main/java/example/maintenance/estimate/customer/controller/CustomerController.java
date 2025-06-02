@@ -1,16 +1,16 @@
 package example.maintenance.estimate.customer.controller;
 
 import example.maintenance.estimate.customer.controller.Response.GlobalResponse;
-import example.maintenance.estimate.customer.dto.CustomerInformationDto;
-import example.maintenance.estimate.customer.dto.request.CustomerAddressCreateRequest;
-import example.maintenance.estimate.customer.dto.request.CustomerAddressUpdateRequest;
-import example.maintenance.estimate.customer.dto.request.CustomerCreateRequest;
-import example.maintenance.estimate.customer.dto.request.CustomerUpdateRequest;
-import example.maintenance.estimate.customer.dto.request.VehicleCreateRequest;
-import example.maintenance.estimate.customer.dto.request.VehicleUpdateRequest;
-import example.maintenance.estimate.customer.entity.Customer;
-import example.maintenance.estimate.customer.entity.CustomerAddress;
-import example.maintenance.estimate.customer.entity.Vehicle;
+import example.maintenance.estimate.customer.dto.request.customerInformation.CustomerAddressCreateRequest;
+import example.maintenance.estimate.customer.dto.request.customerInformation.CustomerAddressUpdateRequest;
+import example.maintenance.estimate.customer.dto.request.customerInformation.CustomerCreateRequest;
+import example.maintenance.estimate.customer.dto.request.customerInformation.CustomerInformationDto;
+import example.maintenance.estimate.customer.dto.request.customerInformation.CustomerUpdateRequest;
+import example.maintenance.estimate.customer.dto.request.customerInformation.VehicleCreateRequest;
+import example.maintenance.estimate.customer.dto.request.customerInformation.VehicleUpdateRequest;
+import example.maintenance.estimate.customer.entity.customerInformation.Customer;
+import example.maintenance.estimate.customer.entity.customerInformation.CustomerAddress;
+import example.maintenance.estimate.customer.entity.customerInformation.Vehicle;
 import example.maintenance.estimate.customer.service.CustomerService;
 import jakarta.validation.Valid;
 import java.net.URI;

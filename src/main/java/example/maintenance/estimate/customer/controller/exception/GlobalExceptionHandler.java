@@ -5,6 +5,8 @@ import example.maintenance.estimate.customer.controller.exception.CustomerExcept
 import example.maintenance.estimate.customer.controller.exception.CustomerException.AlreadyExistsPhoneNumberException;
 import example.maintenance.estimate.customer.controller.exception.CustomerException.CustomerNotFoundException;
 import example.maintenance.estimate.customer.controller.exception.CustomerException.InvalidSearchParameterException;
+import example.maintenance.estimate.customer.controller.exception.MasterException.MaintenanceGuideAlreadyExistsException;
+import example.maintenance.estimate.customer.controller.exception.MasterException.ProductCategoryAlreadyExistsException;
 import example.maintenance.estimate.customer.controller.exception.VehicleException.AlreadyExistsVehicleException;
 import example.maintenance.estimate.customer.controller.exception.VehicleException.VehicleInactiveException;
 import example.maintenance.estimate.customer.controller.exception.VehicleException.VehicleYearInvalidException;
@@ -91,7 +93,7 @@ public class GlobalExceptionHandler {
   }
 
   @ExceptionHandler(VehicleYearInvalidException.class)
-  public ResponseEntity<Map<String, String>> VehicleYearInvalidException(
+  public ResponseEntity<Map<String, String>> handleVehicleYearInvalidException(
       VehicleYearInvalidException e, HttpServletRequest request) {
     return new ResponseEntity<>(
         createErrorResponse(HttpStatus.BAD_REQUEST, e, request), HttpStatus.BAD_REQUEST);
@@ -106,14 +108,25 @@ public class GlobalExceptionHandler {
 
   @ExceptionHandler(VehicleInactiveException.class)
   public ResponseEntity<Map<String, String>> handleVehicleInactiveException(
-      Exception e, HttpServletRequest request) {
-    Map<String, String> body = Map.of(
-        "status", "400",
-        "error", "Bad Request",
-        "message", e.getMessage(),
-        "path", request.getRequestURI());
+      VehicleInactiveException e, HttpServletRequest request) {
+    return new ResponseEntity<>(
+        createErrorResponse(HttpStatus.BAD_REQUEST, e, request), HttpStatus.BAD_REQUEST);
+  }
 
-    return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+  @ExceptionHandler(MaintenanceGuideAlreadyExistsException.class)
+  public ResponseEntity<Map<String, String>> handleMaintenanceGuideAlreadyExistsException(
+      MaintenanceGuideAlreadyExistsException e, HttpServletRequest request) {
+    return new ResponseEntity<>(
+        createErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY, e, request),
+        HttpStatus.UNPROCESSABLE_ENTITY);
+  }
+
+  @ExceptionHandler(ProductCategoryAlreadyExistsException.class)
+  public ResponseEntity<Map<String, String>> handleProductCategoryAlreadyExistsException(
+      ProductCategoryAlreadyExistsException e, HttpServletRequest request) {
+    return new ResponseEntity<>(
+        createErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY, e, request),
+        HttpStatus.UNPROCESSABLE_ENTITY);
   }
 
   private Map<String, String> createErrorResponse(
@@ -124,6 +137,7 @@ public class GlobalExceptionHandler {
         "message", e.getMessage(),
         "path", request.getRequestURI());
   }
+
 
   public static final class ErrorResponse {
 
@@ -149,5 +163,4 @@ public class GlobalExceptionHandler {
       return errors;
     }
   }
-
 }
