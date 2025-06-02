@@ -18,7 +18,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 @RestController
 public class MasterController {
 
-  MaintenanceGuideService maintenanceGuideService;
+  final MaintenanceGuideService maintenanceGuideService;
 
   public MasterController(MaintenanceGuideService maintenanceGuideService) {
     this.maintenanceGuideService = maintenanceGuideService;

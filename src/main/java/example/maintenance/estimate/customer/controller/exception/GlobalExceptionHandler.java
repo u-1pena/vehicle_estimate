@@ -113,13 +113,6 @@ public class GlobalExceptionHandler {
         createErrorResponse(HttpStatus.BAD_REQUEST, e, request), HttpStatus.BAD_REQUEST);
   }
 
-  @ExceptionHandler(EstimateException.MaintenanceGuideNotFoundException.class)
-  public ResponseEntity<Map<String, String>> handleMaintenanceGuideNotFoundException(
-      EstimateException.MaintenanceGuideNotFoundException e, HttpServletRequest request) {
-    return new ResponseEntity<>(
-        createErrorResponse(HttpStatus.NOT_FOUND, e, request), HttpStatus.NOT_FOUND);
-  }
-
   @ExceptionHandler(MaintenanceGuideAlreadyExistsException.class)
   public ResponseEntity<Map<String, String>> handleMaintenanceGuideAlreadyExistsException(
       MaintenanceGuideAlreadyExistsException e, HttpServletRequest request) {
