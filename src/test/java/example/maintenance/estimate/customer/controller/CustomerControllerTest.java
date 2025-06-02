@@ -13,7 +13,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import example.maintenance.estimate.customer.controller.exception.CustomerException;
 import example.maintenance.estimate.customer.controller.exception.CustomerException.AlreadyExistsEmailException;
 import example.maintenance.estimate.customer.controller.exception.CustomerException.AlreadyExistsPhoneNumberException;
@@ -21,16 +20,16 @@ import example.maintenance.estimate.customer.controller.exception.CustomerExcept
 import example.maintenance.estimate.customer.controller.exception.CustomerException.InvalidSearchParameterException;
 import example.maintenance.estimate.customer.controller.exception.VehicleException;
 import example.maintenance.estimate.customer.controller.exception.VehicleException.AlreadyExistsVehicleException;
-import example.maintenance.estimate.customer.dto.CustomerInformationDto;
-import example.maintenance.estimate.customer.dto.request.CustomerAddressCreateRequest;
-import example.maintenance.estimate.customer.dto.request.CustomerAddressUpdateRequest;
-import example.maintenance.estimate.customer.dto.request.CustomerCreateRequest;
-import example.maintenance.estimate.customer.dto.request.CustomerUpdateRequest;
-import example.maintenance.estimate.customer.dto.request.VehicleCreateRequest;
-import example.maintenance.estimate.customer.dto.request.VehicleUpdateRequest;
-import example.maintenance.estimate.customer.entity.Customer;
-import example.maintenance.estimate.customer.entity.CustomerAddress;
-import example.maintenance.estimate.customer.entity.Vehicle;
+import example.maintenance.estimate.customer.dto.request.customerInformation.CustomerAddressCreateRequest;
+import example.maintenance.estimate.customer.dto.request.customerInformation.CustomerAddressUpdateRequest;
+import example.maintenance.estimate.customer.dto.request.customerInformation.CustomerCreateRequest;
+import example.maintenance.estimate.customer.dto.request.customerInformation.CustomerInformationDto;
+import example.maintenance.estimate.customer.dto.request.customerInformation.CustomerUpdateRequest;
+import example.maintenance.estimate.customer.dto.request.customerInformation.VehicleCreateRequest;
+import example.maintenance.estimate.customer.dto.request.customerInformation.VehicleUpdateRequest;
+import example.maintenance.estimate.customer.entity.customerInformation.Customer;
+import example.maintenance.estimate.customer.entity.customerInformation.CustomerAddress;
+import example.maintenance.estimate.customer.entity.customerInformation.Vehicle;
 import example.maintenance.estimate.customer.entity.enums.PlateRegion;
 import example.maintenance.estimate.customer.entity.enums.Prefecture;
 import example.maintenance.estimate.customer.helper.CustomizedMockMvc;
@@ -68,9 +67,6 @@ class CustomerControllerTest {
   CustomerService customerService;
 
   TestHelper testHelper;
-
-  @Autowired
-  ObjectMapper objectMapper;
 
   @BeforeEach
   void setup() {

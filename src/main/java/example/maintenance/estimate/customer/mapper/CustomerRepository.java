@@ -1,8 +1,8 @@
 package example.maintenance.estimate.customer.mapper;
 
-import example.maintenance.estimate.customer.entity.Customer;
-import example.maintenance.estimate.customer.entity.CustomerAddress;
-import example.maintenance.estimate.customer.entity.Vehicle;
+import example.maintenance.estimate.customer.entity.customerInformation.Customer;
+import example.maintenance.estimate.customer.entity.customerInformation.CustomerAddress;
+import example.maintenance.estimate.customer.entity.customerInformation.Vehicle;
 import example.maintenance.estimate.customer.entity.enums.PlateRegion;
 import java.util.List;
 import java.util.Optional;

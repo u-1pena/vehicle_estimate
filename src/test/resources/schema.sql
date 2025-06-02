@@ -39,10 +39,11 @@ CREATE TABLE vehicles
     CONSTRAINT fk_vehicles_customer_id FOREIGN KEY (customer_id) REFERENCES customers(customer_id) ON DELETE CASCADE
 );
 
-CREATE TABLE maintenance_guide
+CREATE TABLE maintenance_guides
 (
     maintenance_id INT AUTO_INCREMENT PRIMARY KEY,
     make VARCHAR(32) NOT NULL,
+    vehicle_name VARCHAR(32) NOT NULL,
     model VARCHAR(32) NOT NULL,
     type VARCHAR(32) NOT NULL,
     start_year VARCHAR(7) NOT NULL,
@@ -54,34 +55,38 @@ CREATE TABLE maintenance_guide
     car_wash_size VARCHAR(32) NOT NULL
 );
 
-CREATE TABLE estimate_base
+CREATE TABLE estimate_bases
 (
     estimate_id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_id INT NOT NULL,
+    vehicle_id INT NOT NULL,
     maintenance_id INT NOT NULL,
-    CONSTRAINT fk_estimate_base_maintenance_id FOREIGN KEY (maintenance_id) REFERENCES maintenance_guide(maintenance_id)
+    CONSTRAINT fk_estimate_base_maintenance_id FOREIGN KEY (maintenance_id) REFERENCES maintenance_guides(maintenance_id)
 );
 
-CREATE TABLE product_category
+CREATE TABLE product_categories
 (
     category_id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(32) NOT NULL
+    category_name VARCHAR(32) NOT NULL
 );
 
 CREATE TABLE products
 (
     product_id INT AUTO_INCREMENT PRIMARY KEY,
     category_id INT NOT NULL,
-    name VARCHAR(32) NOT NULL,
+    product_name VARCHAR(32) NOT NULL,
     description VARCHAR(255) NOT NULL,
+    guide_match_key VARCHAR(32) NOT NULL,
     price DOUBLE NOT NULL,
-    CONSTRAINT fk_products_category_id FOREIGN KEY (category_id) REFERENCES product_category(category_id)
+    CONSTRAINT fk_products_category_id FOREIGN KEY (category_id) REFERENCES product_categories(category_id)
 );
 
-CREATE TABLE estimate_product
-(
-    estimate_id INT NOT NULL,
+CREATE TABLE guide_product_permissions (
+    maintenance_id INT NOT NULL,
+    category_id INT NOT NULL,
     product_id INT NOT NULL,
-    quantity DOUBLE NOT NULL,
-    CONSTRAINT fk_estimate_product_estimate_id FOREIGN KEY (estimate_id) REFERENCES estimate_base(estimate_id),
-    CONSTRAINT fk_estimate_product_product_id FOREIGN KEY (product_id) REFERENCES products(product_id)
+    PRIMARY KEY (maintenance_id, category_id, product_id),
+    FOREIGN KEY (maintenance_id) REFERENCES maintenance_guides(maintenance_id),
+    FOREIGN KEY (category_id) REFERENCES product_categories(category_id),
+    FOREIGN KEY (product_id) REFERENCES products(product_id)
 );

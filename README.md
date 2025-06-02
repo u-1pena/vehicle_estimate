@@ -137,54 +137,56 @@ erDiagram
     Customer ||--|| CustomerAddress: ""
     Vehicle }o--|| MaintenanceGuide: ""
     MaintenanceGuide ||--o{ GuideProductPermission: ""
-    GuideProductPermission }o--|| Product: ""
-    Vehicle ||--o{ EstimateBase: ""
+    GuideProductPermission }o--o{ Product: ""
     MaintenanceGuide ||--o{ EstimateBase: ""
     Product }o--|| ProductCategory: ""
     EstimateBase ||--o{ EstimateProduct: ""
-    login {
-        int loginId PK
-        String Password
-    }
+
     Customer {
-        int customerId PK
-        String lastName
-        String firstName
-        String lastNameKana
-        String firstNameKana
+        int customer_id PK
+        String last_name
+        String first_name
+        String last_name_kana
+        String first_name_kana
         String email
-        String phoneNumber
+        String phone_number
     }
     CustomerAddress {
-        int addressId PK
-        String postalCode
+        int address_id PK
+        String postal_code
         String prefecture
         String city
-        String townAndNumber
-        String buildingNameAndRoomNumber
+        String town_and_number
+        String building_name_and_room_number
     }
 
     Vehicle {
-        int vehicleId PK
-        int customerId FK
+        int vehicle_id PK
+        int customer_id FK
+        String plate_region
+        String plate_category_number
+        String plate_hiragana
+        String plate_vehicle_number
         String make
         String model
-        String startYear
-        String endYear
         String type
-        LocalDateTime inspectionDueDate
+        String year
+        LocalDateTime inspection_date
+        boolean is_active
     }
     MaintenanceGuide {
-        int maintenanceGuideId PK
+        int maintenance_id PK
         String make
+        String vehicle_name
         String model
-        String year
         String type
-        String oilViscosity
-        double OilQuantityWithFilter
-        double OilQuantityWithoutFilter
-        String oilFilterPartNumber
-        String carWashSize
+        YEARMONTH start_year
+        YEARMONTH end_year
+        String oil_viscosity
+        double Oil_quantity_with_filter
+        double OilQuantity_without_filter
+        String oil_filter_part_number
+        String car_wash_size
     }
     GuideProductPermission {
         int maintenanceGuideId FK
@@ -194,14 +196,8 @@ erDiagram
     EstimateBase {
         int estimateBaseId PK
         int customerId FK
-        int customerAddressId FK
         int vehicleId FK
-        LocalDateTime estimateDate
-        String oilViscosity
-        double oilQuantityWithFilter
-        double oilQuantityWithoutFilter
-        String oilFilterPartNumber
-        String carWashSize
+        int maintenanceId FK
     }
     EstimateProduct {
         int estimateProductId PK

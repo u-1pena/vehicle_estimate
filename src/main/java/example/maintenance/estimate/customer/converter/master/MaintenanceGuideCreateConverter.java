@@ -1,0 +1,26 @@
+package example.maintenance.estimate.customer.converter.master;
+
+import example.maintenance.estimate.customer.dto.request.master.MaintenanceGuideCreateRequest;
+import example.maintenance.estimate.customer.entity.enums.CarWashSize;
+import example.maintenance.estimate.customer.entity.master.MaintenanceGuide;
+import java.time.YearMonth;
+
+public class MaintenanceGuideCreateConverter {
+
+  public static MaintenanceGuide maintenanceBaseCreateConvertToEntity(MaintenanceGuideCreateRequest
+      maintenanceGuideCreateRequest) {
+    return MaintenanceGuide.builder()
+        .make(maintenanceGuideCreateRequest.getMake())
+        .vehicleName(maintenanceGuideCreateRequest.getVehicleName())
+        .model(maintenanceGuideCreateRequest.getModel())
+        .type(maintenanceGuideCreateRequest.getType())
+        .startYear(YearMonth.parse(maintenanceGuideCreateRequest.getStartYear()))
+        .endYear(YearMonth.parse(maintenanceGuideCreateRequest.getEndYear()))
+        .oilViscosity(maintenanceGuideCreateRequest.getOilViscosity())
+        .oilQuantityWithFilter(maintenanceGuideCreateRequest.getOilQuantityWithFilter())
+        .oilQuantityWithoutFilter(maintenanceGuideCreateRequest.getOilQuantityWithoutFilter())
+        .oilFilterPartNumber(maintenanceGuideCreateRequest.getOilFilterPartNumber())
+        .carWashSize(CarWashSize.valueOf(maintenanceGuideCreateRequest.getCarWashSize()))
+        .build();
+  }
+}

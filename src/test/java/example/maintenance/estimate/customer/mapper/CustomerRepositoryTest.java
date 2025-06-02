@@ -2,9 +2,9 @@ package example.maintenance.estimate.customer.mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import example.maintenance.estimate.customer.entity.Customer;
-import example.maintenance.estimate.customer.entity.CustomerAddress;
-import example.maintenance.estimate.customer.entity.Vehicle;
+import example.maintenance.estimate.customer.entity.customerInformation.Customer;
+import example.maintenance.estimate.customer.entity.customerInformation.CustomerAddress;
+import example.maintenance.estimate.customer.entity.customerInformation.Vehicle;
 import example.maintenance.estimate.customer.entity.enums.Prefecture;
 import example.maintenance.estimate.customer.helper.TestHelper;
 import java.util.List;

@@ -4,15 +4,17 @@ import static example.maintenance.estimate.customer.entity.enums.PlateRegion.品
 import static example.maintenance.estimate.customer.entity.enums.PlateRegion.渋谷;
 import static example.maintenance.estimate.customer.entity.enums.PlateRegion.練馬;
 
-import example.maintenance.estimate.customer.dto.request.CustomerAddressCreateRequest;
-import example.maintenance.estimate.customer.dto.request.CustomerCreateRequest;
-import example.maintenance.estimate.customer.dto.request.CustomerUpdateRequest;
-import example.maintenance.estimate.customer.dto.request.VehicleCreateRequest;
-import example.maintenance.estimate.customer.entity.Customer;
-import example.maintenance.estimate.customer.entity.CustomerAddress;
-import example.maintenance.estimate.customer.entity.Vehicle;
+import example.maintenance.estimate.customer.dto.request.customerInformation.CustomerAddressCreateRequest;
+import example.maintenance.estimate.customer.dto.request.customerInformation.CustomerCreateRequest;
+import example.maintenance.estimate.customer.dto.request.customerInformation.CustomerUpdateRequest;
+import example.maintenance.estimate.customer.dto.request.customerInformation.VehicleCreateRequest;
+import example.maintenance.estimate.customer.entity.customerInformation.Customer;
+import example.maintenance.estimate.customer.entity.customerInformation.CustomerAddress;
+import example.maintenance.estimate.customer.entity.customerInformation.Vehicle;
 import example.maintenance.estimate.customer.entity.enums.PlateRegion;
 import example.maintenance.estimate.customer.entity.enums.Prefecture;
+import example.maintenance.estimate.customer.entity.master.Product;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
@@ -154,7 +156,26 @@ public class TestHelper {
     customerUpdateRequestMock.setEmail("hanako@example.com");
     customerUpdateRequestMock.setPhoneNumber("090-1111-9999");
     return customerUpdateRequestMock;
+  }
 
+  public List<Product> productMock() {
+    return List.of(
+        new Product(
+            1, 1, "ハイグレードオイル_0w-20",
+            "化学合成油_0w-20", "0w-20", BigDecimal.valueOf(2800.0)),
+        new Product(
+            2, 1, "ハイグレードオイル_5w-30",
+            "化学合成油_5w-30", "5w-30", BigDecimal.valueOf(2800.0)),
+        new Product(
+            3, 1, "ハイグレードオイル_5w-40",
+            "化学合成油_5w-40", "5w-40", BigDecimal.valueOf(2800.0)),
+        new Product(
+            4, 1, "ハイグレードオイル_0w-16",
+            "化学合成油_0w-16", "0w-16", BigDecimal.valueOf(2800.0)));
 
+    //INSERT INTO products VALUES (5, 1, 'ノーマルグレードオイル_0w-20', '部分合成油_0w-20', '0w-20', 2000.0);
+    //INSERT INTO products VALUES (6, 1, 'ノーマルグレードオイル_5w-30', '部分合成油_5w-30', '5w-30', 2000.0);
+    //INSERT INTO products VALUES (7, 1, 'オイル_5w-30', '鉱物油_5w-30', '5w-30', 1400.0);
+    //INSERT INTO products VALUES (8, 1, 'オイル_10w-30', '鉱物油_10w-30', '10w-30', 1300.0);
   }
 }
