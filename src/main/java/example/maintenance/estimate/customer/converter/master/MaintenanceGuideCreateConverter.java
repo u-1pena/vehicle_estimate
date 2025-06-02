@@ -7,7 +7,7 @@ import java.time.YearMonth;
 
 public class MaintenanceGuideCreateConverter {
 
-  public static MaintenanceGuide maintenanceBaseCreateConvertToEntity(MaintenanceGuideCreateRequest
+  public static MaintenanceGuide toEntity(MaintenanceGuideCreateRequest
       maintenanceGuideCreateRequest) {
     return MaintenanceGuide.builder()
         .make(maintenanceGuideCreateRequest.getMake())

@@ -43,7 +43,7 @@ public class MaintenanceGuideService {
   public MaintenanceGuide registerMaintenanceGuide(
       MaintenanceGuideCreateRequest maintenanceGuideCreateRequest) {
     MaintenanceGuide maintenanceGuide = MaintenanceGuideCreateConverter
-        .maintenanceBaseCreateConvertToEntity(maintenanceGuideCreateRequest);
+        .toEntity(maintenanceGuideCreateRequest);
     maintenanceGuideAlreadyExists(maintenanceGuide);
     createMaintenanceGuide(maintenanceGuide);
     registerProductPermission(maintenanceGuide);
@@ -96,7 +96,7 @@ public class MaintenanceGuideService {
       productCategoryCreateRequest) {
 
     ProductCategory productCategory = ProductCategoryCreateConverter
-        .productCategoryConvertToEntity(productCategoryCreateRequest);
+        .toEntity(productCategoryCreateRequest);
     productCategoryAlreadyExists(productCategory);
     createProductCategory(productCategory);
     return productCategory;
@@ -122,7 +122,7 @@ public class MaintenanceGuideService {
    */
   public Product registerProduct(ProductCreateRequest productCreateRequest) {
     Product product = ProductCreateConverter
-        .productCreateConvertToEntity(productCreateRequest);
+        .toEntity(productCreateRequest);
     createProduct(product);
     return product;
   }

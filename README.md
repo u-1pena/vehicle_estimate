@@ -183,8 +183,8 @@ erDiagram
         YEARMONTH start_year
         YEARMONTH end_year
         String oil_viscosity
-        double Oil_quantity_with_filter
-        double OilQuantity_without_filter
+        double oil_quantity_with_filter
+        double oil_quantity_without_filter
         String oil_filter_part_number
         String car_wash_size
     }

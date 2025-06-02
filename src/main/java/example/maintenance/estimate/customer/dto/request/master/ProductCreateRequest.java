@@ -1,6 +1,6 @@
 package example.maintenance.estimate.customer.dto.request.master;
 
-import example.maintenance.estimate.customer.dto.request.Validator.YenAmount;
+import example.maintenance.estimate.customer.dto.request.validator.YenAmount;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;

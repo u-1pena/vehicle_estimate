@@ -1,4 +1,4 @@
-package example.maintenance.estimate.customer.dto.request.Validator;
+package example.maintenance.estimate.customer.dto.request.validator;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
@@ -9,12 +9,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Documented
-@Constraint(validatedBy = PlateRegionValidator.class)
+@Constraint(validatedBy = PrefectureValidator.class)
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ValidPlateRegion {
+public @interface ValidPrefecture {
 
-  String message() default "ナンバープレートの地域名が不正です";
+  String message() default "都道府県は正しい名前を入力してください";
 
   Class<?>[] groups() default {};
 

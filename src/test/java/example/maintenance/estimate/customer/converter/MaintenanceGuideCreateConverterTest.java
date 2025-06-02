@@ -30,7 +30,7 @@ class MaintenanceGuideCreateConverterTest {
     maintenanceGuideCreateRequest.setCarWashSize("M");
 
     // Act
-    MaintenanceGuide actual = MaintenanceGuideCreateConverter.maintenanceBaseCreateConvertToEntity(
+    MaintenanceGuide actual = MaintenanceGuideCreateConverter.toEntity(
         maintenanceGuideCreateRequest);
 
     // Assert

@@ -118,169 +118,170 @@ class MaintenanceGuideServiceTest {
       verify(masterRepository).createGuideProductPermission(
           anyInt(), eq(productOilFilter.getCategoryId()), eq(productOilFilter.getProductId()));
     }
-  }
 
-  @Test
-  void 商品カテゴリーを登録できること() {
-    //Arrange
-    ProductCategoryCreateRequest productCategoryCreateRequest = new ProductCategoryCreateRequest();
-    productCategoryCreateRequest.setCategoryName("エンジンオイル");
 
-    //Mock the repository behavior
-    doNothing().when(masterRepository).createProductCategory(any());
+    @Test
+    void 商品カテゴリーを登録できること() {
+      //Arrange
+      ProductCategoryCreateRequest productCategoryCreateRequest = new ProductCategoryCreateRequest();
+      productCategoryCreateRequest.setCategoryName("エンジンオイル");
 
-    //Act
-    ProductCategory actual = maintenanceGuideService.registerProductCategory(
-        productCategoryCreateRequest);
+      //Mock the repository behavior
+      doNothing().when(masterRepository).createProductCategory(any());
 
-    assertThat(actual.getCategoryName()).isEqualTo("エンジンオイル");
-    verify(masterRepository, times(1))
-        .createProductCategory(any(ProductCategory.class));
-  }
+      //Act
+      ProductCategory actual = maintenanceGuideService.registerProductCategory(
+          productCategoryCreateRequest);
 
-  @Test
-  void 商品を登録できること() {
-    // Arrange
-    ProductCreateRequest productCreateRequest = new ProductCreateRequest();
-    productCreateRequest.setCategoryId(1);
-    productCreateRequest.setProductName("ハイグレードオイル_0w-20");
-    productCreateRequest.setDescription("化学合成油_0w-20");
-    productCreateRequest.setGuideMatchKey("0w-20");
-    productCreateRequest.setPrice(BigDecimal.valueOf(2800.0));
-    doNothing().when(masterRepository).createProduct(any());
+      assertThat(actual.getCategoryName()).isEqualTo("エンジンオイル");
+      verify(masterRepository, times(1))
+          .createProductCategory(any(ProductCategory.class));
+    }
 
-    // Act
-    Product actual = maintenanceGuideService.registerProduct(productCreateRequest);
+    @Test
+    void 商品を登録できること() {
+      // Arrange
+      ProductCreateRequest productCreateRequest = new ProductCreateRequest();
+      productCreateRequest.setCategoryId(1);
+      productCreateRequest.setProductName("ハイグレードオイル_0w-20");
+      productCreateRequest.setDescription("化学合成油_0w-20");
+      productCreateRequest.setGuideMatchKey("0w-20");
+      productCreateRequest.setPrice(BigDecimal.valueOf(2800.0));
+      doNothing().when(masterRepository).createProduct(any());
 
-    // Assert
-    assertThat(actual.getCategoryId()).isEqualTo(productCreateRequest.getCategoryId());
-    assertThat(actual.getProductName()).isEqualTo(productCreateRequest.getProductName());
-    assertThat(actual.getDescription()).isEqualTo(productCreateRequest.getDescription());
-    assertThat(actual.getPrice()).isEqualTo(productCreateRequest.getPrice());
-    verify(masterRepository, times(1)).createProduct(any(Product.class));
-  }
+      // Act
+      Product actual = maintenanceGuideService.registerProduct(productCreateRequest);
 
-  @Test
-  void 使用できる商品が２種類あっても登録できること() {
-    // Arrange
-    MaintenanceGuideCreateRequest request = masterTestHelper.maintenanceGuideCreateRequestMock();
-    MaintenanceGuide maintenanceGuide = new MaintenanceGuide();
-    maintenanceGuide.setMake(request.getMake());
-    maintenanceGuide.setVehicleName(request.getVehicleName());
-    maintenanceGuide.setModel(request.getModel());
-    maintenanceGuide.setType(request.getType());
-    maintenanceGuide.setStartYear(YearMonth.parse(request.getStartYear()));
-    maintenanceGuide.setEndYear(YearMonth.parse(request.getEndYear()));
-    maintenanceGuide.setOilViscosity(request.getOilViscosity());
-    maintenanceGuide.setOilQuantityWithFilter(request.getOilQuantityWithFilter());
-    maintenanceGuide.setOilQuantityWithoutFilter(request.getOilQuantityWithoutFilter());
-    maintenanceGuide.setOilFilterPartNumber(request.getOilFilterPartNumber());
-    maintenanceGuide.setCarWashSize(CarWashSize.valueOf(request.getCarWashSize()));
+      // Assert
+      assertThat(actual.getCategoryId()).isEqualTo(productCreateRequest.getCategoryId());
+      assertThat(actual.getProductName()).isEqualTo(productCreateRequest.getProductName());
+      assertThat(actual.getDescription()).isEqualTo(productCreateRequest.getDescription());
+      assertThat(actual.getPrice()).isEqualTo(productCreateRequest.getPrice());
+      verify(masterRepository, times(1)).createProduct(any(Product.class));
+    }
 
-    Product oilProduct1 = new Product();
-    oilProduct1.setCategoryId(1);
-    oilProduct1.setProductId(1);
-    oilProduct1.setProductName("ハイグレードオイル_0w-20");
-    oilProduct1.setDescription("化学合成油_0w-20");
-    oilProduct1.setGuideMatchKey("0w-20");
-    oilProduct1.setPrice(BigDecimal.valueOf(2800.0));
+    @Test
+    void 使用できる商品が２種類あっても登録できること() {
+      // Arrange
+      MaintenanceGuideCreateRequest request = masterTestHelper.maintenanceGuideCreateRequestMock();
+      MaintenanceGuide maintenanceGuide = new MaintenanceGuide();
+      maintenanceGuide.setMake(request.getMake());
+      maintenanceGuide.setVehicleName(request.getVehicleName());
+      maintenanceGuide.setModel(request.getModel());
+      maintenanceGuide.setType(request.getType());
+      maintenanceGuide.setStartYear(YearMonth.parse(request.getStartYear()));
+      maintenanceGuide.setEndYear(YearMonth.parse(request.getEndYear()));
+      maintenanceGuide.setOilViscosity(request.getOilViscosity());
+      maintenanceGuide.setOilQuantityWithFilter(request.getOilQuantityWithFilter());
+      maintenanceGuide.setOilQuantityWithoutFilter(request.getOilQuantityWithoutFilter());
+      maintenanceGuide.setOilFilterPartNumber(request.getOilFilterPartNumber());
+      maintenanceGuide.setCarWashSize(CarWashSize.valueOf(request.getCarWashSize()));
 
-    Product oilProduct2 = new Product();
-    oilProduct2.setCategoryId(1);
-    oilProduct2.setProductId(2);
-    oilProduct2.setProductName("ノーマルオイル_0w-20");
-    oilProduct2.setDescription("鉱物油_0w-20");
-    oilProduct2.setGuideMatchKey("0w-20");
-    oilProduct2.setPrice(BigDecimal.valueOf(2000.0));
+      Product oilProduct1 = new Product();
+      oilProduct1.setCategoryId(1);
+      oilProduct1.setProductId(1);
+      oilProduct1.setProductName("ハイグレードオイル_0w-20");
+      oilProduct1.setDescription("化学合成油_0w-20");
+      oilProduct1.setGuideMatchKey("0w-20");
+      oilProduct1.setPrice(BigDecimal.valueOf(2800.0));
 
-    // Mock the repository behavior
-    doNothing().when(masterRepository).createMaintenanceGuide(any());
-    when(masterRepository.findProductByOilViscosity(
-        maintenanceGuide.getOilViscosity())).thenReturn(List.of(oilProduct1, oilProduct2));
+      Product oilProduct2 = new Product();
+      oilProduct2.setCategoryId(1);
+      oilProduct2.setProductId(2);
+      oilProduct2.setProductName("ノーマルオイル_0w-20");
+      oilProduct2.setDescription("鉱物油_0w-20");
+      oilProduct2.setGuideMatchKey("0w-20");
+      oilProduct2.setPrice(BigDecimal.valueOf(2000.0));
 
-    // Act
-    MaintenanceGuide actual = maintenanceGuideService.registerMaintenanceGuide(request);
+      // Mock the repository behavior
+      doNothing().when(masterRepository).createMaintenanceGuide(any());
+      when(masterRepository.findProductByOilViscosity(
+          maintenanceGuide.getOilViscosity())).thenReturn(List.of(oilProduct1, oilProduct2));
 
-    // Assert
-    assertThat(actual.getMake()).isEqualTo(request.getMake());
-    assertThat(actual.getVehicleName()).isEqualTo(request.getVehicleName());
-    assertThat(actual.getModel()).isEqualTo(request.getModel());
-    assertThat(actual.getType()).isEqualTo(request.getType());
-    assertThat(actual.getStartYear()).isEqualTo(YearMonth.parse(request.getStartYear()));
-    assertThat(actual.getEndYear()).isEqualTo(YearMonth.parse(request.getEndYear()));
-    assertThat(actual.getOilViscosity()).isEqualTo(request.getOilViscosity());
-    assertThat(actual.getOilQuantityWithFilter())
-        .isEqualTo(request.getOilQuantityWithFilter());
-    assertThat(actual.getOilQuantityWithoutFilter())
-        .isEqualTo(request.getOilQuantityWithoutFilter());
-    assertThat(actual.getOilFilterPartNumber())
-        .isEqualTo(request.getOilFilterPartNumber());
-    assertThat(actual.getCarWashSize()).isEqualTo(CarWashSize.valueOf(request.getCarWashSize()));
-    verify(masterRepository, times(1))
-        .createGuideProductPermission(anyInt(), eq(oilProduct1.getCategoryId()),
-            eq(oilProduct1.getProductId()));
-  }
+      // Act
+      MaintenanceGuide actual = maintenanceGuideService.registerMaintenanceGuide(request);
 
-  @Test
-  void 商品が存在しない場合は商品権限を作成しないこと() {
-    // Arrange
-    MaintenanceGuideCreateRequest request = masterTestHelper.maintenanceGuideCreateRequestMock();
-    MaintenanceGuide maintenanceGuide = new MaintenanceGuide();
-    maintenanceGuide.setMake(request.getMake());
-    maintenanceGuide.setVehicleName(request.getVehicleName());
-    maintenanceGuide.setModel(request.getModel());
-    maintenanceGuide.setType(request.getType());
-    maintenanceGuide.setStartYear(YearMonth.parse(request.getStartYear()));
-    maintenanceGuide.setEndYear(YearMonth.parse(request.getEndYear()));
-    maintenanceGuide.setOilViscosity(request.getOilViscosity());
-    maintenanceGuide.setOilQuantityWithFilter(request.getOilQuantityWithFilter());
-    maintenanceGuide.setOilQuantityWithoutFilter(request.getOilQuantityWithoutFilter());
-    maintenanceGuide.setOilFilterPartNumber(request.getOilFilterPartNumber());
-    maintenanceGuide.setCarWashSize(CarWashSize.valueOf(request.getCarWashSize()));
+      // Assert
+      assertThat(actual.getMake()).isEqualTo(request.getMake());
+      assertThat(actual.getVehicleName()).isEqualTo(request.getVehicleName());
+      assertThat(actual.getModel()).isEqualTo(request.getModel());
+      assertThat(actual.getType()).isEqualTo(request.getType());
+      assertThat(actual.getStartYear()).isEqualTo(YearMonth.parse(request.getStartYear()));
+      assertThat(actual.getEndYear()).isEqualTo(YearMonth.parse(request.getEndYear()));
+      assertThat(actual.getOilViscosity()).isEqualTo(request.getOilViscosity());
+      assertThat(actual.getOilQuantityWithFilter())
+          .isEqualTo(request.getOilQuantityWithFilter());
+      assertThat(actual.getOilQuantityWithoutFilter())
+          .isEqualTo(request.getOilQuantityWithoutFilter());
+      assertThat(actual.getOilFilterPartNumber())
+          .isEqualTo(request.getOilFilterPartNumber());
+      assertThat(actual.getCarWashSize()).isEqualTo(CarWashSize.valueOf(request.getCarWashSize()));
+      verify(masterRepository, times(1))
+          .createGuideProductPermission(anyInt(), eq(oilProduct1.getCategoryId()),
+              eq(oilProduct1.getProductId()));
+    }
 
-    // Mock the repository behavior
-    doNothing().when(masterRepository).createMaintenanceGuide(any());
-    when(masterRepository.findProductByOilViscosity(
-        maintenanceGuide.getOilViscosity())).thenReturn(List.of());
+    @Test
+    void 商品が存在しない場合は商品権限を作成しないこと() {
+      // Arrange
+      MaintenanceGuideCreateRequest request = masterTestHelper.maintenanceGuideCreateRequestMock();
+      MaintenanceGuide maintenanceGuide = new MaintenanceGuide();
+      maintenanceGuide.setMake(request.getMake());
+      maintenanceGuide.setVehicleName(request.getVehicleName());
+      maintenanceGuide.setModel(request.getModel());
+      maintenanceGuide.setType(request.getType());
+      maintenanceGuide.setStartYear(YearMonth.parse(request.getStartYear()));
+      maintenanceGuide.setEndYear(YearMonth.parse(request.getEndYear()));
+      maintenanceGuide.setOilViscosity(request.getOilViscosity());
+      maintenanceGuide.setOilQuantityWithFilter(request.getOilQuantityWithFilter());
+      maintenanceGuide.setOilQuantityWithoutFilter(request.getOilQuantityWithoutFilter());
+      maintenanceGuide.setOilFilterPartNumber(request.getOilFilterPartNumber());
+      maintenanceGuide.setCarWashSize(CarWashSize.valueOf(request.getCarWashSize()));
 
-    // Act
-    MaintenanceGuide actual = maintenanceGuideService.registerMaintenanceGuide(request);
+      // Mock the repository behavior
+      doNothing().when(masterRepository).createMaintenanceGuide(any());
+      when(masterRepository.findProductByOilViscosity(
+          maintenanceGuide.getOilViscosity())).thenReturn(List.of());
 
-    // Assert
-    assertThat(actual.getMake()).isEqualTo(request.getMake());
-    assertThat(actual.getVehicleName()).isEqualTo(request.getVehicleName());
-    assertThat(actual.getModel()).isEqualTo(request.getModel());
-    assertThat(actual.getType()).isEqualTo(request.getType());
-    assertThat(actual.getStartYear()).isEqualTo(YearMonth.parse(request.getStartYear()));
-    assertThat(actual.getEndYear()).isEqualTo(YearMonth.parse(request.getEndYear()));
-    assertThat(actual.getOilViscosity()).isEqualTo(request.getOilViscosity());
-    assertThat(actual.getOilQuantityWithFilter())
-        .isEqualTo(request.getOilQuantityWithFilter());
-    assertThat(actual.getOilQuantityWithoutFilter())
-        .isEqualTo(request.getOilQuantityWithoutFilter());
-    assertThat(actual.getOilFilterPartNumber())
-        .isEqualTo(request.getOilFilterPartNumber());
-    assertThat(actual.getCarWashSize()).isEqualTo(CarWashSize.valueOf(request.getCarWashSize()));
-    verify(masterRepository, times(0))
-        .createGuideProductPermission(anyInt(), anyInt(), anyInt());
-  }
+      // Act
+      MaintenanceGuide actual = maintenanceGuideService.registerMaintenanceGuide(request);
 
-  @Test
-  void 既にメンテナンスガイドが登録されている場合例外処理が行われること() {
-    // Arrange
-    MaintenanceGuide existingGuide = masterTestHelper.maintenanceGuideMock().get(0);
-    MaintenanceGuideCreateRequest request = masterTestHelper.maintenanceGuideCreateRequestMock();
+      // Assert
+      assertThat(actual.getMake()).isEqualTo(request.getMake());
+      assertThat(actual.getVehicleName()).isEqualTo(request.getVehicleName());
+      assertThat(actual.getModel()).isEqualTo(request.getModel());
+      assertThat(actual.getType()).isEqualTo(request.getType());
+      assertThat(actual.getStartYear()).isEqualTo(YearMonth.parse(request.getStartYear()));
+      assertThat(actual.getEndYear()).isEqualTo(YearMonth.parse(request.getEndYear()));
+      assertThat(actual.getOilViscosity()).isEqualTo(request.getOilViscosity());
+      assertThat(actual.getOilQuantityWithFilter())
+          .isEqualTo(request.getOilQuantityWithFilter());
+      assertThat(actual.getOilQuantityWithoutFilter())
+          .isEqualTo(request.getOilQuantityWithoutFilter());
+      assertThat(actual.getOilFilterPartNumber())
+          .isEqualTo(request.getOilFilterPartNumber());
+      assertThat(actual.getCarWashSize()).isEqualTo(CarWashSize.valueOf(request.getCarWashSize()));
+      verify(masterRepository, times(0))
+          .createGuideProductPermission(anyInt(), anyInt(), anyInt());
+    }
 
-    // Mock the repository behavior
-    when(masterRepository.findMaintenanceGuideByMakeAndModelAndTypeAndYear(
-        any(MaintenanceGuide.class))).thenReturn(java.util.Optional.of(existingGuide));
+    @Test
+    void 既にメンテナンスガイドが登録されている場合例外処理が行われること() {
+      // Arrange
+      MaintenanceGuide existingGuide = masterTestHelper.maintenanceGuideMock().get(0);
+      MaintenanceGuideCreateRequest request = masterTestHelper.maintenanceGuideCreateRequestMock();
 
-    // Act
-    MaintenanceGuideAlreadyExistsException exception = assertThrows(
-        MaintenanceGuideAlreadyExistsException.class,
-        () -> maintenanceGuideService.registerMaintenanceGuide(request));
+      // Mock the repository behavior
+      when(masterRepository.findMaintenanceGuideByMakeAndModelAndTypeAndYear(
+          any(MaintenanceGuide.class))).thenReturn(java.util.Optional.of(existingGuide));
 
-    // Assert
-    assertThat(exception.getMessage()).isEqualTo("Maintenance guide already exists");
+      // Act
+      MaintenanceGuideAlreadyExistsException exception = assertThrows(
+          MaintenanceGuideAlreadyExistsException.class,
+          () -> maintenanceGuideService.registerMaintenanceGuide(request));
+
+      // Assert
+      assertThat(exception.getMessage()).isEqualTo("Maintenance guide already exists");
+    }
   }
 }

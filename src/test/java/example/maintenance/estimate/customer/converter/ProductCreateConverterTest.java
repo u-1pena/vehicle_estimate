@@ -19,7 +19,7 @@ class ProductCreateConverterTest {
     productCreateRequest.setGuideMatchKey("test-key");
     productCreateRequest.setPrice(BigDecimal.valueOf(1000));
 
-    Product actual = ProductCreateConverter.productCreateConvertToEntity(productCreateRequest);
+    Product actual = ProductCreateConverter.toEntity(productCreateRequest);
     // 検証
     assertThat(actual.getCategoryId()).isEqualTo(productCreateRequest.getCategoryId());
     assertThat(actual.getProductName()).isEqualTo(productCreateRequest.getProductName());

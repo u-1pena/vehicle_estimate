@@ -1,6 +1,6 @@
 package example.maintenance.estimate.customer.dto.request.customerInformation;
 
-import example.maintenance.estimate.customer.dto.request.Validator.ValidPrefecture;
+import example.maintenance.estimate.customer.dto.request.validator.ValidPrefecture;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;

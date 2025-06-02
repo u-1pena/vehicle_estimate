@@ -1,4 +1,4 @@
-package example.maintenance.estimate.customer.dto.request.Validator;
+package example.maintenance.estimate.customer.dto.request.validator;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

@@ -30,7 +30,7 @@ public class MasterController {
       , UriComponentsBuilder uriComponentsBuilder) {
     MaintenanceGuide maintenanceGuide = maintenanceGuideService.registerMaintenanceGuide(
         maintenanceGuideCreateRequest);
-    URI location = uriComponentsBuilder.path("/maintenance-guide/{id}")
+    URI location = uriComponentsBuilder.path("/maintenance-guides/{id}")
         .buildAndExpand(maintenanceGuide.getMaintenanceId())
         .toUri();
     GlobalResponse body = new GlobalResponse("Maintenance guide created successfully");

@@ -1,4 +1,4 @@
-package example.maintenance.estimate.customer.dto.request.Validator;
+package example.maintenance.estimate.customer.dto.request.validator;
 
 import example.maintenance.estimate.customer.entity.enums.PlateRegion;
 import jakarta.validation.ConstraintValidator;

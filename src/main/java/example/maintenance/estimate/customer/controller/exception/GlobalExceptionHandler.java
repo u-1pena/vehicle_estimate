@@ -93,7 +93,7 @@ public class GlobalExceptionHandler {
   }
 
   @ExceptionHandler(VehicleYearInvalidException.class)
-  public ResponseEntity<Map<String, String>> VehicleYearInvalidException(
+  public ResponseEntity<Map<String, String>> handleVehicleYearInvalidException(
       VehicleYearInvalidException e, HttpServletRequest request) {
     return new ResponseEntity<>(
         createErrorResponse(HttpStatus.BAD_REQUEST, e, request), HttpStatus.BAD_REQUEST);
@@ -170,5 +170,4 @@ public class GlobalExceptionHandler {
       return errors;
     }
   }
-
 }

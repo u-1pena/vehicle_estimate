@@ -1,6 +1,6 @@
 package example.maintenance.estimate.customer.dto.request.customerInformation;
 
-import example.maintenance.estimate.customer.dto.request.Validator.ValidPlateRegion;
+import example.maintenance.estimate.customer.dto.request.validator.ValidPlateRegion;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;

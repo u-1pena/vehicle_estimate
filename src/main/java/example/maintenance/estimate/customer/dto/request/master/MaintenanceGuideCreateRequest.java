@@ -1,7 +1,7 @@
 package example.maintenance.estimate.customer.dto.request.master;
 
-import example.maintenance.estimate.customer.dto.request.Validator.ValidCarWashSize;
-import example.maintenance.estimate.customer.dto.request.Validator.ValidOilViscosity;
+import example.maintenance.estimate.customer.dto.request.validator.ValidCarWashSize;
+import example.maintenance.estimate.customer.dto.request.validator.ValidOilViscosity;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;

@@ -5,7 +5,7 @@ import example.maintenance.estimate.customer.entity.master.ProductCategory;
 
 public class ProductCategoryCreateConverter {
 
-  public static ProductCategory productCategoryConvertToEntity(
+  public static ProductCategory toEntity(
       ProductCategoryCreateRequest productCategoryCreateRequest) {
     return ProductCategory.builder()
         .categoryName(productCategoryCreateRequest.getCategoryName())

@@ -16,7 +16,7 @@ class ProductCategoryCreateConverterTest {
     productCategoryCreateRequest.setCategoryName("Test Category");
 
     // Act
-    ProductCategory actual = ProductCategoryCreateConverter.productCategoryConvertToEntity(
+    ProductCategory actual = ProductCategoryCreateConverter.toEntity(
         productCategoryCreateRequest);
     // Assert
     assertThat(actual.getCategoryName()).isEqualTo(productCategoryCreateRequest.getCategoryName());
