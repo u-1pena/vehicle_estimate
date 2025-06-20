@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="example.maintenance.estimate.customer.mapper.MasterRepository">
+<mapper namespace="com.u1pena.estimateapi.master.repository.MasterRepository">
 
   <insert id="createMaintenanceGuide" useGeneratedKeys="true" keyProperty="maintenanceId"
-    parameterType="example.maintenance.estimate.customer.entity.master.MaintenanceGuide">
+    parameterType="com.u1pena.estimateapi.master.entity.MaintenanceGuide">
     INSERT INTO maintenance_guides (make, vehicle_name, model, type, start_year, end_year,
     oil_viscosity,
     oil_quantity_with_filter, oil_quantity_without_filter, oil_filter_part_number, car_wash_size)
@@ -13,76 +13,77 @@
   </insert>
 
   <select id="findMaintenanceGuideByMakeAndModelAndTypeAndYear"
-    parameterType="example.maintenance.estimate.customer.entity.master.MaintenanceGuide"
-    resultType="example.maintenance.estimate.customer.entity.master.MaintenanceGuide">
+    parameterType="com.u1pena.estimateapi.master.entity.MaintenanceGuide"
+    resultType="com.u1pena.estimateapi.master.entity.MaintenanceGuide">
     SELECT * FROM maintenance_guides
     WHERE make = #{make} AND model = #{model} AND start_year = #{startYear} AND end_year =
     #{endYear}
   </select>
 
   <insert id="createProduct"
-    parameterType="example.maintenance.estimate.customer.entity.master.Product">
+    parameterType="com.u1pena.estimateapi.master.entity.Product">
     INSERT INTO products (category_id, product_name, description, guide_match_key, price)
     VALUES (#{categoryId}, #{productName}, #{description}, #{guideMatchKey}, #{price});
   </insert>
 
   <insert id="createProductCategory" useGeneratedKeys="true" keyProperty="categoryId"
-    parameterType="example.maintenance.estimate.customer.entity.master.ProductCategory">
+    parameterType="com.u1pena.estimateapi.master.entity.ProductCategory">
     INSERT INTO product_categories (category_name) VALUES (#{categoryName});
   </insert>
 
   <insert id="createGuideProductPermission"
-    parameterType="example.maintenance.estimate.customer.entity.master.GuideProductPermission">
-    INSERT INTO guide_product_permissions (maintenance_id, category_id, product_id)
-    VALUES (#{maintenanceId}, #{categoryId}, #{productId});
+    parameterType="com.u1pena.estimateapi.master.entity.GuideProductPermission">
+    INSERT INTO guide_product_permissions (maintenance_id, category_id, product_id, quantity,
+    auto_adjust_quantity)
+    VALUES (#{maintenanceId}, #{categoryId}, #{productId}, #{quantity}, #{autoAdjustQuantity});
   </insert>
 
   <select id="findMaintenanceGuideById" parameterType="int"
-    resultType="example.maintenance.estimate.customer.entity.master.MaintenanceGuide">
+    resultType="com.u1pena.estimateapi.master.entity.MaintenanceGuide">
     SELECT * FROM maintenance_guides WHERE maintenance_id = #{maintenanceId};
   </select>
 
   <select id="findProductByOilViscosity"
-    parameterType="example.maintenance.estimate.customer.entity.master.MaintenanceGuide"
-    resultType="example.maintenance.estimate.customer.entity.master.Product">
+    parameterType="com.u1pena.estimateapi.master.entity.MaintenanceGuide"
+    resultType="com.u1pena.estimateapi.master.entity.Product">
     SELECT * FROM products WHERE guide_match_key = #{oilViscosity};
   </select>
 
   <select id="findProductByCarWashSize"
-    parameterType="example.maintenance.estimate.customer.entity.master.MaintenanceGuide"
-    resultType="example.maintenance.estimate.customer.entity.master.Product">
+    parameterType="com.u1pena.estimateapi.master.entity.MaintenanceGuide"
+    resultType="com.u1pena.estimateapi.master.entity.Product">
     SELECT * FROM products WHERE guide_match_key = #{carWashSize};
   </select>
 
   <select id="findProductByOilFilterPartNumber"
-    parameterType="example.maintenance.estimate.customer.entity.master.MaintenanceGuide"
-    resultType="example.maintenance.estimate.customer.entity.master.Product">
+    parameterType="com.u1pena.estimateapi.master.entity.MaintenanceGuide"
+    resultType="com.u1pena.estimateapi.master.entity.Product">
     SELECT * FROM products WHERE guide_match_key LIKE CONCAT('%', #{oilFilterPartNumber}, '%');
   </select>
 
   <select id="findProductCategoryByCategoryName"
-    parameterType="example.maintenance.estimate.customer.entity.master.ProductCategory"
-    resultType="example.maintenance.estimate.customer.entity.master.ProductCategory">
+    parameterType="com.u1pena.estimateapi.master.entity.ProductCategory"
+    resultType="com.u1pena.estimateapi.master.entity.ProductCategory">
     SELECT * FROM product_categories WHERE category_name = #{categoryName};
   </select>
 
   <select id="findAllMaintenanceGuides"
-    resultType="example.maintenance.estimate.customer.entity.master.MaintenanceGuide">
+    resultType="com.u1pena.estimateapi.master.entity.MaintenanceGuide">
     SELECT * FROM maintenance_guides;
   </select>
 
   <select id="findAllProductCategories"
-    resultType="example.maintenance.estimate.customer.entity.master.ProductCategory">
+    resultType="com.u1pena.estimateapi.master.entity.ProductCategory">
     SELECT * FROM product_categories;
   </select>
 
   <select id="findAllProducts"
-    resultType="example.maintenance.estimate.customer.entity.master.Product">
+    resultType="com.u1pena.estimateapi.master.entity.Product">
     SELECT * FROM products;
   </select>
 
   <select id="findAllGuideProductPermissions"
-    resultType="example.maintenance.estimate.customer.entity.master.GuideProductPermission">
+    resultType="com.u1pena.estimateapi.master.entity.GuideProductPermission">
     SELECT * FROM guide_product_permissions;
   </select>
 

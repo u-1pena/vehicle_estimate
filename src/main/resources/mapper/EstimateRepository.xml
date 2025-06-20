@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.u1pena.estimateapi.estimate.repository.EstimateRepository">
+
+
+  <insert id="insertEstimateBase" useGeneratedKeys="true" keyProperty="estimateBaseId"
+    parameterType="com.u1pena.estimateapi.estimate.entity.EstimateBase">
+    INSERT INTO estimate_bases (customer_id, vehicle_id, maintenance_id)
+    VALUES (#{customerId}, #{vehicleId}, #{maintenanceId});
+  </insert>
+
+
+  <select id="findVehicleByVehicleId"
+    parameterType="int"
+    resultType="com.u1pena.estimateapi.customer.entity.Vehicle">
+    SELECT * FROM vehicles WHERE vehicle_id = #{vehicleId};
+  </select>
+
+  <select id="findMaintenanceGuideByMakeAndModelAndYear"
+    parameterType="map"
+    resultType="com.u1pena.estimateapi.master.entity.MaintenanceGuide">
+    SELECT *
+    FROM maintenance_guides
+    WHERE make = #{make}
+    AND model = #{model}
+    AND #{year} BETWEEN start_year AND end_year
+  </select>
+
+  <insert id="insertEstimateProduct" useGeneratedKeys="true" keyProperty="estimateProductId"
+    parameterType="com.u1pena.estimateapi.estimate.entity.EstimateProduct">
+    INSERT INTO estimate_products (estimate_base_id, product_id, quantity, unit_price,total_price)
+    VALUES (#{estimateBaseId}, #{productId}, #{quantity}, #{unitPrice}, #{totalPrice});
+  </insert>
+
+  <select id="findEstimateBaseById"
+    parameterType="int"
+    resultType="com.u1pena.estimateapi.estimate.entity.EstimateBase">
+    SELECT * FROM estimate_bases WHERE estimate_base_id = #{estimateBaseId};
+  </select>
+
+  <select id="findPermissionByMaintenanceIdAndProductId"
+    parameterType="map"
+    resultType="com.u1pena.estimateapi.master.entity.GuideProductPermission">
+    SELECT * FROM guide_product_permissions
+    WHERE maintenance_id = #{maintenanceId}
+    AND product_id = #{productId};
+  </select>
+
+  <select id="findVehicleNameByMaintenanceId"
+    parameterType="int"
+    resultType="String">
+    SELECT vehicle_name FROM maintenance_guides WHERE maintenance_id = #{maintenanceId};
+  </select>
+
+  <select id="findProductById"
+    parameterType="int"
+    resultType="com.u1pena.estimateapi.master.entity.Product">
+    SELECT * FROM products WHERE product_id = #{productId};
+  </select>
+
+  <update id="updateOilQuantityWithEstimateProductId" parameterType="map">
+    <!-- 見積もり詳細の中から商品カテゴリーをオイルに絞りオイルの数量を更新するメソッド -->
+    UPDATE estimate_products
+    SET quantity = #{quantity}
+    WHERE estimate_product_id = #{estimateProductId}
+    AND product_id IN (SELECT product_id FROM products WHERE category_id = 1);
+  </update>
+
+  <select id="countOilProductsByEstimateBaseId" parameterType="int" resultType="int">
+    <!--　見積もり詳細からオイル製品の数をカウントするメソッド -->
+    SELECT COUNT(*)
+    FROM estimate_products ep
+    JOIN products p ON ep.product_id = p.product_id
+    WHERE ep.estimate_base_id = #{estimateBaseId}
+    AND p.category_id = 1
+  </select>
+
+  <select id="countOilFilterProductsByEstimateBaseId" parameterType="int" resultType="int">
+    <!-- 見積もりからオイルフィルターの数を数えるメソッド -->
+    SELECT COUNT(*)
+    FROM estimate_products ep
+    JOIN products p ON ep.product_id = p.product_id
+    WHERE ep.estimate_base_id = #{estimateBaseId}
+    AND p.category_id = 2;
+  </select>
+
+  <select id="findEstimateProductIdByEstimateBaseId" parameterType="int"
+    resultType="int">
+    SELECT estimate_product_id FROM estimate_products WHERE estimate_base_id = #{estimateBaseId};
+  </select>
+
+  <select id="findOilQuantityWithFilterByMaintenanceId" parameterType="int"
+    resultType="double">
+    SELECT oil_quantity_with_filter FROM maintenance_guides WHERE maintenance_id = #{maintenanceId}
+  </select>
+
+  <select id="findMaintenanceGuideById"
+    parameterType="int"
+    resultType="com.u1pena.estimateapi.master.entity.MaintenanceGuide">
+    SELECT * FROM maintenance_guides WHERE maintenance_id = #{maintenanceId};
+  </select>
+
+  <select id="findCustomerById" parameterType="int"
+    resultType="com.u1pena.estimateapi.customer.entity.Customer">
+    SELECT * FROM customers WHERE customer_id = #{customerId};
+  </select>
+
+  <select id="findCustomerAddressByCustomerId" parameterType="int"
+    resultType="com.u1pena.estimateapi.customer.entity.CustomerAddress">
+    SELECT * FROM customer_addresses WHERE customer_id = #{customerId};
+  </select>
+
+  <select id="findEstimateProductsByEstimateBaseId" parameterType="int"
+    resultType="com.u1pena.estimateapi.estimate.entity.EstimateProduct">
+    SELECT * FROM estimate_products WHERE estimate_base_id = #{estimateBaseId};
+  </select>
+
+  <select id="findProductDetailByProductId" parameterType="list"
+    resultType="com.u1pena.estimateapi.estimate.dto.EstimateProductJoinResult">
+    SELECT pc.category_name,p.* FROM products p
+    JOIN product_categories pc ON p.category_id = pc.category_id WHERE product_id
+    IN
+    <foreach collection="list" item="id" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  </select>
+
+</mapper>

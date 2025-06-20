@@ -31,6 +31,6 @@ INSERT INTO products VALUES (9, 3, '手洗い洗車', '手洗い洗車Sサイズ
 INSERT INTO products VALUES (10, 2, 'オイルフィルター', 'to-101', '90915-10003', 1000.0);
 
 
-INSERT INTO estimate_bases VALUES (1, 1, 1, 1);
+INSERT INTO estimate_bases VALUES (1, 1, 1, 1, CURRENT_DATE);
 
-INSERT INTO guide_product_permissions VALUES (1, 1, 1);
+INSERT INTO guide_product_permissions VALUES (1, 1, 1, 4.0, true);

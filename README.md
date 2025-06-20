@@ -189,34 +189,36 @@ erDiagram
         String car_wash_size
     }
     GuideProductPermission {
-        int maintenanceGuideId FK
-        int productId FK
-        String categoryCode
+        int maintenance_id FK
+        int category_id FK
+        int product_id FK
     }
     EstimateBase {
-        int estimateBaseId PK
-        int customerId FK
-        int vehicleId FK
-        int maintenanceId FK
+        int estimate_base_id PK
+        int customer_id FK
+        int vehicle_id FK
+        int maintenance_id FK
+        LocalDateTime estimate_date
     }
     EstimateProduct {
-        int estimateProductId PK
-        int estimateBaseId FK
-        int productId FK
+        int estimate_product_id PK
+        int estimate_base_id FK
+        int product_id FK
         double quantity
-        decimal unitPrice
-        decimal totalPrice
+        BigDecimal unit_price
+        BigDecimal total_price
     }
     Product {
-        int productId PK
-        int categoryId FK
-        String name
+        int product_id PK
+        int category_id FK
+        String product_name
         String description
-        decimal price
+        String guide_match_key
+        BigDecimal price
     }
     ProductCategory {
-        int categoryId PK
-        String name
+        int category_id PK
+        String category_name
     }
 
 

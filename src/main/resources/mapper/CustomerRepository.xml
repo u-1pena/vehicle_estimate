@@ -1,78 +1,78 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="example.maintenance.estimate.customer.mapper.CustomerRepository">
+<mapper namespace="com.u1pena.estimateapi.customer.mapper.CustomerRepository">
 
   <select id="findCustomerByCustomerId" parameterType="int"
-    resultType="example.maintenance.estimate.customer.entity.customerInformation.Customer">
+    resultType="com.u1pena.estimateapi.customer.entity.Customer">
     SELECT * FROM customers WHERE customer_id = #{customerId}
   </select>
 
   <select id="findCustomerAddressByCustomerId" parameterType="int"
-    resultType="example.maintenance.estimate.customer.entity.customerInformation.CustomerAddress">
+    resultType="com.u1pena.estimateapi.customer.entity.CustomerAddress">
     SELECT * FROM customer_addresses WHERE customer_id = #{customerId}
   </select>
 
   <select id="findVehicleByCustomerId" parameterType="int"
-    resultType="example.maintenance.estimate.customer.entity.customerInformation.Vehicle">
+    resultType="com.u1pena.estimateapi.customer.entity.Vehicle">
     SELECT * FROM vehicles WHERE customer_id = #{customerId}
   </select>
 
   <select id="findCustomerByName" parameterType="String"
-    resultType="example.maintenance.estimate.customer.entity.customerInformation.Customer">
+    resultType="com.u1pena.estimateapi.customer.entity.Customer">
     SELECT * FROM customers WHERE CONCAT(last_name, first_name) LIKE CONCAT('%', #{customerName},
     '%')
   </select>
 
   <select id="findCustomerByNameKana" parameterType="String"
-    resultType="example.maintenance.estimate.customer.entity.customerInformation.Customer">
+    resultType="com.u1pena.estimateapi.customer.entity.Customer">
     SELECT * FROM customers WHERE CONCAT(last_name_kana, first_name_kana) LIKE CONCAT('%',
     #{kana}, '%')
   </select>
 
   <select id="findCustomerByEmail" parameterType="String"
-    resultType="example.maintenance.estimate.customer.entity.customerInformation.Customer">
+    resultType="com.u1pena.estimateapi.customer.entity.Customer">
     SELECT * FROM customers WHERE email = #{email}
   </select>
 
   <select id="findVehicleByPlateNumber" parameterType="String"
-    resultType="example.maintenance.estimate.customer.entity.customerInformation.Vehicle">
+    resultType="com.u1pena.estimateapi.customer.entity.Vehicle">
     SELECT * FROM vehicles WHERE plate_vehicle_number = #{plateNumber}
   </select>
 
   <select id="findCustomerByPhoneNumber" parameterType="String"
-    resultType="example.maintenance.estimate.customer.entity.customerInformation.Customer">
+    resultType="com.u1pena.estimateapi.customer.entity.Customer">
     SELECT * FROM customers WHERE phone_number = #{phoneNumber}
   </select>
 
   <select id="findVehicleByLicensePlateExactMatch"
-    parameterType="example.maintenance.estimate.customer.entity.customerInformation.Vehicle"
-    resultType="example.maintenance.estimate.customer.entity.customerInformation.Vehicle">
+    parameterType="com.u1pena.estimateapi.customer.entity.Vehicle"
+    resultType="com.u1pena.estimateapi.customer.entity.Vehicle">
     SELECT * FROM vehicles WHERE plate_region = #{plateRegion} AND plate_category_number =
     #{plateCategoryNumber} AND plate_hiragana = #{plateHiragana} AND plate_vehicle_number =
     #{plateVehicleNumber}
   </select>
 
   <select id="findVehiclesByCustomerId" parameterType="int"
-    resultType="example.maintenance.estimate.customer.entity.customerInformation.Vehicle">
+    resultType="com.u1pena.estimateapi.customer.entity.Vehicle">
     SELECT * FROM vehicles WHERE customer_id = #{customerId}
   </select>
 
   <select id="findVehicleByVehicleId" parameterType="int"
-    resultType="example.maintenance.estimate.customer.entity.customerInformation.Vehicle">
+    resultType="com.u1pena.estimateapi.customer.entity.Vehicle">
     SELECT * FROM vehicles WHERE vehicle_id = #{vehicleId}
   </select>
 
 
   <insert id="createCustomer" useGeneratedKeys="true" keyProperty="customerId"
-    parameterType="example.maintenance.estimate.customer.entity.customerInformation.Customer">
+    parameterType="com.u1pena.estimateapi.customer.entity.Customer">
     INSERT INTO customers (last_name, first_name, last_name_kana, first_name_kana, email,
     phone_number)
     VALUES (#{lastName}, #{firstName}, #{lastNameKana}, #{firstNameKana}, #{email}, #{phoneNumber})
   </insert>
 
   <insert id="createCustomerAddress" useGeneratedKeys="true" keyProperty="addressId"
-    parameterType="example.maintenance.estimate.customer.entity.customerInformation.CustomerAddress">
+    parameterType="com.u1pena.estimateapi.customer.entity.CustomerAddress">
     INSERT INTO customer_addresses (address_id,customer_id, postal_code, prefecture, city,
     town_and_number,
     building_name_and_room_number) VALUES (#{addressId}, #{customerId}, #{postalCode},
@@ -81,7 +81,7 @@
   </insert>
 
   <insert id="createVehicle" useGeneratedKeys="true" keyProperty="vehicleId"
-    parameterType="example.maintenance.estimate.customer.entity.customerInformation.Vehicle">
+    parameterType="com.u1pena.estimateapi.customer.entity.Vehicle">
     INSERT INTO vehicles (customer_id, plate_region, plate_category_number,
     plate_hiragana, plate_vehicle_number, make, model, type, year, inspection_date)
     VALUES (#{customerId}, #{plateRegion}, #{plateCategoryNumber}, #{plateHiragana},
@@ -97,21 +97,21 @@
   </update>
 
   <update id="updateCustomer"
-    parameterType="example.maintenance.estimate.customer.entity.customerInformation.Customer">
+    parameterType="com.u1pena.estimateapi.customer.entity.Customer">
     UPDATE customers SET last_name = #{lastName}, first_name = #{firstName}, last_name_kana =
     #{lastNameKana}, first_name_kana = #{firstNameKana}, email = #{email}, phone_number =
     #{phoneNumber} WHERE customer_id = #{customerId}
   </update>
 
   <update id="updateCustomerAddress"
-    parameterType="example.maintenance.estimate.customer.entity.customerInformation.CustomerAddress">
+    parameterType="com.u1pena.estimateapi.customer.entity.CustomerAddress">
     UPDATE customer_addresses SET postal_code = #{postalCode}, prefecture = #{prefecture},
     city = #{city}, town_and_number = #{townAndNumber},
     building_name_and_room_number = #{buildingNameAndRoomNumber} WHERE address_id = #{addressId}
   </update>
 
   <update id="updateVehicle"
-    parameterType="example.maintenance.estimate.customer.entity.customerInformation.Vehicle">
+    parameterType="com.u1pena.estimateapi.customer.entity.Vehicle">
     UPDATE vehicles SET plate_region = #{plateRegion}, plate_category_number =
     #{plateCategoryNumber},
     plate_hiragana = #{plateHiragana}, plate_vehicle_number = #{plateVehicleNumber}, make = #{make},
@@ -121,17 +121,17 @@
   </update>
 
   <select id="findAllCustomers"
-    resultType="example.maintenance.estimate.customer.entity.customerInformation.Customer">
+    resultType="com.u1pena.estimateapi.customer.entity.Customer">
     SELECT * FROM customers
   </select>
 
   <select id="findAllCustomerAddresses"
-    resultType="example.maintenance.estimate.customer.entity.customerInformation.CustomerAddress">
+    resultType="com.u1pena.estimateapi.customer.entity.CustomerAddress">
     SELECT * FROM customer_addresses
   </select>
 
   <select id="findAllVehicles"
-    resultType="example.maintenance.estimate.customer.entity.customerInformation.Vehicle">
+    resultType="com.u1pena.estimateapi.customer.entity.Vehicle">
     SELECT * FROM vehicles
   </select>
 </mapper>
