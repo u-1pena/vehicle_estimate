@@ -31,7 +31,7 @@ public class EstimateController {
     int vehicleId = estimateBaseCreateRequest.getVehicleId();
     int estimateBaseId = estimateService.registerEstimateBase(vehicleId);
     URI location = uriBuilder
-        .path("/estimates/vehicle/{estimateId}")
+        .path("/estimates/{estimateId}")
         .buildAndExpand(estimateBaseId)
         .toUri();
     GlobalResponse response = new GlobalResponse("Estimate created successfully");

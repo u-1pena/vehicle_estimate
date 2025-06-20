@@ -68,7 +68,7 @@ CREATE TABLE products
     product_name VARCHAR(32) NOT NULL,
     description VARCHAR(255) NOT NULL,
     guide_match_key VARCHAR(32) NOT NULL,
-    price DECIMAL(8.2) NOT NULL,
+    price DECIMAL(8,2) NOT NULL,
     CONSTRAINT fk_products_category_id FOREIGN KEY (category_id) REFERENCES product_categories(category_id)
 );
 

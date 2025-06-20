@@ -1,5 +1,7 @@
 package com.u1pena.estimateapi.master.service;
 
+import static com.u1pena.estimateapi.common.CategoryConstants.CATEGORY_OIL;
+
 import com.u1pena.estimateapi.estimate.dto.GuideProductPermissionCreateContext;
 import com.u1pena.estimateapi.master.converter.MaintenanceGuideCreateConverter;
 import com.u1pena.estimateapi.master.converter.ProductCategoryCreateConverter;
@@ -16,6 +18,7 @@ import com.u1pena.estimateapi.master.repository.MasterRepository;
 import java.util.List;
 import java.util.function.Function;
 import org.springframework.stereotype.Service;
+
 
 @Service
 public class MaintenanceGuideService {
@@ -63,7 +66,7 @@ public class MaintenanceGuideService {
    * メンテナンスガイドが既に存在するか確認する。 存在する場合は、ExistAlreadyMasterExceptionをスローする。
    *
    * @param maintenanceGuide MaintenanceGuide
-   * @description 検索はMake、model、Type、Yearで行われます。
+   * @throws MaintenanceGuideAlreadyExistsException
    */
   private void maintenanceGuideAlreadyExists(MaintenanceGuide maintenanceGuide) {
     masterRepository.findMaintenanceGuideByMakeAndModelAndTypeAndYear(maintenanceGuide)
@@ -152,7 +155,6 @@ public class MaintenanceGuideService {
     return masterRepository.findProductByOilFilterPartNumber(oilFilterPartNumber);
   }
 
-  private static final int CATEGORY_OIL = 1;// オイルのカテゴリID
 
   /**
    * 中間テーブルを作成する。商品の権限を登録する。
@@ -164,10 +166,10 @@ public class MaintenanceGuideService {
     List<Product> products = productFetcher.apply(maintenanceGuide);
     products.stream()
         .map(product -> {
-          double quantity = (product.getCategoryId() == CATEGORY_OIL) ? // オイル
+          double quantity = (product.getCategoryId() == CATEGORY_OIL) ?
               maintenanceGuide.getOilQuantityWithoutFilter() : 1.0;
 
-          boolean autoAdjustQuantity = (product.getCategoryId() == CATEGORY_OIL); // オイル
+          boolean autoAdjustQuantity = (product.getCategoryId() == CATEGORY_OIL);
           return GuideProductPermissionCreateContext.builder()
               .maintenanceId(maintenanceGuide.getMaintenanceId())
               .categoryId(product.getCategoryId())

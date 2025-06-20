@@ -40,7 +40,7 @@
   </select>
 
   <select id="findPermissionByMaintenanceIdAndProductId"
-    parameterType="int"
+    parameterType="map"
     resultType="com.u1pena.estimateapi.master.entity.GuideProductPermission">
     SELECT * FROM guide_product_permissions
     WHERE maintenance_id = #{maintenanceId}
