@@ -152,6 +152,8 @@ public class MaintenanceGuideService {
     return masterRepository.findProductByOilFilterPartNumber(oilFilterPartNumber);
   }
 
+  private static final int CATEGORY_OIL = 1;// オイルのカテゴリID
+
   /**
    * 中間テーブルを作成する。商品の権限を登録する。
    *
@@ -162,10 +164,10 @@ public class MaintenanceGuideService {
     List<Product> products = productFetcher.apply(maintenanceGuide);
     products.stream()
         .map(product -> {
-          double quantity = (product.getCategoryId() == 1) ? // オイル
+          double quantity = (product.getCategoryId() == CATEGORY_OIL) ? // オイル
               maintenanceGuide.getOilQuantityWithoutFilter() : 1.0;
 
-          boolean autoAdjustQuantity = (product.getCategoryId() == 1); // オイル
+          boolean autoAdjustQuantity = (product.getCategoryId() == CATEGORY_OIL); // オイル
           return GuideProductPermissionCreateContext.builder()
               .maintenanceId(maintenanceGuide.getMaintenanceId())
               .categoryId(product.getCategoryId())

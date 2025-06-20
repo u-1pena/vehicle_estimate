@@ -246,12 +246,8 @@ public class EstimateService {
     if (permission.isAutoAdjustQuantity()) {
       // permissionのquantityがnullの場合は、permissionのquantityを設定する
       return (quantity != null) ? quantity : permission.getQuantity();
-
-    } else {
-      // autoAdjustQuantityがfalseの場合は、1を設定する
-      estimateProduct.setQuantity(1.0);
     }
-    return estimateProduct.getQuantity();
+    return 1.0; // autoAdjustQuantityがfalseの場合は、1.0を返す
   }
 
   private GuideProductPermission findPermissionOrThrow(int maintenanceId,
