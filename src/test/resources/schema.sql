@@ -55,15 +55,6 @@ CREATE TABLE maintenance_guides
     car_wash_size VARCHAR(32) NOT NULL
 );
 
-CREATE TABLE estimate_bases
-(
-    estimate_id INT AUTO_INCREMENT PRIMARY KEY,
-    customer_id INT NOT NULL,
-    vehicle_id INT NOT NULL,
-    maintenance_id INT NOT NULL,
-    CONSTRAINT fk_estimate_base_maintenance_id FOREIGN KEY (maintenance_id) REFERENCES maintenance_guides(maintenance_id)
-);
-
 CREATE TABLE product_categories
 (
     category_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -77,14 +68,41 @@ CREATE TABLE products
     product_name VARCHAR(32) NOT NULL,
     description VARCHAR(255) NOT NULL,
     guide_match_key VARCHAR(32) NOT NULL,
-    price DOUBLE NOT NULL,
+    price DECIMAL NOT NULL,
     CONSTRAINT fk_products_category_id FOREIGN KEY (category_id) REFERENCES product_categories(category_id)
+);
+
+
+
+CREATE TABLE estimate_bases (
+    estimate_base_id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_id INT NOT NULL,
+    vehicle_id INT NOT NULL,
+    maintenance_id INT NOT NULL,
+    estimate_date DATE NOT NULL DEFAULT (CURRENT_DATE),
+    CONSTRAINT fk_estimate_base_maintenance_id FOREIGN KEY (maintenance_id)
+    REFERENCES maintenance_guides(maintenance_id)
+);
+
+CREATE TABLE estimate_products (
+    estimate_product_id INT AUTO_INCREMENT PRIMARY KEY,
+    estimate_base_id INT NOT NULL,
+    product_id INT NOT NULL,
+    quantity DOUBLE NOT NULL,
+    unit_price DECIMAL(8, 2) NOT NULL,
+    total_price DECIMAL(8, 2) NOT NULL,
+    CONSTRAINT fk_estimate_products_estimate_base_id FOREIGN KEY (estimate_base_id)
+    REFERENCES estimate_bases(estimate_base_id) ON DELETE CASCADE,
+    CONSTRAINT fk_estimate_products_product_id FOREIGN KEY (product_id)
+    REFERENCES products(product_id)
 );
 
 CREATE TABLE guide_product_permissions (
     maintenance_id INT NOT NULL,
     category_id INT NOT NULL,
     product_id INT NOT NULL,
+    quantity DOUBLE NOT NULL,
+    auto_adjust_quantity BOOLEAN NOT NULL DEFAULT FALSE,
     PRIMARY KEY (maintenance_id, category_id, product_id),
     FOREIGN KEY (maintenance_id) REFERENCES maintenance_guides(maintenance_id),
     FOREIGN KEY (category_id) REFERENCES product_categories(category_id),
