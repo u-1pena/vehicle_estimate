@@ -241,8 +241,6 @@ public class EstimateService {
 
   private Double resolveQuantity(int maintenanceId, int productId, Double quantity) {
     GuideProductPermission permission = findPermissionOrThrow(maintenanceId, productId);
-    EstimateProduct estimateProduct = new EstimateProduct();
-
     if (permission.isAutoAdjustQuantity()) {
       // permissionのquantityがnullの場合は、permissionのquantityを設定する
       return (quantity != null) ? quantity : permission.getQuantity();
