@@ -1,5 +1,7 @@
 package com.u1pena.estimateapi.estimate.service;
 
+import static com.u1pena.estimateapi.common.CategoryConstants.CATEGORY_OIL;
+import static com.u1pena.estimateapi.common.CategoryConstants.CATEGORY_OIL_FILTER;
 import static org.thymeleaf.util.ListUtils.isEmpty;
 
 import com.u1pena.estimateapi.customer.entity.Customer;
@@ -44,6 +46,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
 @Service
 public class EstimateService {
 
@@ -51,6 +54,7 @@ public class EstimateService {
   CustomerService customerService;
   EstimateRepository estimateRepository;
   MasterRepository masterRepository;
+
 
   public EstimateService(CustomerService customerService, EstimateRepository estimateRepository,
       MasterRepository masterRepository) {
@@ -137,16 +141,15 @@ public class EstimateService {
    *
    * @param vehicleId
    */
-  public void registerEstimateBase(int vehicleId) {
+  public int registerEstimateBase(int vehicleId) {
     Vehicle vehicle = findVehicleById(vehicleId);
     MaintenanceGuide maintenanceGuide = searchMaintenanceGuideMatch(vehicle);
     EstimateBase estimateBase = EstimateBaseCreateConverter
         .toEntity(vehicle.getCustomerId(), vehicleId, maintenanceGuide.getMaintenanceId());
     estimateRepository.insertEstimateBase(estimateBase);
+    return estimateBase.getEstimateBaseId();
   }
 
-  private static final int CATEGORY_OIL = 1;
-  private static final int CATEGORY_FILTER = 2;
 
   /**
    * EstimateProductを登録する。
@@ -163,7 +166,7 @@ public class EstimateService {
     Product product = findValidProduct(
         estimateBase.getMaintenanceId(), estimateProductCreateRequest.getProductId());
 
-    if (product.getCategoryId() == CATEGORY_FILTER) {
+    if (product.getCategoryId() == CATEGORY_OIL) { // オイルの場合
       boolean existOil = estimateRepository.existOilProductsByEstimateBaseId(estimateBaseId);
       if (existOil) {
         int estimateProductId = estimateRepository.findEstimateProductIdByEstimateBaseId(
@@ -174,7 +177,7 @@ public class EstimateService {
             oilQuantityWithFilter);
       }
     }
-    if (product.getCategoryId() == CATEGORY_OIL) {
+    if (product.getCategoryId() == CATEGORY_OIL_FILTER) {
       boolean existOilFilter = estimateRepository.existOilFilterProductsByEstimateBaseId(
           estimateBaseId);
       if (existOilFilter) {

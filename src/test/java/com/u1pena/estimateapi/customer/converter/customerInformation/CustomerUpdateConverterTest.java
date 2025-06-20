@@ -15,7 +15,7 @@ class CustomerUpdateConverterTest {
     Customer customer = new Customer();
     CustomerUpdateRequest customerUpdateRequest = new CustomerUpdateRequest();
     customerUpdateRequest.setLastName("test");
-    customerUpdateRequest.setFirstName("com");
+    customerUpdateRequest.setFirstName("example");
     customerUpdateRequest.setLastNameKana("テスト");
     customerUpdateRequest.setFirstNameKana("サンプル");
     customerUpdateRequest.setEmail("test@example.ne.jp");
@@ -26,7 +26,7 @@ class CustomerUpdateConverterTest {
 
     // 検証
     assertThat(customer.getLastName()).isEqualTo("test");
-    assertThat(customer.getFirstName()).isEqualTo("com");
+    assertThat(customer.getFirstName()).isEqualTo("example");
     assertThat(customer.getLastNameKana()).isEqualTo("テスト");
     assertThat(customer.getFirstNameKana()).isEqualTo("サンプル");
     assertThat(customer.getEmail()).isEqualTo("test@example.ne.jp");

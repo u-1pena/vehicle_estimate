@@ -15,7 +15,7 @@ class CustomerCreateConverterTest {
     // 準備
     CustomerCreateRequest customerCreateRequest = new CustomerCreateRequest();
     customerCreateRequest.setLastName("test");
-    customerCreateRequest.setFirstName("com");
+    customerCreateRequest.setFirstName("example");
     customerCreateRequest.setLastNameKana("テスト");
     customerCreateRequest.setFirstNameKana("サンプル");
     customerCreateRequest.setEmail("test@example.co.jp");
@@ -24,7 +24,7 @@ class CustomerCreateConverterTest {
     Customer actual = CustomerCreateConverter.customerConvertToEntity(customerCreateRequest);
     // 検証
     assertThat(actual.getLastName()).isEqualTo("test");
-    assertThat(actual.getFirstName()).isEqualTo("com");
+    assertThat(actual.getFirstName()).isEqualTo("example");
     assertThat(actual.getLastNameKana()).isEqualTo("テスト");
     assertThat(actual.getFirstNameKana()).isEqualTo("サンプル");
     assertThat(actual.getEmail()).isEqualTo("test@example.co.jp");
