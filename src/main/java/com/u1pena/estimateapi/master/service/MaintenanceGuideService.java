@@ -63,7 +63,7 @@ public class MaintenanceGuideService {
    * メンテナンスガイドが既に存在するか確認する。 存在する場合は、ExistAlreadyMasterExceptionをスローする。
    *
    * @param maintenanceGuide MaintenanceGuide
-   * @description 検索はMake、Model、Type、Yearで行われます。
+   * @description 検索はMake、model、Type、Yearで行われます。
    */
   private void maintenanceGuideAlreadyExists(MaintenanceGuide maintenanceGuide) {
     masterRepository.findMaintenanceGuideByMakeAndModelAndTypeAndYear(maintenanceGuide)

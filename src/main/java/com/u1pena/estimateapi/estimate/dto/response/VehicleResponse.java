@@ -9,8 +9,8 @@ import lombok.Data;
 public class VehicleResponse {
 
   private String vehicleName;
-  private String Make;
-  private String Model;
+  private String make;
+  private String model;
   private String type;
   private YearMonth year;
 }

@@ -8,8 +8,8 @@ public class EstimateVehicleConverter {
   public static VehicleResponse toDto(String vehicleName, Vehicle vehicle) {
     return VehicleResponse.builder()
         .vehicleName(vehicleName)
-        .Make(vehicle.getMake())
-        .Model(vehicle.getModel())
+        .make(vehicle.getMake())
+        .model(vehicle.getModel())
         .type(vehicle.getType())
         .year(vehicle.getYear())
         .build();
