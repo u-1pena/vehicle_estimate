@@ -17,16 +17,22 @@ import com.u1pena.estimateapi.estimate.converter.EstimateCustomerConverter;
 import com.u1pena.estimateapi.estimate.converter.EstimateFullConverter;
 import com.u1pena.estimateapi.estimate.converter.EstimateInformationConverter;
 import com.u1pena.estimateapi.estimate.converter.EstimateProductCreateConverter;
+import com.u1pena.estimateapi.estimate.converter.EstimateProductUpdateConverter;
 import com.u1pena.estimateapi.estimate.converter.EstimateProductsConverter;
+import com.u1pena.estimateapi.estimate.converter.EstimateSummaryConverter;
+import com.u1pena.estimateapi.estimate.converter.EstimateSummaryDateConverter;
 import com.u1pena.estimateapi.estimate.converter.EstimateVehicleConverter;
 import com.u1pena.estimateapi.estimate.dto.EstimateProductContext;
 import com.u1pena.estimateapi.estimate.dto.EstimateProductJoinResult;
 import com.u1pena.estimateapi.estimate.dto.request.EstimateProductCreateRequest;
+import com.u1pena.estimateapi.estimate.dto.request.EstimateProductUpdateRequest;
 import com.u1pena.estimateapi.estimate.dto.response.CustomerAddressResponse;
 import com.u1pena.estimateapi.estimate.dto.response.CustomerResponse;
 import com.u1pena.estimateapi.estimate.dto.response.EstimateFullResponse;
 import com.u1pena.estimateapi.estimate.dto.response.EstimateHeaderResponse;
 import com.u1pena.estimateapi.estimate.dto.response.EstimateProductResponse;
+import com.u1pena.estimateapi.estimate.dto.response.EstimateSummaryDateResponse;
+import com.u1pena.estimateapi.estimate.dto.response.EstimateSummaryResponse;
 import com.u1pena.estimateapi.estimate.dto.response.VehicleResponse;
 import com.u1pena.estimateapi.estimate.entity.EstimateBase;
 import com.u1pena.estimateapi.estimate.entity.EstimateProduct;
@@ -40,6 +46,7 @@ import com.u1pena.estimateapi.master.entity.Product;
 import com.u1pena.estimateapi.master.repository.MasterRepository;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -63,6 +70,12 @@ public class EstimateService {
     this.masterRepository = masterRepository;
   }
 
+  /**
+   * 見積もりの詳細情報を取得する。 見積もりIDを指定して、見積もりのヘッダー情報と商品情報を取得し、合計金額を計算して返す。
+   *
+   * @param estimateBaseId 見積もりの基本情報を取得するためのID
+   * @return EstimateFullResponse 見積もりの詳細情報を含むレスポンスオブジェクト
+   */
   public EstimateFullResponse getEstimateFullById(int estimateBaseId) {
     EstimateHeaderResponse estimateHeaderResponse = getEstimateHeaderById(estimateBaseId);
     List<EstimateProductResponse> estimateProductResponse = getEstimateProductByEstimateId(
@@ -255,5 +268,88 @@ public class EstimateService {
       int productId) {
     return estimateRepository.findPermissionByMaintenanceIdAndProductId(maintenanceId, productId)
         .orElseThrow(EstimateException.NoMatchPermissionException::new);
+  }
+
+  public void deleteEstimateBase(int estimateBaseId) {
+    EstimateBase estimateBase = findEstimateBaseById(estimateBaseId);
+    estimateRepository.deleteEstimateBaseById(estimateBase.getEstimateBaseId());
+  }
+
+  public void deleteEstimateProduct(int estimateProductId) {
+    EstimateProduct estimateProduct = findEstimateProductIdById(estimateProductId);
+    estimateRepository.deleteEstimateProductById(estimateProduct.getEstimateProductId());
+  }
+
+  public void deleteEstimateProductsAllByEstimateBaseId(int estimateBaseId) {
+    findEstimateProductsByEstimateBaseId(estimateBaseId);
+    estimateRepository.deleteEstimateProductsByEstimateBaseId(estimateBaseId);
+  }
+
+  private EstimateProduct findEstimateProductIdById(int estimateProductId) {
+    return estimateRepository.findEstimateProductById(estimateProductId)
+        .orElseThrow(EstimateException.EstimateProductNotFoundException::new);
+  }
+
+  private void findEstimateProductsByEstimateBaseId(int estimateBaseId) {
+    List<EstimateProduct> estimateProduct = estimateRepository
+        .findEstimateProductsByEstimateBaseId(estimateBaseId);
+    if (isEmpty(estimateProduct)) {
+      throw new EstimateException.EstimateProductNotFoundException();
+    }
+  }
+
+  public void updateEstimateProduct(int estimateProductId,
+      EstimateProductUpdateRequest estimateProductUpdateRequest) {
+    findEstimateProductIdById(estimateProductId);
+    EstimateProduct estimateProduct = EstimateProductUpdateConverter.toDto(
+        estimateProductUpdateRequest);
+    estimateProduct.setEstimateProductId(estimateProductId);
+    estimateProduct.setTotalPrice(
+        calculateTotalPrice(estimateProduct.getUnitPrice(), estimateProduct.getQuantity()));
+    estimateRepository.updateEstimateProduct(estimateProduct);
+  }
+
+  public List<EstimateSummaryResponse> getEstimateSummaryByCustomerId(int customerId) {
+    List<EstimateBase> estimateBaseList = estimateRepository.findEstimateBasesByCustomerId(
+        customerId);
+    return getEstimateSummaryResponses(estimateBaseList);
+  }
+
+  public List<EstimateSummaryDateResponse> getEstimatesByDate(LocalDate startDate,
+      LocalDate endDate) {
+    List<EstimateBase> estimateBaseList = estimateRepository
+        .findEstimatesBetweenDates(startDate.toString(), endDate.toString());
+    return getEstimateSummaryDateResponses(estimateBaseList);
+  }
+
+  private List<EstimateSummaryResponse> getEstimateSummaryResponses(
+      List<EstimateBase> estimateBaseList) {
+    return estimateBaseList.stream()
+        .map(estimateBase -> {
+          EstimateFullResponse estimateFullResponse = getEstimateFullById(
+              estimateBase.getEstimateBaseId());
+
+          String categorySummary = estimateFullResponse.getEstimateProducts().stream()
+              .map(EstimateProductResponse::getCategoryName)
+              .distinct()
+              .collect(Collectors.joining("・"));
+          return EstimateSummaryConverter.toDto(estimateFullResponse, categorySummary);
+        })
+        .toList();
+  }
+
+  private List<EstimateSummaryDateResponse> getEstimateSummaryDateResponses(
+      List<EstimateBase> estimateBaseList) {
+    return estimateBaseList.stream()
+        .map(estimateBase -> {
+          EstimateFullResponse estimateFullResponse = getEstimateFullById(
+              estimateBase.getEstimateBaseId());
+          String categorySummary = estimateFullResponse.getEstimateProducts().stream()
+              .map(EstimateProductResponse::getCategoryName)
+              .distinct()
+              .collect(Collectors.joining("・"));
+          return EstimateSummaryDateConverter.toDto(estimateFullResponse, categorySummary);
+        })
+        .toList();
   }
 }

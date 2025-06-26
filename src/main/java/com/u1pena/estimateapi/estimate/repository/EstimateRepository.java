@@ -63,4 +63,20 @@ public interface EstimateRepository {
   List<EstimateProduct> findEstimateProductsByEstimateBaseId(int estimateBaseId);
 
   List<EstimateProductJoinResult> findProductDetailByProductId(List<Integer> productId);
+
+  void deleteEstimateBaseById(int estimateBaseId);
+
+  void deleteEstimateProductsByEstimateBaseId(int estimateBaseId);
+
+  void deleteEstimateProductById(int estimateProductId);
+
+  Optional<EstimateProduct> findEstimateProductById(int estimateProductId);
+
+  void updateEstimateProduct(EstimateProduct estimateProduct);
+
+  List<EstimateBase> findEstimateBasesByCustomerId(int customerId);
+
+  List<EstimateBase> findEstimatesBetweenDates(@Param("startDate") String startDate,
+      @Param("endDate") String endDate);
+
 }

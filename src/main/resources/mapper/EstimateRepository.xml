@@ -126,4 +126,44 @@
     </foreach>
   </select>
 
+  <select id="findEstimateBasesByCustomerId" parameterType="int"
+    resultType="com.u1pena.estimateapi.estimate.entity.EstimateBase">
+    SELECT * FROM estimate_bases WHERE customer_id = #{customerId};
+  </select>
+
+  <delete id="deleteEstimateProductById" parameterType="int">
+    DELETE FROM estimate_products WHERE estimate_product_id = #{estimateProductId};
+  </delete>
+
+  <delete id="deleteEstimateProductsByEstimateBaseId" parameterType="int">
+    DELETE FROM estimate_products WHERE estimate_base_id = #{estimateBaseId};
+  </delete>
+
+  <delete id="deleteEstimateBaseById" parameterType="int">
+    DELETE FROM estimate_bases WHERE estimate_base_id = #{estimateBaseId};
+  </delete>
+
+  <select id="findEstimateProductById" parameterType="int"
+    resultType="com.u1pena.estimateapi.estimate.entity.EstimateProduct">
+    SELECT * FROM estimate_products WHERE estimate_product_id = #{estimateProductId};
+  </select>
+
+  <update id="updateEstimateProduct" parameterType="map">
+    UPDATE estimate_products
+    <set>
+      <if test="quantity != null">quantity = #{quantity},</if>
+      <if test="unitPrice != null">unit_price = #{unitPrice},</if>
+      <if test="totalPrice != null">total_price = #{totalPrice},</if>
+    </set>
+    WHERE estimate_product_id = #{estimateProductId}
+  </update>
+
+  <select id="findEstimatesBetweenDates"
+    resultType="com.u1pena.estimateapi.estimate.entity.EstimateBase">
+    SELECT *
+    FROM estimate_bases
+    WHERE estimate_date BETWEEN #{startDate} AND #{endDate}
+  </select>
+
+
 </mapper>
