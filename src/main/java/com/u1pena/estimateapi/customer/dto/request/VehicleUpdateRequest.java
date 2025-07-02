@@ -4,7 +4,6 @@ import com.u1pena.estimateapi.common.validator.ValidPlateRegion;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
@@ -17,19 +16,16 @@ public class VehicleUpdateRequest {
   String plateRegion;
 
   @Schema(description = "車両のナンバープレートカテゴリ番号", example = "123")
-  @NotNull
   @NotBlank
   @Pattern(regexp = "^\\d{3}$", message = "plateCategoryNumberは半角数字で3文字で入力してください")
   private String plateCategoryNumber;
 
   @Schema(description = "車両のナンバープレートひらがな", example = "た")
-  @NotNull
   @NotBlank
   @Pattern(regexp = "^[\\u3040-\\u309F]+$", message = "plateHiraganaはひらがなで入力してください")
   private String plateHiragana;
 
   @Schema(description = "車両のナンバープレート番号", example = "1234")
-  @NotNull
   @NotBlank(message = "空白は許可されていません")
   private String plateVehicleNumber;
 

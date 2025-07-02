@@ -146,15 +146,10 @@ public class EstimateController {
       , description = "指定された見積もりIDに基づいて見積もりを削除します。")
   @Parameter(name = "estimateId", description = "見積もりID")
   @DeleteMapping("/estimates/{estimateId}")
-  public ResponseEntity<GlobalResponse> deleteEstimateById(
-      @PathVariable int estimateId, UriComponentsBuilder uriBuilder) {
+  public ResponseEntity<Void> deleteEstimateById(
+      @PathVariable int estimateId) {
     estimateService.deleteEstimateBase(estimateId);
-    URI location = uriBuilder
-        .path("/estimates/{estimateId}")
-        .buildAndExpand(estimateId)
-        .toUri();
-    GlobalResponse response = new GlobalResponse("Estimate deleted successfully");
-    return ResponseEntity.ok().location(location).body(response);
+    return ResponseEntity.noContent().build();
   }
 
   /**
@@ -167,15 +162,10 @@ public class EstimateController {
       , description = "指定された見積もり商品IDに基づいて見積もり商品を削除します。")
   @Parameter(name = "estimateProductId", description = "見積もり商品ID")
   @DeleteMapping("/estimates/products/{estimateProductId}")
-  public ResponseEntity<GlobalResponse> deleteEstimateProductById(
-      @PathVariable int estimateProductId, UriComponentsBuilder uriBuilder) {
+  public ResponseEntity<Void> deleteEstimateProductById(
+      @PathVariable int estimateProductId) {
     estimateService.deleteEstimateProduct(estimateProductId);
-    URI location = uriBuilder
-        .path("/estimates/products/{estimateProductId}")
-        .buildAndExpand(estimateProductId)
-        .toUri();
-    GlobalResponse response = new GlobalResponse("Estimate product deleted successfully");
-    return ResponseEntity.ok().location(location).body(response);
+    return ResponseEntity.noContent().build();
   }
 
   /**
@@ -189,14 +179,9 @@ public class EstimateController {
   @Parameter(name = "estimateBaseId", description = "見積もりID")
   @DeleteMapping("/estimates/{estimateBaseId}/products")
   public ResponseEntity<GlobalResponse> deleteEstimateProductsAllByEstimateBaseId(
-      @PathVariable int estimateBaseId, UriComponentsBuilder uriBuilder) {
+      @PathVariable int estimateBaseId) {
     estimateService.deleteEstimateProductsAllByEstimateBaseId(estimateBaseId);
-    URI location = uriBuilder
-        .path("/estimates/{estimateBaseId}/products")
-        .buildAndExpand(estimateBaseId)
-        .toUri();
-    GlobalResponse response = new GlobalResponse("All estimate products deleted successfully");
-    return ResponseEntity.ok().location(location).body(response);
+    return ResponseEntity.noContent().build();
   }
 
   /**
@@ -210,16 +195,10 @@ public class EstimateController {
       , description = "指定された見積もり商品IDに基づいて見積もり商品を更新します。")
   @Parameter(name = "estimateProductId", description = "見積もり商品ID")
   @PutMapping("/estimates/products/{estimateProductId}")
-  public ResponseEntity<GlobalResponse> updateEstimateProduct(
+  public ResponseEntity<Void> updateEstimateProduct(
       @PathVariable int estimateProductId,
-      @RequestBody EstimateProductUpdateRequest estimateProductUpdateRequest,
-      UriComponentsBuilder uriBuilder) {
+      @RequestBody EstimateProductUpdateRequest estimateProductUpdateRequest) {
     estimateService.updateEstimateProduct(estimateProductId, estimateProductUpdateRequest);
-    URI location = uriBuilder
-        .path("/estimates/products/{estimateProductId}")
-        .buildAndExpand(estimateProductId)
-        .toUri();
-    GlobalResponse response = new GlobalResponse("Estimate product updated successfully");
-    return ResponseEntity.ok().location(location).body(response);
+    return ResponseEntity.noContent().build();
   }
 }

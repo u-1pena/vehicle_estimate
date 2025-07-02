@@ -179,11 +179,10 @@ public class CustomerController {
           + "それに伴い、関連する住所情報と車両情報も削除されます。")
   @Parameter(name = "customerId", description = "顧客ID")
   @DeleteMapping("/customers/{customerId}")
-  public ResponseEntity<GlobalResponse> deleteCustomer(
+  public ResponseEntity<Void> deleteCustomer(
       @PathVariable("customerId") int customerId) {
     customerService.deleteCustomerByCustomerId(customerId);
-    GlobalResponse body = new GlobalResponse("Customer deleted");
-    return ResponseEntity.ok(body);
+    return ResponseEntity.noContent().build();
   }
 
   /**
@@ -197,11 +196,10 @@ public class CustomerController {
           + "車両情報はなくならず、非アクティブ状態になります。")
   @Parameter(name = "vehicleId", description = "車両ID")
   @DeleteMapping("/vehicles/{vehicleId}")
-  public ResponseEntity<GlobalResponse> deleteVehicle(
+  public ResponseEntity<Void> deleteVehicle(
       @PathVariable("vehicleId") int vehicleId) {
     customerService.deleteVehicleByVehicleId(vehicleId);
-    GlobalResponse body = new GlobalResponse("Vehicle deleted");
-    return ResponseEntity.ok(body);
+    return ResponseEntity.noContent().build();
   }
 
   /**
@@ -215,12 +213,11 @@ public class CustomerController {
       description = "customerIdを指定して顧客情報を更新します。")
   @Parameter(name = "customerId", description = "顧客ID")
   @PutMapping("/customers/{customerId}")
-  public ResponseEntity<GlobalResponse> updateCustomer(
+  public ResponseEntity<Void> updateCustomer(
       @PathVariable("customerId") int customerId,
       @RequestBody @Valid CustomerUpdateRequest customerUpdateRequest) {
     customerService.updateCustomerByCustomerId(customerId, customerUpdateRequest);
-    GlobalResponse body = new GlobalResponse("Customer updated");
-    return ResponseEntity.ok(body);
+    return ResponseEntity.noContent().build();
   }
 
   /**
@@ -234,12 +231,11 @@ public class CustomerController {
       description = "addressIdを指定して顧客住所を更新します。")
   @Parameter(name = "addressId", description = "顧客住所ID")
   @PutMapping("/addresses/{addressId}")
-  public ResponseEntity<GlobalResponse> updateCustomerAddress(
+  public ResponseEntity<Void> updateCustomerAddress(
       @PathVariable("addressId") int addressId,
       @RequestBody @Valid CustomerAddressUpdateRequest customerAddressUpdateRequest) {
     customerService.updateCustomerAddressByCustomerId(addressId, customerAddressUpdateRequest);
-    GlobalResponse body = new GlobalResponse("CustomerAddress updated");
-    return ResponseEntity.ok(body);
+    return ResponseEntity.noContent().build();
   }
 
   /**
@@ -253,11 +249,11 @@ public class CustomerController {
       description = "vehicleIdを指定して車両情報を更新します。")
   @Parameter(name = "vehicleId", description = "車両ID")
   @PutMapping("/vehicles/{vehicleId}")
-  public ResponseEntity<GlobalResponse> updateVehicle(
+  public ResponseEntity<Void> updateVehicle(
       @PathVariable("vehicleId") int vehicleId,
       @RequestBody @Valid VehicleUpdateRequest vehicleUpdateRequest) {
     customerService.updateVehicleByVehicleId(vehicleId, vehicleUpdateRequest);
     GlobalResponse body = new GlobalResponse("Vehicle updated");
-    return ResponseEntity.ok(body);
+    return ResponseEntity.noContent().build();
   }
 }

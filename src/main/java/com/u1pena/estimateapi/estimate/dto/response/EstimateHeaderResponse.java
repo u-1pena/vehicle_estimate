@@ -13,7 +13,7 @@ public class EstimateHeaderResponse {
   private int estimateBaseId;
   @Schema(description = "見積り日時", example = "2023-10-01")
   private LocalDate estimateDate;
-  @Schema(description = "顧客情報", example = "2023-10-31")
+  @Schema(description = "顧客情報", example = "田中 太郎 ﾀﾅｶﾀﾛｳ　090-1234-5678 tarou@example.com")
   private CustomerResponse customer;
   @Schema(description = "顧客住所情報", example = "123-4567 東京都新宿区西新宿2-8-1 新宿ビル101号室")
   private CustomerAddressResponse customerAddress;
