@@ -92,7 +92,7 @@ public class CustomerController {
       description = "電話番号を指定して顧客情報を取得します。(完全一致検索)")
   @Parameter(name = "phoneNumber", description = "電話番号(XXX-XXXX-XXXX形式)")
 
-  @GetMapping("customers/phone/{phoneNumber}")
+  @GetMapping("/customers/phone/{phoneNumber}")
   public List<CustomerInformationRequest> searchUsersByPhoneNumber(
       @PathVariable String phoneNumber) {
     List<CustomerInformationRequest> result = customerService.findCustomerInformationByPhoneNumber(
@@ -133,7 +133,7 @@ public class CustomerController {
       description = "customerIdを指定して住所情報を登録します。")
   @Parameter(name = "customerId", description = "顧客ID")
 
-  @PostMapping("customers/{customerId}/addresses")
+  @PostMapping("/customers/{customerId}/addresses")
   public ResponseEntity<GlobalResponse> createUserDetail(
       @PathVariable("customerId") int customerId,
       @RequestBody @Valid CustomerAddressCreateRequest customerAddressCreateRequest, // 専用リクエストクラス
@@ -156,7 +156,7 @@ public class CustomerController {
   @Operation(summary = "車両情報を登録する処理",
       description = "customerIdを指定して車両情報を登録します。")
   @Parameter(name = "customerId", description = "顧客ID")
-  @PostMapping("vehicles/{customerId}")
+  @PostMapping("/vehicles/{customerId}")
   public ResponseEntity<GlobalResponse> createVehicle(
       @PathVariable("customerId") int customerId,
       @RequestBody @Valid VehicleCreateRequest vehicleCreateRequest,
@@ -169,7 +169,7 @@ public class CustomerController {
   }
 
   /**
-   * 顧客情報をIDで取得する処理
+   * 顧客情報をIDで削除する処理。顧客情報と関連する住所情報と車両情報も削除されます。
    *
    * @param customerId 顧客ID
    * @return 顧客情報
@@ -178,7 +178,7 @@ public class CustomerController {
       description = "customerIdを指定して顧客情報を削除します。"
           + "それに伴い、関連する住所情報と車両情報も削除されます。")
   @Parameter(name = "customerId", description = "顧客ID")
-  @DeleteMapping("customers/{customerId}")
+  @DeleteMapping("/customers/{customerId}")
   public ResponseEntity<GlobalResponse> deleteCustomer(
       @PathVariable("customerId") int customerId) {
     customerService.deleteCustomerByCustomerId(customerId);
@@ -196,7 +196,7 @@ public class CustomerController {
       description = "vehicleIdを指定して車両情報を削除します。"
           + "車両情報はなくならず、非アクティブ状態になります。")
   @Parameter(name = "vehicleId", description = "車両ID")
-  @DeleteMapping("vehicles/{vehicleId}")
+  @DeleteMapping("/vehicles/{vehicleId}")
   public ResponseEntity<GlobalResponse> deleteVehicle(
       @PathVariable("vehicleId") int vehicleId) {
     customerService.deleteVehicleByVehicleId(vehicleId);
@@ -214,7 +214,7 @@ public class CustomerController {
   @Operation(summary = "顧客情報をIDで更新する処理",
       description = "customerIdを指定して顧客情報を更新します。")
   @Parameter(name = "customerId", description = "顧客ID")
-  @PutMapping("customers/{customerId}")
+  @PutMapping("/customers/{customerId}")
   public ResponseEntity<GlobalResponse> updateCustomer(
       @PathVariable("customerId") int customerId,
       @RequestBody @Valid CustomerUpdateRequest customerUpdateRequest) {
@@ -233,7 +233,7 @@ public class CustomerController {
   @Operation(summary = "顧客住所をIDで更新する処理",
       description = "addressIdを指定して顧客住所を更新します。")
   @Parameter(name = "addressId", description = "顧客住所ID")
-  @PutMapping("addresses/{addressId}")
+  @PutMapping("/addresses/{addressId}")
   public ResponseEntity<GlobalResponse> updateCustomerAddress(
       @PathVariable("addressId") int addressId,
       @RequestBody @Valid CustomerAddressUpdateRequest customerAddressUpdateRequest) {
@@ -252,7 +252,7 @@ public class CustomerController {
   @Operation(summary = "車両情報をIDで更新する処理",
       description = "vehicleIdを指定して車両情報を更新します。")
   @Parameter(name = "vehicleId", description = "車両ID")
-  @PutMapping("vehicles/{vehicleId}")
+  @PutMapping("/vehicles/{vehicleId}")
   public ResponseEntity<GlobalResponse> updateVehicle(
       @PathVariable("vehicleId") int vehicleId,
       @RequestBody @Valid VehicleUpdateRequest vehicleUpdateRequest) {

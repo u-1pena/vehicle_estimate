@@ -216,7 +216,7 @@ public class EstimateController {
       UriComponentsBuilder uriBuilder) {
     estimateService.updateEstimateProduct(estimateProductId, estimateProductUpdateRequest);
     URI location = uriBuilder
-        .path("estimates/products/{estimateProductId}")
+        .path("/estimates/products/{estimateProductId}")
         .buildAndExpand(estimateProductId)
         .toUri();
     GlobalResponse response = new GlobalResponse("Estimate product updated successfully");
