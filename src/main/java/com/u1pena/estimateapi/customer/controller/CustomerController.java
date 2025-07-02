@@ -49,7 +49,7 @@ public class CustomerController {
    * @param email
    * @return 顧客情報のリスト
    */
-  @Operation(summary = "顧客情報を取得する処理"
+  @Operation(summary = "顧客情報をリクエストパラムで取得する処理"
       , description = "顧客名、顧客名カナ、メールアドレスを指定して顧客情報を取得します。"
   )
   @Parameters({
@@ -71,7 +71,7 @@ public class CustomerController {
    * @param plateVehicleNumber
    * @return 顧客情報のリスト
    */
-  @Operation(summary = "顧客情報を取得する処理",
+  @Operation(summary = "顧客情報を車両ナンバーで取得する処理",
       description = "車両ナンバー４桁を指定して顧客情報を取得します。")
   @Parameter(name = "plateVehicleNumber", description = "車両ナンバー４桁")
   @GetMapping("/vehicles/numbers/{plateVehicleNumber}")
@@ -88,7 +88,7 @@ public class CustomerController {
    * @param phoneNumber 電話番号(XXX-XXXX-XXXX形式)
    * @return 顧客情報のリスト
    */
-  @Operation(summary = "顧客情報を取得する処理",
+  @Operation(summary = "顧客情報を電話番号で取得する処理",
       description = "電話番号を指定して顧客情報を取得します。(完全一致検索)")
   @Parameter(name = "phoneNumber", description = "電話番号(XXX-XXXX-XXXX形式)")
 

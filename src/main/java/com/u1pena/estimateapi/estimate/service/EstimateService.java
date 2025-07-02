@@ -271,26 +271,31 @@ public class EstimateService {
         .orElseThrow(EstimateException.NoMatchPermissionException::new);
   }
 
+  @Transactional
   public void deleteEstimateBase(int estimateBaseId) {
     EstimateBase estimateBase = findEstimateBaseById(estimateBaseId);
     estimateRepository.deleteEstimateBaseById(estimateBase.getEstimateBaseId());
   }
 
+  @Transactional
   public void deleteEstimateProduct(int estimateProductId) {
-    EstimateProduct estimateProduct = findEstimateProductIdById(estimateProductId);
+    EstimateProduct estimateProduct = findEstimateProductById(estimateProductId);
     estimateRepository.deleteEstimateProductById(estimateProduct.getEstimateProductId());
   }
 
+  @Transactional
   public void deleteEstimateProductsAllByEstimateBaseId(int estimateBaseId) {
     findEstimateProductsByEstimateBaseId(estimateBaseId);
     estimateRepository.deleteEstimateProductsByEstimateBaseId(estimateBaseId);
   }
 
-  private EstimateProduct findEstimateProductIdById(int estimateProductId) {
+  @Transactional
+  private EstimateProduct findEstimateProductById(int estimateProductId) {
     return estimateRepository.findEstimateProductById(estimateProductId)
         .orElseThrow(EstimateException.EstimateProductNotFoundException::new);
   }
 
+  @Transactional
   private void findEstimateProductsByEstimateBaseId(int estimateBaseId) {
     List<EstimateProduct> estimateProduct = estimateRepository
         .findEstimateProductsByEstimateBaseId(estimateBaseId);
@@ -299,9 +304,10 @@ public class EstimateService {
     }
   }
 
+  @Transactional
   public void updateEstimateProduct(int estimateProductId,
       EstimateProductUpdateRequest estimateProductUpdateRequest) {
-    findEstimateProductIdById(estimateProductId);
+    findEstimateProductById(estimateProductId);
     EstimateProduct estimateProduct = EstimateProductUpdateConverter.toDto(
         estimateProductUpdateRequest);
     estimateProduct.setEstimateProductId(estimateProductId);
