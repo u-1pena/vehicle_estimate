@@ -7,14 +7,14 @@
   <insert id="insertEstimateBase" useGeneratedKeys="true" keyProperty="estimateBaseId"
     parameterType="com.u1pena.estimateapi.estimate.entity.EstimateBase">
     INSERT INTO estimate_bases (customer_id, vehicle_id, maintenance_id)
-    VALUES (#{customerId}, #{vehicleId}, #{maintenanceId});
+    VALUES (#{customerId}, #{vehicleId}, #{maintenanceId})
   </insert>
 
 
   <select id="findVehicleByVehicleId"
     parameterType="int"
     resultType="com.u1pena.estimateapi.customer.entity.Vehicle">
-    SELECT * FROM vehicles WHERE vehicle_id = #{vehicleId};
+    SELECT * FROM vehicles WHERE vehicle_id = #{vehicleId}
   </select>
 
   <select id="findMaintenanceGuideByMakeAndModelAndYear"
@@ -30,13 +30,13 @@
   <insert id="insertEstimateProduct" useGeneratedKeys="true" keyProperty="estimateProductId"
     parameterType="com.u1pena.estimateapi.estimate.entity.EstimateProduct">
     INSERT INTO estimate_products (estimate_base_id, product_id, quantity, unit_price,total_price)
-    VALUES (#{estimateBaseId}, #{productId}, #{quantity}, #{unitPrice}, #{totalPrice});
+    VALUES (#{estimateBaseId}, #{productId}, #{quantity}, #{unitPrice}, #{totalPrice})
   </insert>
 
   <select id="findEstimateBaseById"
     parameterType="int"
     resultType="com.u1pena.estimateapi.estimate.entity.EstimateBase">
-    SELECT * FROM estimate_bases WHERE estimate_base_id = #{estimateBaseId};
+    SELECT * FROM estimate_bases WHERE estimate_base_id = #{estimateBaseId}
   </select>
 
   <select id="findPermissionByMaintenanceIdAndProductId"
@@ -44,19 +44,19 @@
     resultType="com.u1pena.estimateapi.master.entity.GuideProductPermission">
     SELECT * FROM guide_product_permissions
     WHERE maintenance_id = #{maintenanceId}
-    AND product_id = #{productId};
+    AND product_id = #{productId}
   </select>
 
   <select id="findVehicleNameByMaintenanceId"
     parameterType="int"
     resultType="String">
-    SELECT vehicle_name FROM maintenance_guides WHERE maintenance_id = #{maintenanceId};
+    SELECT vehicle_name FROM maintenance_guides WHERE maintenance_id = #{maintenanceId}
   </select>
 
   <select id="findProductById"
     parameterType="int"
     resultType="com.u1pena.estimateapi.master.entity.Product">
-    SELECT * FROM products WHERE product_id = #{productId};
+    SELECT * FROM products WHERE product_id = #{productId}
   </select>
 
   <update id="updateOilQuantityWithEstimateProductId" parameterType="map">
@@ -64,7 +64,7 @@
     UPDATE estimate_products
     SET quantity = #{quantity}
     WHERE estimate_product_id = #{estimateProductId}
-    AND product_id IN (SELECT product_id FROM products WHERE category_id = 1);
+    AND product_id IN (SELECT product_id FROM products WHERE category_id = 1)
   </update>
 
   <select id="countOilProductsByEstimateBaseId" parameterType="int" resultType="int">
@@ -82,12 +82,12 @@
     FROM estimate_products ep
     JOIN products p ON ep.product_id = p.product_id
     WHERE ep.estimate_base_id = #{estimateBaseId}
-    AND p.category_id = 2;
+    AND p.category_id = 2
   </select>
 
   <select id="findEstimateProductIdByEstimateBaseId" parameterType="int"
     resultType="int">
-    SELECT estimate_product_id FROM estimate_products WHERE estimate_base_id = #{estimateBaseId};
+    SELECT estimate_product_id FROM estimate_products WHERE estimate_base_id = #{estimateBaseId}
   </select>
 
   <select id="findOilQuantityWithFilterByMaintenanceId" parameterType="int"
@@ -98,22 +98,22 @@
   <select id="findMaintenanceGuideById"
     parameterType="int"
     resultType="com.u1pena.estimateapi.master.entity.MaintenanceGuide">
-    SELECT * FROM maintenance_guides WHERE maintenance_id = #{maintenanceId};
+    SELECT * FROM maintenance_guides WHERE maintenance_id = #{maintenanceId}
   </select>
 
   <select id="findCustomerById" parameterType="int"
     resultType="com.u1pena.estimateapi.customer.entity.Customer">
-    SELECT * FROM customers WHERE customer_id = #{customerId};
+    SELECT * FROM customers WHERE customer_id = #{customerId}
   </select>
 
   <select id="findCustomerAddressByCustomerId" parameterType="int"
     resultType="com.u1pena.estimateapi.customer.entity.CustomerAddress">
-    SELECT * FROM customer_addresses WHERE customer_id = #{customerId};
+    SELECT * FROM customer_addresses WHERE customer_id = #{customerId}
   </select>
 
   <select id="findEstimateProductsByEstimateBaseId" parameterType="int"
     resultType="com.u1pena.estimateapi.estimate.entity.EstimateProduct">
-    SELECT * FROM estimate_products WHERE estimate_base_id = #{estimateBaseId};
+    SELECT * FROM estimate_products WHERE estimate_base_id = #{estimateBaseId}
   </select>
 
   <select id="findProductDetailByProductId" parameterType="list"
@@ -128,24 +128,24 @@
 
   <select id="findEstimateBasesByCustomerId" parameterType="int"
     resultType="com.u1pena.estimateapi.estimate.entity.EstimateBase">
-    SELECT * FROM estimate_bases WHERE customer_id = #{customerId};
+    SELECT * FROM estimate_bases WHERE customer_id = #{customerId}
   </select>
 
   <delete id="deleteEstimateProductById" parameterType="int">
-    DELETE FROM estimate_products WHERE estimate_product_id = #{estimateProductId};
+    DELETE FROM estimate_products WHERE estimate_product_id = #{estimateProductId}
   </delete>
 
   <delete id="deleteEstimateProductsByEstimateBaseId" parameterType="int">
-    DELETE FROM estimate_products WHERE estimate_base_id = #{estimateBaseId};
+    DELETE FROM estimate_products WHERE estimate_base_id = #{estimateBaseId}
   </delete>
 
   <delete id="deleteEstimateBaseById" parameterType="int">
-    DELETE FROM estimate_bases WHERE estimate_base_id = #{estimateBaseId};
+    DELETE FROM estimate_bases WHERE estimate_base_id = #{estimateBaseId}
   </delete>
 
   <select id="findEstimateProductById" parameterType="int"
     resultType="com.u1pena.estimateapi.estimate.entity.EstimateProduct">
-    SELECT * FROM estimate_products WHERE estimate_product_id = #{estimateProductId};
+    SELECT * FROM estimate_products WHERE estimate_product_id = #{estimateProductId}
   </select>
 
   <update id="updateEstimateProduct" parameterType="map">
@@ -165,5 +165,51 @@
     WHERE estimate_date BETWEEN #{startDate} AND #{endDate}
   </select>
 
+  <select id="findEstimateSummaryResultsByCustomerId" parameterType="int"
+    resultType="com.u1pena.estimateapi.estimate.dto.EstimateSummaryResult">
+    SELECT
+    eb.estimate_base_id AS estimateBaseId,
+    eb.estimate_date AS estimateDate,
+    mg.vehicle_name AS vehicleName,
+    CONCAT(COALESCE(c.last_name, ''), ' ', COALESCE(c.first_name, '')) AS customerName,
+    GROUP_CONCAT(DISTINCT pc.category_name SEPARATOR ' ・ ') AS estimateSummary,
+    IFNULL(SUM(ep.unit_price * ep.quantity), 0) AS totalPrice
+    FROM estimate_bases eb
+    JOIN customers c ON eb.customer_id = c.customer_id
+    JOIN vehicles v ON eb.vehicle_id = v.vehicle_id
+    JOIN maintenance_guides mg ON eb.maintenance_id = mg.maintenance_id
+    LEFT JOIN estimate_products ep ON eb.estimate_base_id = ep.estimate_base_id
+    LEFT JOIN products p ON ep.product_id = p.product_id
+    LEFT JOIN product_categories pc ON p.category_id = pc.category_id
+    WHERE
+    c.customer_id = #{customerId}
+    GROUP BY
+    eb.estimate_base_id, eb.estimate_date, c.last_name, c.first_name, mg.vehicle_name
+    ORDER BY
+    eb.estimate_date DESC
+  </select>
 
+  <select id="findEstimateSummaryResultsByDateRange" parameterType="map"
+    resultType="com.u1pena.estimateapi.estimate.dto.EstimateSummaryResult">
+    SELECT
+    eb.estimate_base_id AS estimateBaseId,
+    eb.estimate_date AS estimateDate,
+    mg.vehicle_name AS vehicleName,
+    CONCAT(COALESCE(c.last_name, ''), ' ', COALESCE(c.first_name, '')) AS customerName,
+    GROUP_CONCAT(DISTINCT pc.category_name SEPARATOR ' ・ ') AS estimateSummary,
+    IFNULL(SUM(ep.unit_price * ep.quantity), 0) AS totalPrice
+    FROM estimate_bases eb
+    JOIN customers c ON eb.customer_id = c.customer_id
+    JOIN vehicles v ON eb.vehicle_id = v.vehicle_id
+    JOIN maintenance_guides mg ON eb.maintenance_id = mg.maintenance_id
+    LEFT JOIN estimate_products ep ON eb.estimate_base_id = ep.estimate_base_id
+    LEFT JOIN products p ON ep.product_id = p.product_id
+    LEFT JOIN product_categories pc ON p.category_id = pc.category_id
+    WHERE
+    eb.estimate_date BETWEEN #{startDate} AND #{endDate}
+    GROUP BY
+    eb.estimate_base_id, eb.estimate_date, c.last_name, c.first_name, mg.vehicle_name
+    ORDER BY
+    eb.estimate_date DESC
+  </select>
 </mapper>

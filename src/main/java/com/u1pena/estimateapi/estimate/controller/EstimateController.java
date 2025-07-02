@@ -131,7 +131,7 @@ public class EstimateController {
       @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
       @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
   ) {
-    List<EstimateSummaryDateResponse> result = estimateService.getEstimatesByDate(startDate,
+    List<EstimateSummaryDateResponse> result = estimateService.getEstimatesByDateRange(startDate,
         endDate);
     return ResponseEntity.ok(result);
   }
@@ -209,14 +209,14 @@ public class EstimateController {
   @Operation(summary = "見積もり商品を更新する処理"
       , description = "指定された見積もり商品IDに基づいて見積もり商品を更新します。")
   @Parameter(name = "estimateProductId", description = "見積もり商品ID")
-  @PutMapping("estimates/products/{estimateProductId}")
+  @PutMapping("/estimates/products/{estimateProductId}")
   public ResponseEntity<GlobalResponse> updateEstimateProduct(
       @PathVariable int estimateProductId,
       @RequestBody EstimateProductUpdateRequest estimateProductUpdateRequest,
       UriComponentsBuilder uriBuilder) {
     estimateService.updateEstimateProduct(estimateProductId, estimateProductUpdateRequest);
     URI location = uriBuilder
-        .path("estimate/products/{estimateProductId}")
+        .path("estimates/products/{estimateProductId}")
         .buildAndExpand(estimateProductId)
         .toUri();
     GlobalResponse response = new GlobalResponse("Estimate product updated successfully");

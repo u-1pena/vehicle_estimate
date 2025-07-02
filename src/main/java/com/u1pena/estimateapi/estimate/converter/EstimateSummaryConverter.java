@@ -1,18 +1,17 @@
 package com.u1pena.estimateapi.estimate.converter;
 
-import com.u1pena.estimateapi.estimate.dto.response.EstimateFullResponse;
+import com.u1pena.estimateapi.estimate.dto.EstimateSummaryResult;
 import com.u1pena.estimateapi.estimate.dto.response.EstimateSummaryResponse;
 
 public class EstimateSummaryConverter {
 
-  public static EstimateSummaryResponse toDto(EstimateFullResponse estimateFullResponse,
-      String estimateSummary) {
+  public static EstimateSummaryResponse toDto(EstimateSummaryResult estimateSummaryResult) {
     return EstimateSummaryResponse.builder()
-        .estimateBaseId(estimateFullResponse.getEstimateHeader().getEstimateBaseId())
-        .estimateDate(estimateFullResponse.getEstimateHeader().getEstimateDate())
-        .vehicleName(estimateFullResponse.getEstimateHeader().getVehicle().getVehicleName())
-        .estimateSummary(estimateSummary)
-        .totalPrice(estimateFullResponse.getTotalPrice())
+        .estimateBaseId(estimateSummaryResult.getEstimateBaseId())
+        .estimateDate(estimateSummaryResult.getEstimateDate())
+        .vehicleName(estimateSummaryResult.getVehicleName())
+        .estimateSummary(estimateSummaryResult.getEstimateSummary())
+        .totalPrice(estimateSummaryResult.getTotalPrice())
         .build();
   }
 }

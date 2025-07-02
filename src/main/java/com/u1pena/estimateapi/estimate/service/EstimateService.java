@@ -24,6 +24,7 @@ import com.u1pena.estimateapi.estimate.converter.EstimateSummaryDateConverter;
 import com.u1pena.estimateapi.estimate.converter.EstimateVehicleConverter;
 import com.u1pena.estimateapi.estimate.dto.EstimateProductContext;
 import com.u1pena.estimateapi.estimate.dto.EstimateProductJoinResult;
+import com.u1pena.estimateapi.estimate.dto.EstimateSummaryResult;
 import com.u1pena.estimateapi.estimate.dto.request.EstimateProductCreateRequest;
 import com.u1pena.estimateapi.estimate.dto.request.EstimateProductUpdateRequest;
 import com.u1pena.estimateapi.estimate.dto.response.CustomerAddressResponse;
@@ -309,47 +310,33 @@ public class EstimateService {
     estimateRepository.updateEstimateProduct(estimateProduct);
   }
 
+  /**
+   * 見積もりの概要をリストで顧客IDから取得する。
+   *
+   * @param customerId 顧客ID
+   * @return 見積もりの概要リスト
+   */
   public List<EstimateSummaryResponse> getEstimateSummaryByCustomerId(int customerId) {
-    List<EstimateBase> estimateBaseList = estimateRepository.findEstimateBasesByCustomerId(
+    List<EstimateSummaryResult> results = estimateRepository.findEstimateSummaryResultsByCustomerId(
         customerId);
-    return getEstimateSummaryResponses(estimateBaseList);
-  }
-
-  public List<EstimateSummaryDateResponse> getEstimatesByDate(LocalDate startDate,
-      LocalDate endDate) {
-    List<EstimateBase> estimateBaseList = estimateRepository
-        .findEstimatesBetweenDates(startDate.toString(), endDate.toString());
-    return getEstimateSummaryDateResponses(estimateBaseList);
-  }
-
-  private List<EstimateSummaryResponse> getEstimateSummaryResponses(
-      List<EstimateBase> estimateBaseList) {
-    return estimateBaseList.stream()
-        .map(estimateBase -> {
-          EstimateFullResponse estimateFullResponse = getEstimateFullById(
-              estimateBase.getEstimateBaseId());
-
-          String categorySummary = estimateFullResponse.getEstimateProducts().stream()
-              .map(EstimateProductResponse::getCategoryName)
-              .distinct()
-              .collect(Collectors.joining("・"));
-          return EstimateSummaryConverter.toDto(estimateFullResponse, categorySummary);
-        })
+    return results.stream()
+        .map(EstimateSummaryConverter::toDto)
         .toList();
   }
 
-  private List<EstimateSummaryDateResponse> getEstimateSummaryDateResponses(
-      List<EstimateBase> estimateBaseList) {
-    return estimateBaseList.stream()
-        .map(estimateBase -> {
-          EstimateFullResponse estimateFullResponse = getEstimateFullById(
-              estimateBase.getEstimateBaseId());
-          String categorySummary = estimateFullResponse.getEstimateProducts().stream()
-              .map(EstimateProductResponse::getCategoryName)
-              .distinct()
-              .collect(Collectors.joining("・"));
-          return EstimateSummaryDateConverter.toDto(estimateFullResponse, categorySummary);
-        })
+  /**
+   * 指定した期間内の見積もりの概要をリストで取得する。
+   *
+   * @param startDate 開始日
+   * @param endDate   終了日
+   * @return 見積もりの概要リスト
+   */
+  public List<EstimateSummaryDateResponse> getEstimatesByDateRange(LocalDate startDate,
+      LocalDate endDate) {
+    List<EstimateSummaryResult> results = estimateRepository
+        .findEstimateSummaryResultsByDateRange(startDate.toString(), endDate.toString());
+    return results.stream()
+        .map(EstimateSummaryDateConverter::toDto)
         .toList();
   }
 }

@@ -9,7 +9,7 @@
     oil_viscosity,
     oil_quantity_with_filter, oil_quantity_without_filter, oil_filter_part_number, car_wash_size)
     VALUES (#{make}, #{vehicleName}, #{model}, #{type}, #{startYear}, #{endYear}, #{oilViscosity},
-    #{oilQuantityWithFilter}, #{oilQuantityWithoutFilter}, #{oilFilterPartNumber}, #{carWashSize});
+    #{oilQuantityWithFilter}, #{oilQuantityWithoutFilter}, #{oilFilterPartNumber}, #{carWashSize})
   </insert>
 
   <select id="findMaintenanceGuideByMakeAndModelAndTypeAndYear"
@@ -28,63 +28,63 @@
 
   <insert id="createProductCategory" useGeneratedKeys="true" keyProperty="categoryId"
     parameterType="com.u1pena.estimateapi.master.entity.ProductCategory">
-    INSERT INTO product_categories (category_name) VALUES (#{categoryName});
+    INSERT INTO product_categories (category_name) VALUES (#{categoryName})
   </insert>
 
   <insert id="createGuideProductPermission"
     parameterType="com.u1pena.estimateapi.master.entity.GuideProductPermission">
     INSERT INTO guide_product_permissions (maintenance_id, category_id, product_id, quantity,
     auto_adjust_quantity)
-    VALUES (#{maintenanceId}, #{categoryId}, #{productId}, #{quantity}, #{autoAdjustQuantity});
+    VALUES (#{maintenanceId}, #{categoryId}, #{productId}, #{quantity}, #{autoAdjustQuantity})
   </insert>
 
   <select id="findMaintenanceGuideById" parameterType="int"
     resultType="com.u1pena.estimateapi.master.entity.MaintenanceGuide">
-    SELECT * FROM maintenance_guides WHERE maintenance_id = #{maintenanceId};
+    SELECT * FROM maintenance_guides WHERE maintenance_id = #{maintenanceId}
   </select>
 
   <select id="findProductByOilViscosity"
     parameterType="com.u1pena.estimateapi.master.entity.MaintenanceGuide"
     resultType="com.u1pena.estimateapi.master.entity.Product">
-    SELECT * FROM products WHERE guide_match_key = #{oilViscosity};
+    SELECT * FROM products WHERE guide_match_key = #{oilViscosity}
   </select>
 
   <select id="findProductByCarWashSize"
     parameterType="com.u1pena.estimateapi.master.entity.MaintenanceGuide"
     resultType="com.u1pena.estimateapi.master.entity.Product">
-    SELECT * FROM products WHERE guide_match_key = #{carWashSize};
+    SELECT * FROM products WHERE guide_match_key = #{carWashSize}
   </select>
 
   <select id="findProductByOilFilterPartNumber"
     parameterType="com.u1pena.estimateapi.master.entity.MaintenanceGuide"
     resultType="com.u1pena.estimateapi.master.entity.Product">
-    SELECT * FROM products WHERE guide_match_key LIKE CONCAT('%', #{oilFilterPartNumber}, '%');
+    SELECT * FROM products WHERE guide_match_key LIKE CONCAT('%', #{oilFilterPartNumber}, '%')
   </select>
 
   <select id="findProductCategoryByCategoryName"
     parameterType="com.u1pena.estimateapi.master.entity.ProductCategory"
     resultType="com.u1pena.estimateapi.master.entity.ProductCategory">
-    SELECT * FROM product_categories WHERE category_name = #{categoryName};
+    SELECT * FROM product_categories WHERE category_name = #{categoryName}
   </select>
 
   <select id="findAllMaintenanceGuides"
     resultType="com.u1pena.estimateapi.master.entity.MaintenanceGuide">
-    SELECT * FROM maintenance_guides;
+    SELECT * FROM maintenance_guides
   </select>
 
   <select id="findAllProductCategories"
     resultType="com.u1pena.estimateapi.master.entity.ProductCategory">
-    SELECT * FROM product_categories;
+    SELECT * FROM product_categories
   </select>
 
   <select id="findAllProducts"
     resultType="com.u1pena.estimateapi.master.entity.Product">
-    SELECT * FROM products;
+    SELECT * FROM products
   </select>
 
   <select id="findAllGuideProductPermissions"
     resultType="com.u1pena.estimateapi.master.entity.GuideProductPermission">
-    SELECT * FROM guide_product_permissions;
+    SELECT * FROM guide_product_permissions
   </select>
 
 </mapper>
