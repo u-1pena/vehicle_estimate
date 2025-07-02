@@ -1175,14 +1175,7 @@ class CustomerControllerTest {
     void 指定したIDの顧客情報を削除できること() throws Exception {
       doNothing().when(customerService).deleteCustomerByCustomerId(1);
       mockMvc.perform(MockMvcRequestBuilders.delete("/customers/{customerId}", 1))
-          .andExpect(status().isOk())
-          .andExpect(MockMvcResultMatchers.content().json(
-              """
-                  {
-                      "message": "Customer deleted"
-                  }
-                  """, true
-          ));
+          .andExpect(status().isNoContent());
       verify(customerService).deleteCustomerByCustomerId(1);
     }
 
@@ -1209,14 +1202,8 @@ class CustomerControllerTest {
     void 指定したIDの車両情報を非アクティブにする() throws Exception {
       doNothing().when(customerService).deleteVehicleByVehicleId(1);
       mockMvc.perform(MockMvcRequestBuilders.delete("/vehicles/{vehicleId}", 1))
-          .andExpect(status().isOk())
-          .andExpect(MockMvcResultMatchers.content().json(
-              """
-                  {
-                      "message": "Vehicle deleted"
-                  }
-                  """, true
-          ));
+          .andExpect(status().isNoContent());
+      verify(customerService).deleteVehicleByVehicleId(1);
     }
 
     @Test
@@ -1256,14 +1243,7 @@ class CustomerControllerTest {
       mockMvc.perform(MockMvcRequestBuilders.put("/customers/{customerId}", 1)
               .contentType(MediaType.APPLICATION_JSON)
               .content(requestBody))
-          .andExpect(status().isOk())
-          .andExpect(MockMvcResultMatchers.content().json(
-              """
-                  {
-                      "message": "Customer updated"
-                  }
-                  """, true
-          ));
+          .andExpect(status().isNoContent());
       verify(customerService).updateCustomerByCustomerId(eq(1),
           any(CustomerUpdateRequest.class));
     }
@@ -1282,14 +1262,7 @@ class CustomerControllerTest {
       mockMvc.perform(MockMvcRequestBuilders.put("/addresses/{addressId}", 1)
               .contentType(MediaType.APPLICATION_JSON)
               .content(requestBody))
-          .andExpect(status().isOk())
-          .andExpect(MockMvcResultMatchers.content().json(
-              """
-                  {
-                      "message": "CustomerAddress updated"
-                  }
-                  """, true
-          ));
+          .andExpect(status().isNoContent());
       verify(customerService).updateCustomerAddressByCustomerId(eq(1),
           any(CustomerAddressUpdateRequest.class));
     }
@@ -1312,14 +1285,7 @@ class CustomerControllerTest {
       mockMvc.perform(MockMvcRequestBuilders.put("/vehicles/{vehicleId}", 1)
               .contentType(MediaType.APPLICATION_JSON)
               .content(requestBody))
-          .andExpect(status().isOk())
-          .andExpect(MockMvcResultMatchers.content().json(
-              """
-                  {
-                      "message": "Vehicle updated"
-                  }
-                  """, true
-          ));
+          .andExpect(status().isNoContent());
       verify(customerService).updateVehicleByVehicleId(eq(1),
           any(VehicleUpdateRequest.class));
     }
