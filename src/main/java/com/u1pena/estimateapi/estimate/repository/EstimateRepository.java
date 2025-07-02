@@ -4,6 +4,7 @@ import com.u1pena.estimateapi.customer.entity.Customer;
 import com.u1pena.estimateapi.customer.entity.CustomerAddress;
 import com.u1pena.estimateapi.customer.entity.Vehicle;
 import com.u1pena.estimateapi.estimate.dto.EstimateProductJoinResult;
+import com.u1pena.estimateapi.estimate.dto.EstimateSummaryResult;
 import com.u1pena.estimateapi.estimate.entity.EstimateBase;
 import com.u1pena.estimateapi.estimate.entity.EstimateProduct;
 import com.u1pena.estimateapi.master.entity.GuideProductPermission;
@@ -63,4 +64,25 @@ public interface EstimateRepository {
   List<EstimateProduct> findEstimateProductsByEstimateBaseId(int estimateBaseId);
 
   List<EstimateProductJoinResult> findProductDetailByProductId(List<Integer> productId);
+
+  void deleteEstimateBaseById(int estimateBaseId);
+
+  void deleteEstimateProductsByEstimateBaseId(int estimateBaseId);
+
+  void deleteEstimateProductById(int estimateProductId);
+
+  Optional<EstimateProduct> findEstimateProductById(int estimateProductId);
+
+  void updateEstimateProduct(EstimateProduct estimateProduct);
+
+  List<EstimateBase> findEstimateBasesByCustomerId(int customerId);
+
+  List<EstimateBase> findEstimatesBetweenDates(@Param("startDate") String startDate,
+      @Param("endDate") String endDate);
+
+  List<EstimateSummaryResult> findEstimateSummaryResultsByCustomerId(int customerId);
+
+  List<EstimateSummaryResult> findEstimateSummaryResultsByDateRange(
+      @Param("startDate") String startDate,
+      @Param("endDate") String endDate);
 }

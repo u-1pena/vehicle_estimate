@@ -3,11 +3,13 @@ package com.u1pena.estimateapi.customer.dto.request;
 import com.u1pena.estimateapi.customer.entity.Customer;
 import com.u1pena.estimateapi.customer.entity.CustomerAddress;
 import com.u1pena.estimateapi.customer.entity.Vehicle;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import java.util.Objects;
 import lombok.Getter;
 import lombok.Setter;
 
+@Tag(name = "CustomerInformationRequest", description = "顧客情報をまとめたリクエスト")
 @Getter
 @Setter
 public class CustomerInformationRequest {
