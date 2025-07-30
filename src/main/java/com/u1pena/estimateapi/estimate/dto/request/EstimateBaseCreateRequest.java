@@ -1,9 +1,11 @@
 package com.u1pena.estimateapi.estimate.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 public class EstimateBaseCreateRequest {
 
   @Schema(description = "顧客ID", example = "1")
@@ -12,11 +14,6 @@ public class EstimateBaseCreateRequest {
   private int vehicleId;
   @Schema(description = "メンテナンスガイドID", example = "1")
   private int maintenanceId;
-
-  public static EstimateBaseCreateRequest fromVehicleId(int vehicleId) {
-    EstimateBaseCreateRequest request = new EstimateBaseCreateRequest();
-    request.setVehicleId(vehicleId);
-    return request;
-  }
+  
 }
 

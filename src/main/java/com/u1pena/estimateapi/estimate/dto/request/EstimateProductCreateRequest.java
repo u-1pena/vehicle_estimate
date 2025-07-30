@@ -4,9 +4,11 @@ import com.u1pena.estimateapi.common.validator.YenAmount;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 public class EstimateProductCreateRequest {
 
   @Schema(description = "見積もりベースID", example = "1")

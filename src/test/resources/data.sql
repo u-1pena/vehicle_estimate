@@ -1,8 +1,8 @@
-INSERT INTO customers VALUES (1, 'suzuki', 'ichiro', 'スズキ','イチロウ', 'ichiro@example.ne.jp', '090-1234-5678');
+INSERT INTO customers VALUES (1, 'suzuki', 'ichiro', 'ｽｽﾞｷ','ｲﾁﾛｳ', 'ichiro@example.com', '090-1234-5678');
 
-INSERT INTO customers VALUES (2, 'sato', 'hanako', 'サトウ', 'ハナコ','hanako@example.ne.jp', '080-1234-5678');
+INSERT INTO customers VALUES (2, 'sato', 'hanako', 'ｻﾄｳ', 'ﾊﾅｺ','hanako@example.ne.jp', '080-1234-5678');
 
-INSERT INTO customer_addresses VALUES (1, 1, '123-4567', '東京都', '港区', '六本木1-1-1', '都心ビル101');
+INSERT INTO customer_addresses VALUES (1, 1, '123-4567', '東京都', '港区', '六本木1-1-1', '都心ビル101号室');
 
 INSERT INTO vehicles VALUES (1, 1, '品川', '123', 'あ', '1234', 'toyota', 'DBA-NZE141', '1NZ', '2010-12', '2027-12-31',true);
 
@@ -31,6 +31,10 @@ INSERT INTO products VALUES (9, 3, '手洗い洗車', '手洗い洗車Sサイズ
 INSERT INTO products VALUES (10, 2, 'オイルフィルター', 'to-101', '90915-10003', 1000.0);
 
 
-INSERT INTO estimate_bases VALUES (1, 1, 1, 1, CURRENT_DATE);
+INSERT INTO estimate_bases VALUES (1, 1, 1, 1, DATE '2025-01-01');
+INSERT INTO estimate_bases VALUES (2, 2, 1, 1, DATE '2025-01-02');
+
+INSERT INTO estimate_products VALUES (1, 1, 1, 1.0, 1800.00, 1800.00);
+INSERT INTO estimate_products VALUES (2, 1, 9, 1.0, 1000.00, 1000.00);
 
 INSERT INTO guide_product_permissions VALUES (1, 1, 1, 4.0, true);

@@ -1,4 +1,4 @@
-package com.u1pena.estimateapi.customer.controller.Response;
+package com.u1pena.estimateapi.master.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -8,8 +8,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.u1pena.estimateapi.customer.helper.CustomizedMockMvc;
-import com.u1pena.estimateapi.customer.helper.MasterTestHelper;
-import com.u1pena.estimateapi.master.controller.MasterController;
 import com.u1pena.estimateapi.master.dto.request.MaintenanceGuideCreateRequest;
 import com.u1pena.estimateapi.master.dto.request.ProductCategoryCreateRequest;
 import com.u1pena.estimateapi.master.dto.request.ProductCreateRequest;
@@ -18,6 +16,7 @@ import com.u1pena.estimateapi.master.entity.Product;
 import com.u1pena.estimateapi.master.entity.ProductCategory;
 import com.u1pena.estimateapi.master.exception.MasterException;
 import com.u1pena.estimateapi.master.exception.MasterException.MaintenanceGuideAlreadyExistsException;
+import com.u1pena.estimateapi.master.helper.MasterTestHelper;
 import com.u1pena.estimateapi.master.service.MaintenanceGuideService;
 import java.math.BigDecimal;
 import org.junit.jupiter.api.BeforeEach;

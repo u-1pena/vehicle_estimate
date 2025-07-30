@@ -8,20 +8,20 @@ import com.u1pena.estimateapi.customer.dto.request.CustomerInformationRequest;
 import com.u1pena.estimateapi.customer.entity.Customer;
 import com.u1pena.estimateapi.customer.entity.CustomerAddress;
 import com.u1pena.estimateapi.customer.entity.Vehicle;
-import com.u1pena.estimateapi.customer.helper.TestHelper;
+import com.u1pena.estimateapi.customer.helper.CustomerTestHelper;
 import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 class CustomerInformationConverterTest {
 
-  TestHelper testHelper = new TestHelper();
+  CustomerTestHelper customerTestHelper = new CustomerTestHelper();
 
   @Test
   void 顧客情報と住所と車両情報を１つにまとめることができる() {
-    Customer customer = testHelper.customerMock().get(0);
-    CustomerAddress customerAddress = testHelper.customerAddressMock().get(0);
-    List<Vehicle> vehicles = List.of(testHelper.vehicleMock().get(0));
+    Customer customer = customerTestHelper.customerMock().get(0);
+    CustomerAddress customerAddress = customerTestHelper.customerAddressMock().get(0);
+    List<Vehicle> vehicles = List.of(customerTestHelper.vehicleMock().get(0));
 
     CustomerInformationRequest actual = CustomerInformationConverter.convertToCustomerInformationDto(
         customer,
@@ -34,9 +34,9 @@ class CustomerInformationConverterTest {
 
   @Test
   void 車両情報が複数ある場合に正常に変換できる() {
-    Customer customer = testHelper.customerMock().get(1);
-    CustomerAddress customerAddress = testHelper.customerAddressMock().get(1);
-    List<Vehicle> vehicles = testHelper.vehicleMock()
+    Customer customer = customerTestHelper.customerMock().get(1);
+    CustomerAddress customerAddress = customerTestHelper.customerAddressMock().get(1);
+    List<Vehicle> vehicles = customerTestHelper.vehicleMock()
         .stream()
         .filter(vehicle -> vehicle.getCustomerId() == 2)
         .toList();
@@ -53,8 +53,8 @@ class CustomerInformationConverterTest {
 
   @Test
   void ユーザーの車両情報が空の場合にも正常に変換できる() {
-    Customer customer = testHelper.customerMock().get(2);
-    CustomerAddress customerAddress = testHelper.customerAddressMock().get(2);
+    Customer customer = customerTestHelper.customerMock().get(2);
+    CustomerAddress customerAddress = customerTestHelper.customerAddressMock().get(2);
     List<Vehicle> vehicles = emptyList();
 
     CustomerInformationRequest actual = CustomerInformationConverter.convertToCustomerInformationDto(

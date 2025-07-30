@@ -55,7 +55,13 @@ public interface EstimateRepository {
 
   double findOilQuantityWithFilterByMaintenanceId(int maintenanceId);
 
-  int findEstimateProductIdByEstimateBaseId(int estimateBaseId);
+  List<Integer> findEstimateProductIdByEstimateBaseId(int estimateBaseId);
+
+  int findProductsWithOilCategoryByEstimateBaseId(int estimateBaseId);
+
+  int findEstimateProductIdByEstimateBaseIdAndProductId(
+      @Param("estimateBaseId") int estimateBaseId,
+      @Param("productId") int productId);
 
   Optional<Customer> findCustomerById(int customerId);
 
@@ -63,7 +69,7 @@ public interface EstimateRepository {
 
   List<EstimateProduct> findEstimateProductsByEstimateBaseId(int estimateBaseId);
 
-  List<EstimateProductJoinResult> findProductDetailByProductId(List<Integer> productId);
+  List<EstimateProductJoinResult> findProductsWithCategoryByIds(List<Integer> productId);
 
   void deleteEstimateBaseById(int estimateBaseId);
 
@@ -75,14 +81,13 @@ public interface EstimateRepository {
 
   void updateEstimateProduct(EstimateProduct estimateProduct);
 
-  List<EstimateBase> findEstimateBasesByCustomerId(int customerId);
-
-  List<EstimateBase> findEstimatesBetweenDates(@Param("startDate") String startDate,
-      @Param("endDate") String endDate);
-
   List<EstimateSummaryResult> findEstimateSummaryResultsByCustomerId(int customerId);
 
   List<EstimateSummaryResult> findEstimateSummaryResultsByDateRange(
       @Param("startDate") String startDate,
       @Param("endDate") String endDate);
+
+  List<EstimateBase> findAllEstimateBases();
+
+  List<EstimateProduct> findAllEstimateProducts();
 }

@@ -14,5 +14,4 @@ public class EstimateVehicleConverter {
         .year(vehicle.getYear())
         .build();
   }
-
 }

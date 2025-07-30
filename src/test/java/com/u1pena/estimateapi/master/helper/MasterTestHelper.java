@@ -1,4 +1,4 @@
-package com.u1pena.estimateapi.customer.helper;
+package com.u1pena.estimateapi.master.helper;
 
 import com.u1pena.estimateapi.common.enums.CarWashSize;
 import com.u1pena.estimateapi.master.dto.request.MaintenanceGuideCreateRequest;

@@ -16,5 +16,4 @@ public class EstimateProductsConverter {
         .totalPrice(estimateProduct.getTotalPrice())
         .build();
   }
-
 }

@@ -61,4 +61,21 @@ public class EstimateException {
     }
   }
 
+  public static class ExistOilFilterProductsException extends RuntimeException {
+
+    public ExistOilFilterProductsException() {
+      super("Oil filter products already exist for this estimate base");
+    }
+
+    public ExistOilFilterProductsException(String message) {
+      super(message);
+    }
+  }
+
+  public static class ExistOilProductsException extends RuntimeException {
+
+    public ExistOilProductsException() {
+      super("Oil products already exist for this estimate base");
+    }
+  }
 }

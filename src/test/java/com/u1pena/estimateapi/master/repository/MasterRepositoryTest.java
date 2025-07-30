@@ -1,15 +1,14 @@
-package com.u1pena.estimateapi.customer.mapper;
+package com.u1pena.estimateapi.master.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.u1pena.estimateapi.common.enums.CarWashSize;
-import com.u1pena.estimateapi.customer.helper.MasterTestHelper;
 import com.u1pena.estimateapi.estimate.dto.GuideProductPermissionCreateContext;
 import com.u1pena.estimateapi.master.entity.GuideProductPermission;
 import com.u1pena.estimateapi.master.entity.MaintenanceGuide;
 import com.u1pena.estimateapi.master.entity.Product;
 import com.u1pena.estimateapi.master.entity.ProductCategory;
-import com.u1pena.estimateapi.master.repository.MasterRepository;
+import com.u1pena.estimateapi.master.helper.MasterTestHelper;
 import java.math.BigDecimal;
 import java.time.YearMonth;
 import java.util.List;

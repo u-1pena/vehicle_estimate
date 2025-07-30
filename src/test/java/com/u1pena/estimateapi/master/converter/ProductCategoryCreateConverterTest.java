@@ -1,8 +1,7 @@
-package com.u1pena.estimateapi.customer.converter;
+package com.u1pena.estimateapi.master.converter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.u1pena.estimateapi.master.converter.ProductCategoryCreateConverter;
 import com.u1pena.estimateapi.master.dto.request.ProductCategoryCreateRequest;
 import com.u1pena.estimateapi.master.entity.ProductCategory;
 import org.junit.jupiter.api.Test;

@@ -12,6 +12,8 @@ import com.u1pena.estimateapi.customer.exception.VehicleException.VehicleNotFoun
 import com.u1pena.estimateapi.customer.exception.VehicleException.VehicleYearInvalidException;
 import com.u1pena.estimateapi.estimate.exception.EstimateException.EstimateBaseNotFoundException;
 import com.u1pena.estimateapi.estimate.exception.EstimateException.EstimateProductNotFoundException;
+import com.u1pena.estimateapi.estimate.exception.EstimateException.ExistOilFilterProductsException;
+import com.u1pena.estimateapi.estimate.exception.EstimateException.ExistOilProductsException;
 import com.u1pena.estimateapi.estimate.exception.EstimateException.NoMatchMaintenanceGuideException;
 import com.u1pena.estimateapi.master.exception.MasterException.MaintenanceGuideAlreadyExistsException;
 import com.u1pena.estimateapi.master.exception.MasterException.ProductCategoryAlreadyExistsException;
@@ -153,6 +155,22 @@ public class GlobalExceptionHandler {
       EstimateProductNotFoundException e, HttpServletRequest request) {
     return new ResponseEntity<>(
         createErrorResponse(HttpStatus.NOT_FOUND, e, request), HttpStatus.NOT_FOUND);
+  }
+
+  @ExceptionHandler(ExistOilFilterProductsException.class)
+  public ResponseEntity<Map<String, String>> handleExistOilFilterProductsException(
+      ExistOilFilterProductsException e, HttpServletRequest request) {
+    return new ResponseEntity<>(
+        createErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY, e, request),
+        HttpStatus.UNPROCESSABLE_ENTITY);
+  }
+
+  @ExceptionHandler(ExistOilProductsException.class)
+  public ResponseEntity<Map<String, String>> handleExistOilProductsException(
+      ExistOilProductsException e, HttpServletRequest request) {
+    return new ResponseEntity<>(
+        createErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY, e, request),
+        HttpStatus.UNPROCESSABLE_ENTITY);
   }
 
   private Map<String, String> createErrorResponse(

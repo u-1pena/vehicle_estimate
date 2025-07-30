@@ -6,8 +6,8 @@ import com.u1pena.estimateapi.estimate.dto.response.CustomerResponse;
 public class EstimateCustomerConverter {
 
   public static CustomerResponse toDto(Customer customer) {
-    String fullName = customer.getFirstName() + " " + customer.getLastName();
-    String fullNameKana = customer.getFirstNameKana() + " " + customer.getLastNameKana();
+    String fullName = customer.getLastName() + " " + customer.getFirstName();
+    String fullNameKana = customer.getLastNameKana() + " " + customer.getFirstNameKana();
     return CustomerResponse.builder()
         .fullName(fullName)
         .fullNameKana(fullNameKana)
