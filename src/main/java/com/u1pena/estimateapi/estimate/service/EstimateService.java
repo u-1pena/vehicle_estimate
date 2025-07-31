@@ -189,9 +189,9 @@ public class EstimateService {
   /**
    * EstimateProductを登録する。
    *
-   * @param estimateBaseId
-   * @param estimateProductCreateRequest
-   * @throws NoMatchMaintenanceGuideException
+   * @param estimateBaseId               見積もりの基本情報を取得するためのID
+   * @param estimateProductCreateRequest 見積もり商品作成リクエスト
+   * @throws NoMatchMaintenanceGuideException メンテナンスガイドが見つからない場合にスローされる例外
    */
   @Transactional
   public void registerEstimateProduct(int estimateBaseId,
@@ -230,10 +230,10 @@ public class EstimateService {
   /**
    * 数量をカテゴリーごとに解決する。オイルやオイルフィルターなどの特定のカテゴリーに基づいて数量を決定します。
    *
-   * @param categoryId             カテゴリーID
+   * @param categoryId             カテゴリーID（オイル、オイルフィルターなど）
    * @param estimateBaseId         見積もりの基本情報を取得するためのID
-   * @param maintenanceId          メンテナンスID
-   * @param guideProductPermission ガイド商品許可
+   * @param maintenanceId          メンテナンスガイドのID
+   * @param guideProductPermission ガイド上の商品許可
    * @return 解決された数量
    */
   protected double resolveQuantityByCategory(int categoryId, int estimateBaseId,
@@ -315,9 +315,9 @@ public class EstimateService {
    * オイルフィルター登録時の処理を行う。このメソッドは、オイルフィルターが存在するかどうかをチェックし、
    * 既に存在する場合は例外をスローします。また、オイルが既に登録されている場合は、オイルの数量をフィルター込の数量に更新します。
    *
-   * @param estimateBaseId
-   * @param maintenanceId
-   * @throws NoMatchMaintenanceGuideException
+   * @param estimateBaseId 　見積もりの基本情報を取得するためのID
+   * @param maintenanceId  　メンテンナンスガイドのID
+   * @throws NoMatchMaintenanceGuideException 　メンテナンスガイドが見つからない場合にスローされる例外
    */
   private void handleOilFilterRegistration(int estimateBaseId, int maintenanceId) {
     validateOilFilterConstraints(estimateBaseId);
@@ -335,13 +335,24 @@ public class EstimateService {
     }
   }
 
-
+  /**
+   * オイルの制約を検証する。オイル商品が既に存在する場合は、例外をスローします。
+   *
+   * @param estimateBaseId 見積もりの基本情報を取得するためのID
+   * @throws EstimateException.ExistOilProductsException オイル商品が既に存在する場合にスローされる例外
+   */
   private void validateOilConstraints(int estimateBaseId) {
     if (estimateRepository.existOilProductsByEstimateBaseId(estimateBaseId)) {
       throw new EstimateException.ExistOilProductsException();
     }
   }
 
+  /**
+   * オイルフィルターの制約を検証する。オイルフィルター商品が既に存在する場合は、例外をスローします。
+   *
+   * @param estimateBaseId 見積もりの基本情報を取得するためのID
+   * @throws EstimateException.ExistOilFilterProductsException オイルフィルター商品が既に存在する場合にスローされる例外
+   */
   private void validateOilFilterConstraints(int estimateBaseId) {
     if (estimateRepository.existOilFilterProductsByEstimateBaseId(estimateBaseId)) {
       throw new EstimateException.ExistOilFilterProductsException();
@@ -351,9 +362,9 @@ public class EstimateService {
   /**
    * EstimateProductを作成する。
    *
-   * @param productId
-   * @param estimateBaseId
-   * @param estimateProductCreateRequest
+   * @param productId                    　商品ID
+   * @param estimateBaseId               　見積もりの基本情報を取得するためのID
+   * @param estimateProductCreateRequest 　見積もり商品作成リクエスト
    * @return EstimateProduct 作成されたEstimateProductエンティティ
    */
   private EstimateProduct createEstimateProduct(int productId, int estimateBaseId,

@@ -28,11 +28,11 @@ import com.u1pena.estimateapi.estimate.exception.EstimateException;
 import com.u1pena.estimateapi.estimate.exception.EstimateException.ExistOilFilterProductsException;
 import com.u1pena.estimateapi.estimate.exception.EstimateException.ExistOilProductsException;
 import com.u1pena.estimateapi.estimate.exception.EstimateException.NoMatchMaintenanceGuideException;
+import com.u1pena.estimateapi.estimate.helper.EstimateTestHelper;
 import com.u1pena.estimateapi.estimate.repository.EstimateRepository;
 import com.u1pena.estimateapi.master.entity.GuideProductPermission;
 import com.u1pena.estimateapi.master.entity.MaintenanceGuide;
 import com.u1pena.estimateapi.master.entity.Product;
-import com.u1pena.estimateapi.master.helper.EstimateTestHelper;
 import com.u1pena.estimateapi.master.helper.MasterTestHelper;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -579,7 +579,7 @@ class EstimateServiceTest {
       GuideProductPermission guideProductPermission = GuideProductPermission.builder()
           .maintenanceId(1)
           .productId(11)
-          .categoryId(2) // CATEGORY_OIL
+          .categoryId(2) // CATEGORY_OIL_FILTER
           .quantity(1.0)
           .autoAdjustQuantity(true)
           .build();

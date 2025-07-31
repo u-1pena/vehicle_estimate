@@ -29,7 +29,7 @@ class EstimateProductCreateConverterTest {
     assertThat(actual.getEstimateBaseId()).isEqualTo(estimateProductContext.getEstimateBaseId());
     assertThat(actual.getProductId()).isEqualTo(estimateProductContext.getProduct().getProductId());
     assertThat(actual.getQuantity()).isEqualTo(estimateProductContext.getQuantity());
-    assertThat(actual.getUnitPrice()).isEqualTo(estimateProductContext.getUnitPrice());
-    assertThat(actual.getTotalPrice()).isEqualTo(estimateProductContext.getTotalPrice());
+    assertThat(actual.getUnitPrice()).isEqualByComparingTo(estimateProductContext.getUnitPrice());
+    assertThat(actual.getTotalPrice()).isEqualByComparingTo(estimateProductContext.getTotalPrice());
   }
 }

@@ -29,7 +29,7 @@ class EstimateSummaryConverterTest {
     assertThat(actual.getEstimateDate()).isEqualTo(estimateSummaryResult.getEstimateDate());
     assertThat(actual.getVehicleName()).isEqualTo(estimateSummaryResult.getVehicleName());
     assertThat(actual.getEstimateSummary()).isEqualTo(estimateSummaryResult.getEstimateSummary());
-    assertThat(actual.getTotalPrice()).isEqualTo(estimateSummaryResult.getTotalPrice());
+    assertThat(actual.getTotalPrice()).isEqualByComparingTo(estimateSummaryResult.getTotalPrice());
   }
 
 }

@@ -23,7 +23,7 @@ class EstimateProductUpdateConverterTest {
 
     // 検証
     assertThat(actual.getQuantity()).isEqualTo(updateRequest.getQuantity());
-    assertThat(actual.getUnitPrice()).isEqualTo(updateRequest.getUnitPrice());
-    assertThat(actual.getTotalPrice()).isEqualTo(updateRequest.getTotalPrice());
+    assertThat(actual.getUnitPrice()).isEqualByComparingTo(updateRequest.getUnitPrice());
+    assertThat(actual.getTotalPrice()).isEqualByComparingTo(updateRequest.getTotalPrice());
   }
 }

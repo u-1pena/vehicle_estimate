@@ -40,8 +40,9 @@ class EstimateProductsConverterTest {
     assertThat(actual.getCategoryName()).isEqualTo(estimateProductResponse.getCategoryName());
     assertThat(actual.getProductName()).isEqualTo(estimateProductResponse.getProductName());
     assertThat(actual.getQuantity()).isEqualTo(estimateProductResponse.getQuantity());
-    assertThat(actual.getUnitPrice()).isEqualTo(estimateProductResponse.getUnitPrice());
-    assertThat(actual.getTotalPrice()).isEqualTo(estimateProductResponse.getTotalPrice());
+    assertThat(actual.getUnitPrice()).isEqualByComparingTo(estimateProductResponse.getUnitPrice());
+    assertThat(actual.getTotalPrice()).isEqualByComparingTo(
+        estimateProductResponse.getTotalPrice());
     assertTrue(actual.getTotalPrice().compareTo(BigDecimal.ZERO) > 0, "合計金額は正の値であるべき");
   }
 }
