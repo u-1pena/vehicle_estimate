@@ -294,7 +294,7 @@ class EstimateServiceTest {
     }
 
     @Test
-    void CATEGORY_OIL_フィルターなし_ユーザー指定なしならガイド数量が返る() {
+    void オイルフィルターなし_ユーザー指定なしならガイド数量が返る() {
       // 準備
       GuideProductPermission guideProductPermission = GuideProductPermission.builder()
           .quantity(3.0)
@@ -322,7 +322,7 @@ class EstimateServiceTest {
     }
 
     @Test
-    void CATEGORY_OIL_フィルターあり_ユーザー指定なしならフィルター込数量が返る() {
+    void フィルターあり_ユーザー指定なしならフィルター込数量が返る() {
       // 準備
       GuideProductPermission guideProductPermission = GuideProductPermission.builder()
           .quantity(3.0)

@@ -266,13 +266,13 @@ public class EstimateService {
       GuideProductPermission permission, Double userQuantity) {
 
     if (userQuantity != null) {
-      return resolveQuantityWithValue(userQuantity, permission);
+      return adjustQuantityWithPermission(userQuantity, permission);
     }
 
     if (estimateRepository.existOilFilterProductsByEstimateBaseId(estimateBaseId)) {
       double oilWithFilter = estimateRepository.findOilQuantityWithFilterByMaintenanceId(
           maintenanceId);
-      return resolveQuantityWithValue(oilWithFilter, permission);
+      return adjustQuantityWithPermission(oilWithFilter, permission);
     }
 
     return resolveQuantityFromGuide(permission);
@@ -288,7 +288,7 @@ public class EstimateService {
   private double resolveQuantityFromUserOrGuide(Double userQuantity,
       GuideProductPermission permission) {
     if (userQuantity != null) {
-      return resolveQuantityWithValue(userQuantity, permission);
+      return adjustQuantityWithPermission(userQuantity, permission);
     }
     return resolveQuantityFromGuide(permission);
   }
@@ -305,7 +305,7 @@ public class EstimateService {
         : 1.0;
   }
 
-  private double resolveQuantityWithValue(double quantity, GuideProductPermission permission) {
+  private double adjustQuantityWithPermission(double quantity, GuideProductPermission permission) {
     return permission.isAutoAdjustQuantity()
         ? quantity
         : 1.0;

@@ -44,7 +44,7 @@ class EstimateRepositoryTest {
       // 準備
       int initialSize = estimateRepository.findAllEstimateBases().size();
       EstimateBase estimateBase = new EstimateBase(
-          1, // customerId
+          1, // estimateBaseId
           1, // customerId
           1, // vehicleId
           1, // maintenanceId
