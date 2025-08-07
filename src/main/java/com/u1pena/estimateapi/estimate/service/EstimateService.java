@@ -209,7 +209,7 @@ public class EstimateService {
 
     // カテゴリーごとの処理
     Double userQuantity = estimateProductCreateRequest.getQuantity();
-    double resolvedQuantity = (userQuantity != null)
+    Double resolvedQuantity = (userQuantity != null)
         ? userQuantity
         : resolveQuantityByCategory(
             product.getCategoryId(),
@@ -218,12 +218,13 @@ public class EstimateService {
             guideProductPermission,
             null);
 
-    // 数量をセット
-    estimateProductCreateRequest.setQuantity(resolvedQuantity);
-
+    // 数量をセット（新しいリクエストオブジェクトを作成）
+    EstimateProductCreateRequest updatedRequest = EstimateProductCreateRequest.builder()
+        .quantity(resolvedQuantity)
+        .build();
     // エンティティ生成と登録
     EstimateProduct estimateProduct = createEstimateProduct(
-        product.getProductId(), estimateBaseId, estimateProductCreateRequest);
+        product.getProductId(), estimateBaseId, updatedRequest);
     estimateRepository.insertEstimateProduct(estimateProduct);
   }
 
@@ -324,7 +325,7 @@ public class EstimateService {
 
     boolean existOil = estimateRepository.existOilProductsByEstimateBaseId(estimateBaseId);
     if (existOil) {
-      int oilProductId = estimateRepository.findProductsWithOilCategoryByEstimateBaseId(
+      int oilProductId = estimateRepository.findProductWithOilCategoryByEstimateBaseId(
           estimateBaseId);
       int updateEstimateProductId = estimateRepository
           .findEstimateProductIdByEstimateBaseIdAndProductId(estimateBaseId, oilProductId);

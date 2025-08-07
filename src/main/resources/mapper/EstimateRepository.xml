@@ -117,7 +117,7 @@
     SELECT * FROM estimate_products WHERE estimate_base_id = #{estimateBaseId}
   </select>
 
-  <select id="findProductsWithOilCategoryByEstimateBaseId" parameterType="int"
+  <select id="findProductWithOilCategoryByEstimateBaseId" parameterType="int"
     resultType="int">
     SELECT p.product_id FROM products p
     JOIN product_categories pc ON p.category_id = pc.category_id WHERE p.category_id = 1

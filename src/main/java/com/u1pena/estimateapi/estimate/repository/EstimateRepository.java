@@ -57,7 +57,7 @@ public interface EstimateRepository {
 
   List<Integer> findEstimateProductIdByEstimateBaseId(int estimateBaseId);
 
-  int findProductsWithOilCategoryByEstimateBaseId(int estimateBaseId);
+  int findProductWithOilCategoryByEstimateBaseId(int estimateBaseId);
 
   int findEstimateProductIdByEstimateBaseIdAndProductId(
       @Param("estimateBaseId") int estimateBaseId,

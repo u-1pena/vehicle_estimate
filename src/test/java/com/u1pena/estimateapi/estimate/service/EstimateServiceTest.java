@@ -509,7 +509,7 @@ class EstimateServiceTest {
           .build();
       doReturnEstimateProductRegisterStub(estimateBase, product, guideProductPermission);
       doReturn(1).when(estimateRepository)
-          .findProductsWithOilCategoryByEstimateBaseId(estimateBase.getEstimateBaseId());
+          .findProductWithOilCategoryByEstimateBaseId(estimateBase.getEstimateBaseId());
       doReturn(true).when(estimateRepository)
           .existOilProductsByEstimateBaseId(estimateBase.getEstimateBaseId());
       doReturn(3.7).when(estimateRepository)
