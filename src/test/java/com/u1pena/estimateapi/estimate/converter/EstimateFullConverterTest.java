@@ -43,8 +43,8 @@ class EstimateFullConverterTest {
     VehicleResponse vehicleResponse = VehicleResponse.builder()
         .vehicleName("トヨタ プリウス")
         .make("toyota")
-        .type("ZVW30")
-        .model("2ZR-FXE")
+        .type("2ZR-FXE")
+        .model("ZVW30")
         .year(YearMonth.of(2010, 1))
         .build();
     EstimateHeaderResponse estimateHeaderResponse = EstimateHeaderResponse.builder()
