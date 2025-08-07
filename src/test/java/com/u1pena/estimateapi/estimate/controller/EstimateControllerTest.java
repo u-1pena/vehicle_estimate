@@ -277,7 +277,8 @@ class EstimateControllerTest {
             "productId": 1
           }
            """;
-      doNothing().when(estimateService).registerEstimateProduct(1, estimateProductCreateRequest);
+      doNothing().when(estimateService)
+          .registerEstimateProduct(eq(1), any(EstimateProductCreateRequest.class));
       mockMvc.perform(MockMvcRequestBuilders.post("/estimates/1/products")
               .contentType(MediaType.APPLICATION_JSON)
               .content(requestBody))
