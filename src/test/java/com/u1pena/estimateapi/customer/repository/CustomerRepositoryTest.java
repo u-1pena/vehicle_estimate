@@ -1,4 +1,4 @@
-package com.u1pena.estimateapi.customer.mapper;
+package com.u1pena.estimateapi.customer.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -6,7 +6,8 @@ import com.u1pena.estimateapi.common.enums.Prefecture;
 import com.u1pena.estimateapi.customer.entity.Customer;
 import com.u1pena.estimateapi.customer.entity.CustomerAddress;
 import com.u1pena.estimateapi.customer.entity.Vehicle;
-import com.u1pena.estimateapi.customer.helper.TestHelper;
+import com.u1pena.estimateapi.customer.helper.CustomerTestHelper;
+import com.u1pena.estimateapi.customer.mapper.CustomerRepository;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,42 +22,42 @@ class CustomerRepositoryTest {
   @Autowired
   CustomerRepository customerRepository;
 
-  TestHelper testHelper;
+  CustomerTestHelper customerTestHelper;
 
   @BeforeEach
   void setup() {
-    testHelper = new TestHelper();
+    customerTestHelper = new CustomerTestHelper();
   }
 
   @Nested
   class ReadClass {
 
     @Test
-    void 指定したidで顧客情報を検索することができる() {
+    void 指定した顧客idで顧客情報を検索することができる() {
       Optional<Customer> actual = customerRepository.findCustomerByCustomerId(1);
-      Customer expected = testHelper.customerMock().get(0);
+      Customer expected = customerTestHelper.customerMock().get(0);
       assertThat(actual).hasValue(expected);
     }
 
     @Test
-    void 指定したidで顧客住所を検索することができる() {
+    void 指定した顧客idで顧客住所を検索することができる() {
       Optional<CustomerAddress> actual = customerRepository.findCustomerAddressByCustomerId(1);
-      CustomerAddress expected = testHelper.customerAddressMock().get(0);
+      CustomerAddress expected = customerTestHelper.customerAddressMock().get(0);
       assertThat(actual).hasValue(expected);
     }
 
     @Test
-    void 指定したidで車両情報を検索することができる() {
+    void 指定した顧客idで車両情報を検索することができる() {
       List<Vehicle> actual = customerRepository.findVehicleByCustomerId(1);
-      Vehicle expected = testHelper.vehicleMock().get(0);
+      Vehicle expected = customerTestHelper.vehicleMock().get(0);
       assertThat(actual).contains(expected);
       assertThat(actual.size()).isEqualTo(1);
     }
 
     @Test
-    void 指定したidで車両情報が複数あっても検索することができる() {
+    void 指定した顧客idで車両情報が複数あっても検索することができる() {
       List<Vehicle> actual = customerRepository.findVehicleByCustomerId(2);
-      List<Vehicle> expected = testHelper.vehicleMock().stream()
+      List<Vehicle> expected = customerTestHelper.vehicleMock().stream()
           .filter(vehicle -> vehicle.getCustomerId() == 2)
           .toList();
       assertThat(actual).isEqualTo(expected);
@@ -66,7 +67,7 @@ class CustomerRepositoryTest {
     @Test
     void 名前で顧客情報を検索することができる() {
       List<Customer> actual = customerRepository.findCustomerByName("suzuki");
-      Customer expected = testHelper.customerMock().get(0);
+      Customer expected = customerTestHelper.customerMock().get(0);
       assertThat(actual).contains(expected);
       assertThat(actual.size()).isEqualTo(1);
     }
@@ -74,7 +75,7 @@ class CustomerRepositoryTest {
     @Test
     void 読みがなで顧客情報を検索することができる() {
       List<Customer> actual = customerRepository.findCustomerByNameKana("スズキ");
-      Customer expected = testHelper.customerMock().get(0);
+      Customer expected = customerTestHelper.customerMock().get(0);
       assertThat(actual).contains(expected);
       assertThat(actual.size()).isEqualTo(1);
     }
@@ -82,14 +83,14 @@ class CustomerRepositoryTest {
     @Test
     void 電話番号で顧客情報を検索することができる() {
       Optional<Customer> actual = customerRepository.findCustomerByPhoneNumber("090-1234-5678");
-      Customer expected = testHelper.customerMock().get(0);
+      Customer expected = customerTestHelper.customerMock().get(0);
       assertThat(actual).contains(expected);
     }
 
     @Test
     void メールアドレスで顧客情報を検索することができる() {
-      Optional<Customer> actual = customerRepository.findCustomerByEmail("ichiro@example.ne.jp");
-      Customer expected = testHelper.customerMock().get(0);
+      Optional<Customer> actual = customerRepository.findCustomerByEmail("ichiro@example.com");
+      Customer expected = customerTestHelper.customerMock().get(0);
       assertThat(actual).contains(expected);
       assertThat(actual).isPresent();
     }
@@ -97,7 +98,7 @@ class CustomerRepositoryTest {
     @Test
     void 車両番号4桁で顧客情報を検索することができる() {
       List<Vehicle> actual = customerRepository.findVehicleByPlateNumber("1234");
-      Vehicle expected = testHelper.vehicleMock().get(0);
+      Vehicle expected = customerTestHelper.vehicleMock().get(0);
       assertThat(actual).contains(expected);
       assertThat(actual).hasSize(1);
     }
@@ -110,7 +111,7 @@ class CustomerRepositoryTest {
     void 顧客情報を登録することができる() {
       //準備
       int initialSize = customerRepository.findAllCustomers().size();
-      Customer customer = testHelper.customerCreateMock();
+      Customer customer = customerTestHelper.customerCreateMock();
       //実行
       customerRepository.createCustomer(customer);
       //検証
@@ -122,9 +123,9 @@ class CustomerRepositoryTest {
     void 顧客住所を登録することができる() {
       //準備
       int initialSize = customerRepository.findAllCustomerAddresses().size();
-      Customer customer = testHelper.customerCreateMock();
+      Customer customer = customerTestHelper.customerCreateMock();
       customerRepository.createCustomer(customer);
-      CustomerAddress customerAddress = testHelper.customerAddressCreateMock(customer);
+      CustomerAddress customerAddress = customerTestHelper.customerAddressCreateMock(customer);
       //実行
       customerRepository.createCustomerAddress(customerAddress);
       //検証
@@ -136,9 +137,9 @@ class CustomerRepositoryTest {
     void 車両情報を登録することができる() {
       //準備
       int initialSize = customerRepository.findAllVehicles().size();
-      Customer customer = testHelper.customerCreateMock();
+      Customer customer = customerTestHelper.customerCreateMock();
       customerRepository.createCustomer(customer);
-      Vehicle vehicle = testHelper.vehicleCreateMock(customer);
+      Vehicle vehicle = customerTestHelper.vehicleCreateMock(customer);
       //実行
       customerRepository.createVehicle(vehicle);
       //検証
@@ -182,7 +183,7 @@ class CustomerRepositoryTest {
     @Test
     void IDで指定した顧客情報が更新できること() {
       //準備
-      Customer customer = testHelper.customerMock().get(0);
+      Customer customer = customerTestHelper.customerMock().get(0);
       customer.setPhoneNumber("090-1111-1111");
 
       //実行
@@ -197,7 +198,7 @@ class CustomerRepositoryTest {
 
     @Test
     void IDで指定した顧客住所が更新されること() {
-      CustomerAddress customerAddress = testHelper.customerAddressMock().get(0);
+      CustomerAddress customerAddress = customerTestHelper.customerAddressMock().get(0);
       customerAddress.setPrefecture(Prefecture.神奈川県);
       customerAddress.setCity("横浜市");
       customerAddress.setTownAndNumber("みなとみらい1-1-1");
@@ -216,7 +217,7 @@ class CustomerRepositoryTest {
 
     @Test
     void IDで更新した車両情報が更新されること() {
-      Vehicle vehicle = testHelper.vehicleMock().get(0);
+      Vehicle vehicle = customerTestHelper.vehicleMock().get(0);
       vehicle.setPlateHiragana("か");
       vehicle.setPlateVehicleNumber("1111");
 

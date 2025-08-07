@@ -1,4 +1,4 @@
-package com.u1pena.estimateapi.customer.service;
+package com.u1pena.estimateapi.master.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -9,9 +9,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.u1pena.estimateapi.common.enums.CarWashSize;
-import com.u1pena.estimateapi.customer.helper.MasterTestHelper;
 import com.u1pena.estimateapi.estimate.dto.GuideProductPermissionCreateContext;
-import com.u1pena.estimateapi.master.converter.MaintenanceGuideCreateConverter;
 import com.u1pena.estimateapi.master.dto.request.MaintenanceGuideCreateRequest;
 import com.u1pena.estimateapi.master.dto.request.ProductCategoryCreateRequest;
 import com.u1pena.estimateapi.master.dto.request.ProductCreateRequest;
@@ -19,8 +17,8 @@ import com.u1pena.estimateapi.master.entity.MaintenanceGuide;
 import com.u1pena.estimateapi.master.entity.Product;
 import com.u1pena.estimateapi.master.entity.ProductCategory;
 import com.u1pena.estimateapi.master.exception.MasterException.MaintenanceGuideAlreadyExistsException;
+import com.u1pena.estimateapi.master.helper.MasterTestHelper;
 import com.u1pena.estimateapi.master.repository.MasterRepository;
-import com.u1pena.estimateapi.master.service.MaintenanceGuideService;
 import java.math.BigDecimal;
 import java.time.YearMonth;
 import java.util.List;
@@ -37,7 +35,6 @@ class MaintenanceGuideServiceTest {
 
   @Mock
   MasterRepository masterRepository;
-  MaintenanceGuideCreateConverter maintenanceCreateBaseCreateConverter;
 
   @InjectMocks
   MaintenanceGuideService maintenanceGuideService;

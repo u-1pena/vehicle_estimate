@@ -20,7 +20,7 @@ import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TestHelper {
+public class CustomerTestHelper {
 
   /*
    * テスト用のユーザーデータを作成するクラス
@@ -28,7 +28,7 @@ public class TestHelper {
   public List<Customer> customerMock() {
     return List.of(
         new Customer(1, "suzuki", "ichiro", "スズキ",
-            "イチロウ", "ichiro@example.ne.jp", "090-1234-5678"),
+            "イチロウ", "ichiro@example.com", "090-1234-5678"),
         new Customer(2, "sato", "hanako", "サトウ", "ハナコ",
             "hanako@example.ne.jp", "080-1234-5678"),
         new Customer(3, "tanaka", "taro", "タナカ", "タロウ",
@@ -40,7 +40,7 @@ public class TestHelper {
    */
   public List<CustomerAddress> customerAddressMock() {
     return List.of(new CustomerAddress(1, 1, "123-4567", Prefecture.東京都, "港区",
-            "六本木1-1-1", "都心ビル101"),
+            "六本木1-1-1", "都心ビル101号室"),
         new CustomerAddress(2, 2, "123-4568", Prefecture.東京都, "港区",
             "六本木1-2-3", "副都心ビル302"),
         new CustomerAddress(3, 3, "123-4569", Prefecture.東京都, "港区",

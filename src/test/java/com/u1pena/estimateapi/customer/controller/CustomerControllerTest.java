@@ -32,8 +32,8 @@ import com.u1pena.estimateapi.customer.exception.CustomerException.CustomerNotFo
 import com.u1pena.estimateapi.customer.exception.CustomerException.InvalidSearchParameterException;
 import com.u1pena.estimateapi.customer.exception.VehicleException;
 import com.u1pena.estimateapi.customer.exception.VehicleException.AlreadyExistsVehicleException;
+import com.u1pena.estimateapi.customer.helper.CustomerTestHelper;
 import com.u1pena.estimateapi.customer.helper.CustomizedMockMvc;
-import com.u1pena.estimateapi.customer.helper.TestHelper;
 import com.u1pena.estimateapi.customer.service.CustomerService;
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -66,11 +66,11 @@ class CustomerControllerTest {
   @MockBean
   CustomerService customerService;
 
-  TestHelper testHelper;
+  CustomerTestHelper customerTestHelper;
 
   @BeforeEach
   void setup() {
-    testHelper = new TestHelper();
+    customerTestHelper = new CustomerTestHelper();
   }
 
   @Nested
@@ -80,9 +80,10 @@ class CustomerControllerTest {
     void 指定した名前で顧客検索ができること() throws Exception {
 
       CustomerInformationRequest customerInformationRequest = new CustomerInformationRequest();
-      customerInformationRequest.setCustomer(testHelper.customerMock().get(0));
-      customerInformationRequest.setCustomerAddress(testHelper.customerAddressMock().get(0));
-      customerInformationRequest.setVehicles(List.of(testHelper.vehicleMock().get(0)));
+      customerInformationRequest.setCustomer(customerTestHelper.customerMock().get(0));
+      customerInformationRequest.setCustomerAddress(
+          customerTestHelper.customerAddressMock().get(0));
+      customerInformationRequest.setVehicles(List.of(customerTestHelper.vehicleMock().get(0)));
       List<CustomerInformationRequest> expected = List.of(customerInformationRequest);
 
       doReturn(expected).when(customerService)
@@ -100,7 +101,7 @@ class CustomerControllerTest {
                               "firstName": "ichiro",
                               "lastNameKana": "スズキ",
                               "firstNameKana": "イチロウ",
-                              "email": "ichiro@example.ne.jp",
+                              "email": "ichiro@example.com",
                               "phoneNumber": "090-1234-5678"
                           },
                           "customerAddress": {
@@ -110,7 +111,7 @@ class CustomerControllerTest {
                               "prefecture": "東京都",
                               "city": "港区",
                               "townAndNumber": "六本木1-1-1",
-                              "buildingNameAndRoomNumber": "都心ビル101"
+                              "buildingNameAndRoomNumber": "都心ビル101号室"
                           },
                           "vehicles": [
                               {
@@ -150,9 +151,10 @@ class CustomerControllerTest {
     void 指定した読みかなで顧客検索ができること() throws Exception {
 
       CustomerInformationRequest customerInformationRequest = new CustomerInformationRequest();
-      customerInformationRequest.setCustomer(testHelper.customerMock().get(0));
-      customerInformationRequest.setCustomerAddress(testHelper.customerAddressMock().get(0));
-      customerInformationRequest.setVehicles(List.of(testHelper.vehicleMock().get(0)));
+      customerInformationRequest.setCustomer(customerTestHelper.customerMock().get(0));
+      customerInformationRequest.setCustomerAddress(
+          customerTestHelper.customerAddressMock().get(0));
+      customerInformationRequest.setVehicles(List.of(customerTestHelper.vehicleMock().get(0)));
       List<CustomerInformationRequest> expected = List.of(customerInformationRequest);
 
       doReturn(expected).when(customerService)
@@ -170,7 +172,7 @@ class CustomerControllerTest {
                               "firstName": "ichiro",
                               "lastNameKana": "スズキ",
                               "firstNameKana": "イチロウ",
-                              "email": "ichiro@example.ne.jp",
+                              "email": "ichiro@example.com",
                               "phoneNumber": "090-1234-5678"
                           },
                           "customerAddress": {
@@ -180,7 +182,7 @@ class CustomerControllerTest {
                               "prefecture": "東京都",
                               "city": "港区",
                               "townAndNumber": "六本木1-1-1",
-                              "buildingNameAndRoomNumber": "都心ビル101"
+                              "buildingNameAndRoomNumber": "都心ビル101号室"
                           },
                           "vehicles": [
                               {
@@ -220,9 +222,10 @@ class CustomerControllerTest {
     void 指定した車両番号で顧客検索ができること() throws Exception {
 
       CustomerInformationRequest customerInformationRequest = new CustomerInformationRequest();
-      customerInformationRequest.setCustomer(testHelper.customerMock().get(0));
-      customerInformationRequest.setCustomerAddress(testHelper.customerAddressMock().get(0));
-      customerInformationRequest.setVehicles(List.of(testHelper.vehicleMock().get(0)));
+      customerInformationRequest.setCustomer(customerTestHelper.customerMock().get(0));
+      customerInformationRequest.setCustomerAddress(
+          customerTestHelper.customerAddressMock().get(0));
+      customerInformationRequest.setVehicles(List.of(customerTestHelper.vehicleMock().get(0)));
       List<CustomerInformationRequest> expected = List.of(customerInformationRequest);
 
       doReturn(expected).when(customerService)
@@ -239,7 +242,7 @@ class CustomerControllerTest {
                               "firstName": "ichiro",
                               "lastNameKana": "スズキ",
                               "firstNameKana": "イチロウ",
-                              "email": "ichiro@example.ne.jp",
+                              "email": "ichiro@example.com",
                               "phoneNumber": "090-1234-5678"
                           },
                           "customerAddress": {
@@ -249,7 +252,7 @@ class CustomerControllerTest {
                               "prefecture": "東京都",
                               "city": "港区",
                               "townAndNumber": "六本木1-1-1",
-                              "buildingNameAndRoomNumber": "都心ビル101"
+                              "buildingNameAndRoomNumber": "都心ビル101号室"
                           },
                           "vehicles": [
                               {
@@ -287,9 +290,10 @@ class CustomerControllerTest {
     @Test
     void 指定したメールアドレスでユーザー検索ができること() throws Exception {
       CustomerInformationRequest customerInformationRequest = new CustomerInformationRequest();
-      customerInformationRequest.setCustomer(testHelper.customerMock().get(0));
-      customerInformationRequest.setCustomerAddress(testHelper.customerAddressMock().get(0));
-      customerInformationRequest.setVehicles(List.of(testHelper.vehicleMock().get(0)));
+      customerInformationRequest.setCustomer(customerTestHelper.customerMock().get(0));
+      customerInformationRequest.setCustomerAddress(
+          customerTestHelper.customerAddressMock().get(0));
+      customerInformationRequest.setVehicles(List.of(customerTestHelper.vehicleMock().get(0)));
 
       List<CustomerInformationRequest> expected = List.of(customerInformationRequest);
 
@@ -308,7 +312,7 @@ class CustomerControllerTest {
                               "firstName": "ichiro",
                               "lastNameKana": "スズキ",
                               "firstNameKana": "イチロウ",
-                              "email": "ichiro@example.ne.jp",
+                              "email": "ichiro@example.com",
                               "phoneNumber": "090-1234-5678"
                           },
                           "customerAddress": {
@@ -318,7 +322,7 @@ class CustomerControllerTest {
                               "prefecture": "東京都",
                               "city": "港区",
                               "townAndNumber": "六本木1-1-1",
-                              "buildingNameAndRoomNumber": "都心ビル101"
+                              "buildingNameAndRoomNumber": "都心ビル101号室"
                           },
                           "vehicles": [
                               {

@@ -15,7 +15,7 @@ import com.u1pena.estimateapi.estimate.converter.EstimateBaseCreateConverter;
 import com.u1pena.estimateapi.estimate.converter.EstimateCustomerAddressConverter;
 import com.u1pena.estimateapi.estimate.converter.EstimateCustomerConverter;
 import com.u1pena.estimateapi.estimate.converter.EstimateFullConverter;
-import com.u1pena.estimateapi.estimate.converter.EstimateInformationConverter;
+import com.u1pena.estimateapi.estimate.converter.EstimateHeaderConverter;
 import com.u1pena.estimateapi.estimate.converter.EstimateProductCreateConverter;
 import com.u1pena.estimateapi.estimate.converter.EstimateProductUpdateConverter;
 import com.u1pena.estimateapi.estimate.converter.EstimateProductsConverter;
@@ -105,11 +105,17 @@ public class EstimateService {
     CustomerAddressResponse customerAddressResponse = EstimateCustomerAddressConverter.toDto(
         customerAddress);
     VehicleResponse vehicleDto = EstimateVehicleConverter.toDto(vehicleName, vehicle);
-    return EstimateInformationConverter.toDto(
+    return EstimateHeaderConverter.toDto(
         estimateBaseId, estimateBase.getEstimateDate(), customerResponse, customerAddressResponse,
         vehicleDto);
   }
 
+  /**
+   * 見積もりIDに紐づくEstimateProductを取得する。 見積もりIDを指定して、EstimateProductsから関連する商品情報を取得し、DTOに変換して返す。
+   *
+   * @param estimateBaseId 見積もりの基本情報を取得するためのID
+   * @return List<EstimateProductResponse> 見積もり商品のリスト
+   */
   private List<EstimateProductResponse> getEstimateProductByEstimateId(int estimateBaseId) {
     // まずEstimateProductsからestimateBaseIdに紐づくEstimateProductを取得
     List<EstimateProduct> estimateProducts = estimateRepository.findEstimateProductsByEstimateBaseId(
@@ -124,7 +130,7 @@ public class EstimateService {
     if (isEmpty(productDetailList)) {
       return List.of(); // 空のリストを返す
     }
-    List<EstimateProductJoinResult> result = estimateRepository.findProductDetailByProductId(
+    List<EstimateProductJoinResult> result = estimateRepository.findProductsWithCategoryByIds(
         productDetailList);
 
     return result.stream()
@@ -133,187 +139,6 @@ public class EstimateService {
           return EstimateProductsConverter.toDto(joinResult, estimateProduct);
         })
         .toList();
-  }
-
-  private Customer findCustomerById(int customerId) {
-    return estimateRepository.findCustomerById(customerId)
-        .orElseThrow(CustomerException.CustomerNotFoundException::new);
-  }
-
-  private CustomerAddress findCustomerAddressByCustomerId(int customerId) {
-    return estimateRepository.findCustomerAddressByCustomerId(customerId)
-        .orElseThrow(CustomerAddressException.CustomerAddressNotFoundException::new);
-  }
-
-  private String getVehicleNameByMaintenanceId(int maintenanceId) {
-    return estimateRepository.findVehicleNameByMaintenanceId(maintenanceId)
-        .orElseThrow(EstimateException.NoMatchMaintenanceGuideException::new);
-  }
-
-  /**
-   * EstimateBaseを登録する。
-   *
-   * @param vehicleId
-   */
-  public int registerEstimateBase(int vehicleId) {
-    Vehicle vehicle = findVehicleById(vehicleId);
-    MaintenanceGuide maintenanceGuide = searchMaintenanceGuideMatch(vehicle);
-    EstimateBase estimateBase = EstimateBaseCreateConverter
-        .toEntity(vehicle.getCustomerId(), vehicleId, maintenanceGuide.getMaintenanceId());
-    estimateRepository.insertEstimateBase(estimateBase);
-    return estimateBase.getEstimateBaseId();
-  }
-
-
-  /**
-   * EstimateProductを登録する。
-   *
-   * @param estimateBaseId
-   * @param estimateProductCreateRequest
-   * @throws NoMatchMaintenanceGuideException
-   */
-  @Transactional
-  public void registerEstimateProduct(int estimateBaseId,
-      EstimateProductCreateRequest estimateProductCreateRequest) {
-
-    EstimateBase estimateBase = findEstimateBaseById(estimateBaseId);
-    Product product = findValidProduct(
-        estimateBase.getMaintenanceId(), estimateProductCreateRequest.getProductId());
-
-    if (product.getCategoryId() == CATEGORY_OIL) { // オイルの場合
-      boolean existOil = estimateRepository.existOilProductsByEstimateBaseId(estimateBaseId);
-      if (existOil) {
-        int estimateProductId = estimateRepository.findEstimateProductIdByEstimateBaseId(
-            estimateBaseId);
-        double oilQuantityWithFilter = estimateRepository.findOilQuantityWithFilterByMaintenanceId(
-            estimateBase.getMaintenanceId());
-        estimateRepository.updateOilQuantityWithEstimateProductId(estimateProductId,
-            oilQuantityWithFilter);
-      }
-    }
-    if (product.getCategoryId() == CATEGORY_OIL_FILTER) {
-      boolean existOilFilter = estimateRepository.existOilFilterProductsByEstimateBaseId(
-          estimateBaseId);
-      if (existOilFilter) {
-        double oilQuantityWithFilter = estimateRepository.findOilQuantityWithFilterByMaintenanceId(
-            estimateBase.getMaintenanceId());
-        estimateProductCreateRequest.setQuantity(oilQuantityWithFilter);
-      }
-    }
-    double quantity = resolveQuantity(estimateBase.getMaintenanceId(),
-        product.getProductId(), estimateProductCreateRequest.getQuantity());
-
-    BigDecimal unitPrice = product.getPrice();
-    BigDecimal totalPrice = calculateTotalPrice(unitPrice,
-        quantity);
-
-    EstimateProductContext estimateProductContext = EstimateProductContext.builder()
-        .estimateBaseId(estimateBaseId)
-        .product(product)
-        .quantity(quantity)
-        .unitPrice(unitPrice)
-        .totalPrice(totalPrice)
-        .build();
-
-    EstimateProduct estimateProduct = EstimateProductCreateConverter.toEntity(
-        estimateProductContext);
-    estimateRepository.insertEstimateProduct(estimateProduct);
-  }
-
-  private Vehicle findVehicleById(int vehicleId) {
-    return estimateRepository.findVehicleByVehicleId(vehicleId)
-        .orElseThrow(VehicleNotFoundException::new);
-  }
-
-  private EstimateBase findEstimateBaseById(int estimateBaseId) {
-    return estimateRepository.findEstimateBaseById(estimateBaseId)
-        .orElseThrow(EstimateBaseNotFoundException::new);
-  }
-
-  private Product findValidProduct(int maintenanceId, int productId) {
-    GuideProductPermission guideProductPermission = findPermissionOrThrow(maintenanceId, productId);
-    return estimateRepository.findProductById(guideProductPermission.getProductId())
-        .orElseThrow(EstimateException.NoMatchProductException::new);
-  }
-
-  private MaintenanceGuide searchMaintenanceGuideMatch(Vehicle vehicle) {
-    return estimateRepository.findMaintenanceGuideByMakeAndModelAndYear(
-            vehicle.getMake(),
-            vehicle.getModel(),
-            vehicle.getYear())
-        .orElseThrow(NoMatchMaintenanceGuideException::new);
-  }
-
-  /**
-   * 合計金額を計算する。
-   *
-   * @param unitPrice 単価
-   * @param quantity  数量
-   * @return 合計金額
-   */
-  private BigDecimal calculateTotalPrice(BigDecimal unitPrice, double quantity) {
-    return unitPrice.multiply(BigDecimal.valueOf(quantity))
-        .setScale(2, RoundingMode.HALF_UP);
-  }
-
-  private Double resolveQuantity(int maintenanceId, int productId, Double quantity) {
-    GuideProductPermission permission = findPermissionOrThrow(maintenanceId, productId);
-    if (permission.isAutoAdjustQuantity()) {
-      // permissionのquantityがnullの場合は、permissionのquantityを設定する
-      return (quantity != null) ? quantity : permission.getQuantity();
-    }
-    return 1.0; // autoAdjustQuantityがfalseの場合は、1.0を返す
-  }
-
-  private GuideProductPermission findPermissionOrThrow(int maintenanceId,
-      int productId) {
-    return estimateRepository.findPermissionByMaintenanceIdAndProductId(maintenanceId, productId)
-        .orElseThrow(EstimateException.NoMatchPermissionException::new);
-  }
-
-  @Transactional
-  public void deleteEstimateBase(int estimateBaseId) {
-    EstimateBase estimateBase = findEstimateBaseById(estimateBaseId);
-    estimateRepository.deleteEstimateBaseById(estimateBase.getEstimateBaseId());
-  }
-
-  @Transactional
-  public void deleteEstimateProduct(int estimateProductId) {
-    EstimateProduct estimateProduct = findEstimateProductById(estimateProductId);
-    estimateRepository.deleteEstimateProductById(estimateProduct.getEstimateProductId());
-  }
-
-  @Transactional
-  public void deleteEstimateProductsAllByEstimateBaseId(int estimateBaseId) {
-    findEstimateProductsByEstimateBaseId(estimateBaseId);
-    estimateRepository.deleteEstimateProductsByEstimateBaseId(estimateBaseId);
-  }
-
-  @Transactional
-  private EstimateProduct findEstimateProductById(int estimateProductId) {
-    return estimateRepository.findEstimateProductById(estimateProductId)
-        .orElseThrow(EstimateException.EstimateProductNotFoundException::new);
-  }
-
-  @Transactional
-  private void findEstimateProductsByEstimateBaseId(int estimateBaseId) {
-    List<EstimateProduct> estimateProduct = estimateRepository
-        .findEstimateProductsByEstimateBaseId(estimateBaseId);
-    if (isEmpty(estimateProduct)) {
-      throw new EstimateException.EstimateProductNotFoundException();
-    }
-  }
-
-  @Transactional
-  public void updateEstimateProduct(int estimateProductId,
-      EstimateProductUpdateRequest estimateProductUpdateRequest) {
-    findEstimateProductById(estimateProductId);
-    EstimateProduct estimateProduct = EstimateProductUpdateConverter.toDto(
-        estimateProductUpdateRequest);
-    estimateProduct.setEstimateProductId(estimateProductId);
-    estimateProduct.setTotalPrice(
-        calculateTotalPrice(estimateProduct.getUnitPrice(), estimateProduct.getQuantity()));
-    estimateRepository.updateEstimateProduct(estimateProduct);
   }
 
   /**
@@ -344,5 +169,399 @@ public class EstimateService {
     return results.stream()
         .map(EstimateSummaryDateConverter::toDto)
         .toList();
+  }
+
+  /**
+   * EstimateBaseを登録する。
+   *
+   * @param vehicleId
+   */
+  public int registerEstimateBase(int vehicleId) {
+    Vehicle vehicle = findVehicleById(vehicleId);
+    MaintenanceGuide maintenanceGuide = searchMaintenanceGuideMatch(vehicle);
+    EstimateBase estimateBase = EstimateBaseCreateConverter
+        .toEntity(vehicle.getCustomerId(), vehicleId, maintenanceGuide.getMaintenanceId());
+    estimateRepository.insertEstimateBase(estimateBase);
+    return estimateBase.getEstimateBaseId();
+  }
+
+
+  /**
+   * EstimateProductを登録する。
+   *
+   * @param estimateBaseId               見積もりの基本情報を取得するためのID
+   * @param estimateProductCreateRequest 見積もり商品作成リクエスト
+   * @throws NoMatchMaintenanceGuideException メンテナンスガイドが見つからない場合にスローされる例外
+   */
+  @Transactional
+  public void registerEstimateProduct(int estimateBaseId,
+      EstimateProductCreateRequest estimateProductCreateRequest) {
+
+    // 見積もりの基本情報を取得
+    EstimateBase estimateBase = findEstimateBaseById(estimateBaseId);
+
+    // ガイドに基づく商品があるかチェック（Validation + 値利用）
+    GuideProductPermission guideProductPermission = fetchPermissionWithValidation(
+        estimateBase.getMaintenanceId(), estimateProductCreateRequest.getProductId());
+
+    // 商品を取得
+    Product product = findProduct(estimateProductCreateRequest.getProductId());
+
+    // カテゴリーごとの処理
+    Double userQuantity = estimateProductCreateRequest.getQuantity();
+    Double resolvedQuantity = (userQuantity != null)
+        ? userQuantity
+        : resolveQuantityByCategory(
+            product.getCategoryId(),
+            estimateBase.getEstimateBaseId(),
+            estimateBase.getMaintenanceId(),
+            guideProductPermission,
+            null);
+
+    // 数量をセット（新しいリクエストオブジェクトを作成）
+    EstimateProductCreateRequest updatedRequest = EstimateProductCreateRequest.builder()
+        .quantity(resolvedQuantity)
+        .build();
+    // エンティティ生成と登録
+    EstimateProduct estimateProduct = createEstimateProduct(
+        product.getProductId(), estimateBaseId, updatedRequest);
+    estimateRepository.insertEstimateProduct(estimateProduct);
+  }
+
+  /**
+   * 数量をカテゴリーごとに解決する。オイルやオイルフィルターなどの特定のカテゴリーに基づいて数量を決定します。
+   *
+   * @param categoryId             カテゴリーID（オイル、オイルフィルターなど）
+   * @param estimateBaseId         見積もりの基本情報を取得するためのID
+   * @param maintenanceId          メンテナンスガイドのID
+   * @param guideProductPermission ガイド上の商品許可
+   * @return 解決された数量
+   */
+  protected double resolveQuantityByCategory(int categoryId, int estimateBaseId,
+      int maintenanceId, GuideProductPermission guideProductPermission, Double userQuantity) {
+
+    if (categoryId == CATEGORY_OIL) {
+      validateOilConstraints(estimateBaseId);
+      return resolveQuantityForOil(estimateBaseId, maintenanceId, guideProductPermission,
+          userQuantity);
+    }
+
+    if (categoryId == CATEGORY_OIL_FILTER) {
+      handleOilFilterRegistration(estimateBaseId, maintenanceId);
+      return resolveQuantityFromUserOrGuide(userQuantity, guideProductPermission);
+    }
+
+    return resolveQuantityFromUserOrGuide(userQuantity, guideProductPermission);
+  }
+
+  /**
+   * オイルの数量を解決する。ユーザーが指定した数量がある場合はそれを使用し、なければガイドから取得します。 オイルフィルターが存在する場合は、フィルター込の数量を使用します。
+   *
+   * @param estimateBaseId 見積もりの基本情報を取得するためのID
+   * @param maintenanceId  メンテナンスID
+   * @param permission     ガイド商品許可
+   * @param userQuantity   ユーザーが指定した数量（nullの場合はガイドから取得）
+   * @return 解決されたオイルの数量
+   */
+  private double resolveQuantityForOil(int estimateBaseId, int maintenanceId,
+      GuideProductPermission permission, Double userQuantity) {
+
+    if (userQuantity != null) {
+      return adjustQuantityWithPermission(userQuantity, permission);
+    }
+
+    if (estimateRepository.existOilFilterProductsByEstimateBaseId(estimateBaseId)) {
+      double oilWithFilter = estimateRepository.findOilQuantityWithFilterByMaintenanceId(
+          maintenanceId);
+      return adjustQuantityWithPermission(oilWithFilter, permission);
+    }
+
+    return resolveQuantityFromGuide(permission);
+  }
+
+  /**
+   * ユーザーが指定した数量がある場合はそれを使用し、なければガイドから取得します。 ガイドの許可に基づいて数量を解決します。
+   *
+   * @param userQuantity ユーザーが指定した数量（nullの場合はガイドから取得）
+   * @param permission   ガイド商品許可
+   * @return 解決された数量
+   */
+  private double resolveQuantityFromUserOrGuide(Double userQuantity,
+      GuideProductPermission permission) {
+    if (userQuantity != null) {
+      return adjustQuantityWithPermission(userQuantity, permission);
+    }
+    return resolveQuantityFromGuide(permission);
+  }
+
+  /**
+   * ガイドから数量を解決する。ガイドの許可に基づいて数量を取得します。 自動調整フラグがtrueの場合は、ガイドからの数量を使用し、falseの場合は1.0を返します。
+   *
+   * @param permission ガイド商品許可
+   * @return 解決された数量
+   */
+  private double resolveQuantityFromGuide(GuideProductPermission permission) {
+    return permission.isAutoAdjustQuantity()
+        ? permission.getQuantity()
+        : 1.0;
+  }
+
+  private double adjustQuantityWithPermission(double quantity, GuideProductPermission permission) {
+    return permission.isAutoAdjustQuantity()
+        ? quantity
+        : 1.0;
+  }
+
+  /**
+   * オイルフィルター登録時の処理を行う。このメソッドは、オイルフィルターが存在するかどうかをチェックし、
+   * 既に存在する場合は例外をスローします。また、オイルが既に登録されている場合は、オイルの数量をフィルター込の数量に更新します。
+   *
+   * @param estimateBaseId 　見積もりの基本情報を取得するためのID
+   * @param maintenanceId  　メンテンナンスガイドのID
+   * @throws NoMatchMaintenanceGuideException 　メンテナンスガイドが見つからない場合にスローされる例外
+   */
+  private void handleOilFilterRegistration(int estimateBaseId, int maintenanceId) {
+    validateOilFilterConstraints(estimateBaseId);
+
+    boolean existOil = estimateRepository.existOilProductsByEstimateBaseId(estimateBaseId);
+    if (existOil) {
+      int oilProductId = estimateRepository.findProductWithOilCategoryByEstimateBaseId(
+          estimateBaseId);
+      int updateEstimateProductId = estimateRepository
+          .findEstimateProductIdByEstimateBaseIdAndProductId(estimateBaseId, oilProductId);
+      double oilQuantityWithFilter = estimateRepository
+          .findOilQuantityWithFilterByMaintenanceId(maintenanceId);
+      estimateRepository.updateOilQuantityWithEstimateProductId(updateEstimateProductId,
+          oilQuantityWithFilter);
+    }
+  }
+
+  /**
+   * オイルの制約を検証する。オイル商品が既に存在する場合は、例外をスローします。
+   *
+   * @param estimateBaseId 見積もりの基本情報を取得するためのID
+   * @throws EstimateException.ExistOilProductsException オイル商品が既に存在する場合にスローされる例外
+   */
+  private void validateOilConstraints(int estimateBaseId) {
+    if (estimateRepository.existOilProductsByEstimateBaseId(estimateBaseId)) {
+      throw new EstimateException.ExistOilProductsException();
+    }
+  }
+
+  /**
+   * オイルフィルターの制約を検証する。オイルフィルター商品が既に存在する場合は、例外をスローします。
+   *
+   * @param estimateBaseId 見積もりの基本情報を取得するためのID
+   * @throws EstimateException.ExistOilFilterProductsException オイルフィルター商品が既に存在する場合にスローされる例外
+   */
+  private void validateOilFilterConstraints(int estimateBaseId) {
+    if (estimateRepository.existOilFilterProductsByEstimateBaseId(estimateBaseId)) {
+      throw new EstimateException.ExistOilFilterProductsException();
+    }
+  }
+
+  /**
+   * EstimateProductを作成する。
+   *
+   * @param productId                    　商品ID
+   * @param estimateBaseId               　見積もりの基本情報を取得するためのID
+   * @param estimateProductCreateRequest 　見積もり商品作成リクエスト
+   * @return EstimateProduct 作成されたEstimateProductエンティティ
+   */
+  private EstimateProduct createEstimateProduct(int productId, int estimateBaseId,
+      EstimateProductCreateRequest estimateProductCreateRequest) {
+
+    Product product = findProduct(productId);
+
+    BigDecimal unitPrice = product.getPrice();
+    double quantity = estimateProductCreateRequest.getQuantity();
+    BigDecimal totalPrice = calculateTotalPrice(unitPrice, quantity);
+
+    return EstimateProductCreateConverter.toEntity(
+        EstimateProductContext.builder()
+            .estimateBaseId(estimateBaseId)
+            .product(product)
+            .quantity(quantity)
+            .unitPrice(unitPrice)
+            .totalPrice(totalPrice)
+            .build()
+    );
+  }
+
+  /**
+   * 合計金額を計算する。
+   *
+   * @param unitPrice 単価
+   * @param quantity  数量
+   * @return 合計金額
+   */
+  private BigDecimal calculateTotalPrice(BigDecimal unitPrice, double quantity) {
+    return unitPrice.multiply(BigDecimal.valueOf(quantity))
+        .setScale(2, RoundingMode.HALF_UP);
+  }
+
+  /**
+   * 車両IDを指定して、車両情報を取得する。
+   *
+   * @param vehicleId 車両ID
+   * @return Vehicle 車両情報
+   * @throws VehicleNotFoundException 車両が見つからない場合にスローされる例外
+   */
+  private Vehicle findVehicleById(int vehicleId) {
+    return estimateRepository.findVehicleByVehicleId(vehicleId)
+        .orElseThrow(VehicleNotFoundException::new);
+  }
+
+  /**
+   * 見積もりの基本情報をIDで取得する。
+   *
+   * @param estimateBaseId 見積もりの基本情報を取得するためのID
+   * @return EstimateBase 見積もりの基本情報
+   * @throws EstimateBaseNotFoundException 見積もりの基本情報が見つからない場合にスローされる例外
+   */
+  private EstimateBase findEstimateBaseById(int estimateBaseId) {
+    return estimateRepository.findEstimateBaseById(estimateBaseId)
+        .orElseThrow(EstimateBaseNotFoundException::new);
+  }
+
+  /**
+   * 指定されたメンテナンスIDと商品IDに基づいて、ガイド商品を取得する。 ガイドの許可を確認し、存在しない場合は例外をスローします。
+   *
+   * @param maintenanceId メンテナンスID
+   * @param productId     商品ID
+   * @return GuideProductPermission ガイド商品許可
+   * @throws EstimateException.NoMatchProductException 商品が見つからない場合にスローされる例外
+   */
+  private GuideProductPermission fetchPermissionWithValidation(int maintenanceId, int productId) {
+    return estimateRepository.findPermissionByMaintenanceIdAndProductId(maintenanceId, productId)
+        .orElseThrow(EstimateException.NoMatchPermissionException::new);
+  }
+
+  /**
+   * 商品IDを指定して、商品情報を取得する。
+   *
+   * @param productId 商品ID
+   * @return Product 商品情報
+   * @throws EstimateException.NoMatchProductException 商品が見つからない場合にスローされる例外
+   */
+  private Product findProduct(int productId) {
+    return estimateRepository.findProductById(productId)
+        .orElseThrow(EstimateException.NoMatchProductException::new);
+  }
+
+  /**
+   * 車両に基づいてメンテナンスガイドを検索する。 車両のメーカー、モデル、年を使用して、対応するメンテナンスガイドを取得します。
+   *
+   * @param vehicle 車両情報
+   * @return MaintenanceGuide メンテナンスガイド
+   * @throws NoMatchMaintenanceGuideException メンテナンスガイドが見つからない場合にスローされる例外
+   */
+  private MaintenanceGuide searchMaintenanceGuideMatch(Vehicle vehicle) {
+    return estimateRepository.findMaintenanceGuideByMakeAndModelAndYear(
+            vehicle.getMake(),
+            vehicle.getModel(),
+            vehicle.getYear())
+        .orElseThrow(NoMatchMaintenanceGuideException::new);
+  }
+
+  /**
+   * 顧客IDを指定して、顧客情報を取得します。
+   *
+   * @param customerId 顧客ID
+   * @return Customer 顧客情報
+   * @throws CustomerException.CustomerNotFoundException 顧客が見つからない場合にスローされる例外
+   */
+  private Customer findCustomerById(int customerId) {
+    return estimateRepository.findCustomerById(customerId)
+        .orElseThrow(CustomerException.CustomerNotFoundException::new);
+  }
+
+  /**
+   * 顧客IDを指定して、顧客の住所情報を取得します。
+   *
+   * @param customerId 顧客ID
+   * @return CustomerAddress 顧客の住所情報
+   * @throws CustomerAddressException.CustomerAddressNotFoundException 顧客の住所が見つからない場合にスローされる例外
+   */
+  private CustomerAddress findCustomerAddressByCustomerId(int customerId) {
+    return estimateRepository.findCustomerAddressByCustomerId(customerId)
+        .orElseThrow(CustomerAddressException.CustomerAddressNotFoundException::new);
+  }
+
+  /**
+   * メンテナンスIDを指定して、車両名を取得します。 見つからない場合は、NoMatchMaintenanceGuideExceptionをスローします。
+   *
+   * @param maintenanceId メンテナンスID
+   * @return 車両名
+   * @throws EstimateException.NoMatchMaintenanceGuideException メンテナンスガイドが見つからない場合にスローされる例外
+   */
+  private String getVehicleNameByMaintenanceId(int maintenanceId) {
+    return estimateRepository.findVehicleNameByMaintenanceId(maintenanceId)
+        .orElseThrow(EstimateException.NoMatchMaintenanceGuideException::new);
+  }
+
+  /**
+   * 見積もりベースを削除します。紐づいている見積もり商品も削除されます。
+   *
+   * @param estimateBaseId 見積もりの基本情報を取得するためのID
+   * @throws EstimateBaseNotFoundException 見積もりの基本情報が見つからない場合にスローされる例外
+   */
+  @Transactional
+  public void deleteEstimateBase(int estimateBaseId) {
+    estimateRepository.deleteEstimateBaseById(estimateBaseId);
+  }
+
+  /**
+   * 見積もり商品を削除します。
+   *
+   * @param estimateProductId 見積もり商品のID
+   * @throws EstimateException.EstimateProductNotFoundException 見積もり商品が見つからない場合にスローされる例外
+   */
+  @Transactional
+  public void deleteEstimateProduct(int estimateProductId) {
+    estimateRepository.deleteEstimateProductById(estimateProductId);
+  }
+
+  /**
+   * 見積もり商品の全てを見積もりベースIDで削除します。 見積もりベースは削除されませんが、紐づいている全ての見積もり商品が削除されます。
+   *
+   * @param estimateBaseId 見積もりの基本情報を取得するためのID
+   * @throws EstimateException.EstimateProductNotFoundException 見積もり商品が見つからない場合にスローされる例外
+   */
+  @Transactional
+  public void deleteEstimateProductsAllByEstimateBaseId(int estimateBaseId) {
+    estimateRepository.deleteEstimateProductsByEstimateBaseId(estimateBaseId);
+  }
+
+  /**
+   * 見積もり商品IDを指定して、見積もり商品を取得します。
+   *
+   * @param estimateProductId 見積もり商品のID
+   * @return EstimateProduct 見積もり商品
+   * @throws EstimateException.EstimateProductNotFoundException 見積もり商品が見つからない場合にスローされる例外
+   */
+  @Transactional
+  private EstimateProduct findEstimateProductById(int estimateProductId) {
+    return estimateRepository.findEstimateProductById(estimateProductId)
+        .orElseThrow(EstimateException.EstimateProductNotFoundException::new);
+  }
+
+  /**
+   * 見積もり商品を更新します。 見積もり商品IDを指定して、見積もり商品の情報を更新します。 更新後、合計金額を再計算して保存します。
+   *
+   * @param estimateProductId            見積もり商品のID
+   * @param estimateProductUpdateRequest 更新する見積もり商品のリクエスト
+   * @throws EstimateException.EstimateProductNotFoundException 見積もり商品が見つからない場合にスローされる例外
+   */
+  @Transactional
+  public void updateEstimateProduct(int estimateProductId,
+      EstimateProductUpdateRequest estimateProductUpdateRequest) {
+    findEstimateProductById(estimateProductId);
+    EstimateProduct estimateProduct = EstimateProductUpdateConverter.toDto(
+        estimateProductUpdateRequest);
+    estimateProduct.setEstimateProductId(estimateProductId);
+    estimateProduct.setTotalPrice(
+        calculateTotalPrice(estimateProduct.getUnitPrice(), estimateProduct.getQuantity()));
+    estimateRepository.updateEstimateProduct(estimateProduct);
   }
 }

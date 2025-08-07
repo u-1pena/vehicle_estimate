@@ -59,7 +59,8 @@
     SELECT * FROM products WHERE product_id = #{productId}
   </select>
 
-  <update id="updateOilQuantityWithEstimateProductId" parameterType="map">
+  <update id="updateOilQuantityWithEstimateProductId"
+    parameterType="com.u1pena.estimateapi.estimate.dto.request.EstimateProductUpdateRequest">
     <!-- 見積もり詳細の中から商品カテゴリーをオイルに絞りオイルの数量を更新するメソッド -->
     UPDATE estimate_products
     SET quantity = #{quantity}
@@ -116,7 +117,21 @@
     SELECT * FROM estimate_products WHERE estimate_base_id = #{estimateBaseId}
   </select>
 
-  <select id="findProductDetailByProductId" parameterType="list"
+  <select id="findProductWithOilCategoryByEstimateBaseId" parameterType="int"
+    resultType="int">
+    SELECT p.product_id FROM products p
+    JOIN product_categories pc ON p.category_id = pc.category_id WHERE p.category_id = 1
+    AND product_id IN (SELECT product_id FROM estimate_products WHERE estimate_base_id =
+    #{estimateBaseId})
+  </select>
+
+  <select id="findEstimateProductIdByEstimateBaseIdAndProductId" parameterType="map"
+    resultType="int">
+    SELECT estimate_product_id FROM estimate_products WHERE estimate_base_id = #{estimateBaseId}
+    AND product_id = #{productId}
+  </select>
+
+  <select id="findProductsWithCategoryByIds" parameterType="list"
     resultType="com.u1pena.estimateapi.estimate.dto.EstimateProductJoinResult">
     SELECT pc.category_name,p.* FROM products p
     JOIN product_categories pc ON p.category_id = pc.category_id WHERE product_id
@@ -212,4 +227,15 @@
     ORDER BY
     eb.estimate_date DESC
   </select>
+
+  <select id="findAllEstimateBases"
+    resultType="com.u1pena.estimateapi.estimate.entity.EstimateBase">
+    SELECT * FROM estimate_bases
+  </select>
+
+  <select id="findAllEstimateProducts"
+    resultType="com.u1pena.estimateapi.estimate.entity.EstimateProduct">
+    SELECT * FROM estimate_products
+  </select>
+
 </mapper>

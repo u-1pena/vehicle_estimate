@@ -2,12 +2,10 @@ package com.u1pena.estimateapi.estimate.entity;
 
 import java.math.BigDecimal;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter
-@Setter
+@Data
 @Builder
 @NoArgsConstructor
 public class EstimateProduct {

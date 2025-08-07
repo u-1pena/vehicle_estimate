@@ -6,7 +6,7 @@ import com.u1pena.estimateapi.estimate.dto.response.EstimateHeaderResponse;
 import com.u1pena.estimateapi.estimate.dto.response.VehicleResponse;
 import java.time.LocalDate;
 
-public class EstimateInformationConverter {
+public class EstimateHeaderConverter {
 
   public static EstimateHeaderResponse toDto(int estimateBaseId, LocalDate estimateDate,
       CustomerResponse customer,

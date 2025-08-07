@@ -27,7 +27,7 @@ import com.u1pena.estimateapi.customer.exception.CustomerException.CustomerNotFo
 import com.u1pena.estimateapi.customer.exception.CustomerException.InvalidSearchParameterException;
 import com.u1pena.estimateapi.customer.exception.VehicleException;
 import com.u1pena.estimateapi.customer.exception.VehicleException.VehicleYearInvalidException;
-import com.u1pena.estimateapi.customer.helper.TestHelper;
+import com.u1pena.estimateapi.customer.helper.CustomerTestHelper;
 import com.u1pena.estimateapi.customer.mapper.CustomerRepository;
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -53,11 +53,11 @@ class CustomerServiceTest {
   @InjectMocks
   CustomerService customerService;
 
-  TestHelper testHelper;
+  CustomerTestHelper customerTestHelper;
 
   @BeforeEach
   void setup() {
-    testHelper = new TestHelper();
+    customerTestHelper = new CustomerTestHelper();
   }
 
   @Nested
@@ -65,9 +65,9 @@ class CustomerServiceTest {
 
     @Test
     void 指定した車両番号４桁で検索すること() {
-      Customer expectedCustomers = testHelper.customerMock().get(0);
-      CustomerAddress expectedCustomerAddress = testHelper.customerAddressMock().get(0);
-      List<Vehicle> expectedVehicles = testHelper.vehicleMock()
+      Customer expectedCustomers = customerTestHelper.customerMock().get(0);
+      CustomerAddress expectedCustomerAddress = customerTestHelper.customerAddressMock().get(0);
+      List<Vehicle> expectedVehicles = customerTestHelper.vehicleMock()
           .stream()
           .filter(vehicle -> vehicle.getCustomerId() == expectedCustomers.getCustomerId())
           .toList();
@@ -90,9 +90,9 @@ class CustomerServiceTest {
 
     @Test
     void 指定した名字や名前でユーザー情報を検索すること() {
-      Customer expectedCustomer = testHelper.customerMock().get(0);
-      CustomerAddress expectedCustomerAddress = testHelper.customerAddressMock().get(0);
-      List<Vehicle> expectedVehicles = testHelper.vehicleMock()
+      Customer expectedCustomer = customerTestHelper.customerMock().get(0);
+      CustomerAddress expectedCustomerAddress = customerTestHelper.customerAddressMock().get(0);
+      List<Vehicle> expectedVehicles = customerTestHelper.vehicleMock()
           .stream()
           .filter(vehicle -> vehicle.getCustomerId() == expectedCustomer.getCustomerId())
           .toList();
@@ -113,9 +113,9 @@ class CustomerServiceTest {
 
     @Test
     void 指定した読みかなでユーザー情報を検索すること() {
-      Customer expectedCustomer = testHelper.customerMock().get(0);
-      CustomerAddress expectedCustomerAddress = testHelper.customerAddressMock().get(0);
-      List<Vehicle> expectedVehicles = testHelper.vehicleMock()
+      Customer expectedCustomer = customerTestHelper.customerMock().get(0);
+      CustomerAddress expectedCustomerAddress = customerTestHelper.customerAddressMock().get(0);
+      List<Vehicle> expectedVehicles = customerTestHelper.vehicleMock()
           .stream()
           .filter(vehicle -> vehicle.getCustomerId() == expectedCustomer.getCustomerId())
           .toList();
@@ -136,9 +136,9 @@ class CustomerServiceTest {
 
     @Test
     void 指定したemailでユーザー情報を検索すること() {
-      Customer expectedCustomer = testHelper.customerMock().get(0);
-      CustomerAddress expectedCustomerAddress = testHelper.customerAddressMock().get(0);
-      List<Vehicle> expectedVehicles = testHelper.vehicleMock()
+      Customer expectedCustomer = customerTestHelper.customerMock().get(0);
+      CustomerAddress expectedCustomerAddress = customerTestHelper.customerAddressMock().get(0);
+      List<Vehicle> expectedVehicles = customerTestHelper.vehicleMock()
           .stream()
           .filter(vehicle -> vehicle.getCustomerId() == expectedCustomer.getCustomerId())
           .toList();
@@ -159,9 +159,9 @@ class CustomerServiceTest {
 
     @Test
     void 複数の車両情報を持つユーザーを正しく取得できること() {
-      Customer expectedCustomer = testHelper.customerMock().get(1);
-      CustomerAddress expectedCustomerAddress = testHelper.customerAddressMock().get(1);
-      List<Vehicle> expectedVehicles = testHelper.vehicleMock()
+      Customer expectedCustomer = customerTestHelper.customerMock().get(1);
+      CustomerAddress expectedCustomerAddress = customerTestHelper.customerAddressMock().get(1);
+      List<Vehicle> expectedVehicles = customerTestHelper.vehicleMock()
           .stream()
           .filter(vehicle -> vehicle.getCustomerId() == expectedCustomer.getCustomerId())
           .toList();
@@ -179,8 +179,8 @@ class CustomerServiceTest {
 
     @Test
     void 車両情報を持たないユーザーを正しく取得できること() {
-      Customer expectedCustomer = testHelper.customerMock().get(2);
-      CustomerAddress expectedCustomerAddress = testHelper.customerAddressMock().get(2);
+      Customer expectedCustomer = customerTestHelper.customerMock().get(2);
+      CustomerAddress expectedCustomerAddress = customerTestHelper.customerAddressMock().get(2);
       List<Vehicle> expectedVehicles = Collections.emptyList();
 
       doReturn(Optional.of(expectedCustomer)).when(customerRepository).findCustomerByCustomerId(3);
@@ -304,8 +304,8 @@ class CustomerServiceTest {
     public void 顧客を登録できること() {
 
       //準備
-      CustomerCreateRequest customerCreateRequest = testHelper.customerCreateRequestMock();
-      Customer expectedCustomer = testHelper.customerCreateMock();
+      CustomerCreateRequest customerCreateRequest = customerTestHelper.customerCreateRequestMock();
+      Customer expectedCustomer = customerTestHelper.customerCreateMock();
 
       //モックの振る舞いを設定
       when(customerRepository.findCustomerByEmail(customerCreateRequest.getEmail())).thenReturn(
@@ -328,8 +328,8 @@ class CustomerServiceTest {
     @Test
     void Eメールがすでに登録されていた場合顧客登録ができずエラーが発生すること() {
       //準備
-      CustomerCreateRequest customerCreateRequest = testHelper.customerCreateRequestMock();
-      Customer expectedCustomer = testHelper.customerCreateMock();
+      CustomerCreateRequest customerCreateRequest = customerTestHelper.customerCreateRequestMock();
+      Customer expectedCustomer = customerTestHelper.customerCreateMock();
 
       //モックの振る舞いを設定
       when(customerRepository.findCustomerByEmail(customerCreateRequest.getEmail())).thenReturn(
@@ -349,8 +349,8 @@ class CustomerServiceTest {
     @Test
     void 電話番号がすでに登録されていた場合顧客登録ができずエラーが発生すること() {
       //準備
-      CustomerCreateRequest customerCreateRequest = testHelper.customerCreateRequestMock();
-      Customer expectedCustomer = testHelper.customerCreateMock();
+      CustomerCreateRequest customerCreateRequest = customerTestHelper.customerCreateRequestMock();
+      Customer expectedCustomer = customerTestHelper.customerCreateMock();
 
       //モックの振る舞いを設定
       when(customerRepository.findCustomerByPhoneNumber(customerCreateRequest.getPhoneNumber()))
@@ -370,9 +370,10 @@ class CustomerServiceTest {
 
     @Test
     void 顧客住所をIDに紐づけて登録できること() {
-      Customer customer = testHelper.customerMock().get(0);
-      CustomerAddress expectedCustomerAddress = testHelper.customerAddressCreateMock(customer);
-      CustomerAddressCreateRequest customerAddressCreateRequest = testHelper.customerAddressCreateRequestMock();
+      Customer customer = customerTestHelper.customerMock().get(0);
+      CustomerAddress expectedCustomerAddress = customerTestHelper.customerAddressCreateMock(
+          customer);
+      CustomerAddressCreateRequest customerAddressCreateRequest = customerTestHelper.customerAddressCreateRequestMock();
 
       //モックの振る舞いを設定
       doReturn(Optional.of(customer)).when(customerRepository)
@@ -403,7 +404,7 @@ class CustomerServiceTest {
     @Test
     void 顧客登録されていないIDで住所を登録しようとするとエラーが発生すること() {
       //準備
-      CustomerAddressCreateRequest customerAddressCreateRequest = testHelper.customerAddressCreateRequestMock();
+      CustomerAddressCreateRequest customerAddressCreateRequest = customerTestHelper.customerAddressCreateRequestMock();
 
       //モックの振る舞いを設定
       doReturn(Optional.empty()).when(customerRepository).findCustomerByCustomerId(0);
@@ -421,9 +422,10 @@ class CustomerServiceTest {
     @Test
     void 顧客住所がすでに登録されていたIDで登録しようとするとエラーが発生すること() {
       //準備
-      Customer expectedUser = testHelper.customerMock().get(0);
-      CustomerAddressCreateRequest customerAddressCreateRequest = testHelper.customerAddressCreateRequestMock();
-      CustomerAddress expectedCustomerAddress = testHelper.customerAddressCreateMock(expectedUser);
+      Customer expectedUser = customerTestHelper.customerMock().get(0);
+      CustomerAddressCreateRequest customerAddressCreateRequest = customerTestHelper.customerAddressCreateRequestMock();
+      CustomerAddress expectedCustomerAddress = customerTestHelper.customerAddressCreateMock(
+          expectedUser);
 
       //モックの振る舞いを設定
       doReturn(Optional.of(expectedUser)).when(customerRepository)
@@ -461,9 +463,9 @@ class CustomerServiceTest {
     void 車両番号が重複していなければ車両情報が登録できること() {
 
       //準備
-      Customer expectedCustomer = testHelper.customerMock().get(0);
-      Vehicle expectedVehicle = testHelper.vehicleMock().get(0);
-      VehicleCreateRequest vehicleCreateRequest = testHelper.vehicleCreateRequestMock();
+      Customer expectedCustomer = customerTestHelper.customerMock().get(0);
+      Vehicle expectedVehicle = customerTestHelper.vehicleMock().get(0);
+      VehicleCreateRequest vehicleCreateRequest = customerTestHelper.vehicleCreateRequestMock();
 
       //モックの振る舞いを設定
       doReturn(Optional.of(expectedCustomer)).when(customerRepository)
@@ -492,8 +494,8 @@ class CustomerServiceTest {
     @Test
     void 車両年式が未来の場合エラーが発生すること() {
       //準備
-      Customer expectedCustomer = testHelper.customerMock().get(0);
-      VehicleCreateRequest vehicleCreateRequest = testHelper.vehicleCreateRequestMock();
+      Customer expectedCustomer = customerTestHelper.customerMock().get(0);
+      VehicleCreateRequest vehicleCreateRequest = customerTestHelper.vehicleCreateRequestMock();
       vehicleCreateRequest.setYear("2028-01");
 
       //モックの振る舞いを設定
@@ -534,7 +536,7 @@ class CustomerServiceTest {
     @Test
     void 顧客情報を削除できること() {
       //準備
-      Customer expectedCustomer = testHelper.customerMock().get(0);
+      Customer expectedCustomer = customerTestHelper.customerMock().get(0);
       doReturn(Optional.of(expectedCustomer)).when(customerRepository)
           .findCustomerByCustomerId(expectedCustomer.getCustomerId());
       doNothing().when(customerRepository).deleteCustomer(expectedCustomer.getCustomerId());
@@ -551,7 +553,7 @@ class CustomerServiceTest {
     @Test
     void 車両情報を非アクティブにして削除できること() {
       //準備
-      Vehicle expectedVehicle = testHelper.vehicleMock().get(0);
+      Vehicle expectedVehicle = customerTestHelper.vehicleMock().get(0);
       doReturn(Optional.of(expectedVehicle)).when(customerRepository)
           .findVehicleByVehicleId(expectedVehicle.getVehicleId());
       doNothing().when(customerRepository).deactivateVehicle(expectedVehicle.getVehicleId());
