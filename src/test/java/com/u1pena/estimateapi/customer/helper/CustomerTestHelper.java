@@ -27,11 +27,11 @@ public class CustomerTestHelper {
    */
   public List<Customer> customerMock() {
     return List.of(
-        new Customer(1, "suzuki", "ichiro", "ｽｽﾞｷ",
-            "ｲﾁﾛｳ", "ichiro@example.com", "090-1234-5678"),
-        new Customer(2, "sato", "hanako", "ｻﾄｳ", "ﾊﾅｺ",
+        new Customer(1, "suzuki", "ichiro", "スズキ",
+            "イチロウ", "ichiro@example.com", "090-1234-5678"),
+        new Customer(2, "sato", "hanako", "サトウ", "ハナコ",
             "hanako@example.ne.jp", "080-1234-5678"),
-        new Customer(3, "tanaka", "taro", "ﾀﾅｶ", "ﾀﾛｳ",
+        new Customer(3, "tanaka", "taro", "タナカ", "タロウ",
             "taro@example.ne.jp", "070-1234-5678"));
   }
 

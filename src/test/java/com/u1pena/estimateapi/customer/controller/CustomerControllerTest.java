@@ -99,8 +99,8 @@ class CustomerControllerTest {
                               "customerId": 1,
                               "lastName": "suzuki",
                               "firstName": "ichiro",
-                              "lastNameKana": "ｽｽﾞｷ",
-                              "firstNameKana": "ｲﾁﾛｳ",
+                              "lastNameKana": "スズキ",
+                              "firstNameKana": "イチロウ",
                               "email": "ichiro@example.com",
                               "phoneNumber": "090-1234-5678"
                           },
@@ -158,9 +158,9 @@ class CustomerControllerTest {
       List<CustomerInformationRequest> expected = List.of(customerInformationRequest);
 
       doReturn(expected).when(customerService)
-          .findCustomerInformation(null, "ｽｽﾞｷ", null);
+          .findCustomerInformation(null, "スズキ", null);
       mockMvc.perform(MockMvcRequestBuilders.get("/customers")
-              .param("kana", "ｽｽﾞｷ"))
+              .param("kana", "スズキ"))
           .andExpect(status().isOk())
           .andExpect(MockMvcResultMatchers.content().json(
               """
@@ -170,8 +170,8 @@ class CustomerControllerTest {
                               "customerId": 1,
                               "lastName": "suzuki",
                               "firstName": "ichiro",
-                              "lastNameKana": "ｽｽﾞｷ",
-                              "firstNameKana": "ｲﾁﾛｳ",
+                              "lastNameKana": "スズキ",
+                              "firstNameKana": "イチロウ",
                               "email": "ichiro@example.com",
                               "phoneNumber": "090-1234-5678"
                           },
@@ -240,8 +240,8 @@ class CustomerControllerTest {
                               "customerId": 1,
                               "lastName": "suzuki",
                               "firstName": "ichiro",
-                              "lastNameKana": "ｽｽﾞｷ",
-                              "firstNameKana": "ｲﾁﾛｳ",
+                              "lastNameKana": "スズキ",
+                              "firstNameKana": "イチロウ",
                               "email": "ichiro@example.com",
                               "phoneNumber": "090-1234-5678"
                           },
@@ -310,8 +310,8 @@ class CustomerControllerTest {
                               "customerId": 1,
                               "lastName": "suzuki",
                               "firstName": "ichiro",
-                              "lastNameKana": "ｽｽﾞｷ",
-                              "firstNameKana": "ｲﾁﾛｳ",
+                              "lastNameKana": "スズキ",
+                              "firstNameKana": "イチロウ",
                               "email": "ichiro@example.com",
                               "phoneNumber": "090-1234-5678"
                           },

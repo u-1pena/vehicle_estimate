@@ -74,7 +74,7 @@ class CustomerRepositoryTest {
 
     @Test
     void 読みがなで顧客情報を検索することができる() {
-      List<Customer> actual = customerRepository.findCustomerByNameKana("ｽｽﾞｷ");
+      List<Customer> actual = customerRepository.findCustomerByNameKana("スズキ");
       Customer expected = customerTestHelper.customerMock().get(0);
       assertThat(actual).contains(expected);
       assertThat(actual.size()).isEqualTo(1);

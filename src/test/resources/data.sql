@@ -1,6 +1,6 @@
-INSERT INTO customers VALUES (1, 'suzuki', 'ichiro', 'ｽｽﾞｷ', 'ｲﾁﾛｳ', 'ichiro@example.com', '090-1234-5678');
+INSERT INTO customers VALUES (1, 'suzuki', 'ichiro', 'スズキ', 'イチロウ', 'ichiro@example.com', '090-1234-5678');
 
-INSERT INTO customers VALUES (2, 'sato', 'hanako', 'ｻﾄｳ', 'ﾊﾅｺ','hanako@example.ne.jp', '080-1234-5678');
+INSERT INTO customers VALUES (2, 'sato', 'hanako', 'サトウ', 'ハナコ','hanako@example.ne.jp', '080-1234-5678');
 
 INSERT INTO customer_addresses VALUES (1, 1, '123-4567', '東京都', '港区', '六本木1-1-1', '都心ビル101号室');
 

@@ -91,7 +91,7 @@ class EstimateControllerTest {
                           "estimateDate": "2025-01-01",
                           "customer": {
                               "fullName": "suzuki ichiro",
-                              "fullNameKana": "ｽｽﾞｷ ｲﾁﾛｳ",
+                              "fullNameKana": "スズキ イチロウ",
                               "email": "ichiro@example.com",
                               "phoneNumber": "090-1234-5678"
                           },

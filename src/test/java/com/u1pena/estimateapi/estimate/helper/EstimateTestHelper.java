@@ -42,7 +42,7 @@ public class EstimateTestHelper {
   public CustomerResponse customerResponseMock() {
     CustomerResponse customerResponse = CustomerResponse.builder()
         .fullName("suzuki ichiro")
-        .fullNameKana("ｽｽﾞｷ ｲﾁﾛｳ")
+        .fullNameKana("スズキ イチロウ")
         .email("ichiro@example.com")
         .phoneNumber("090-1234-5678")
         .build();
