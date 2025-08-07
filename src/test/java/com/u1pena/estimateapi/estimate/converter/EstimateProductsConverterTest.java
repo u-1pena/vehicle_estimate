@@ -1,7 +1,6 @@
 package com.u1pena.estimateapi.estimate.converter;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.u1pena.estimateapi.estimate.dto.EstimateProductJoinResult;
 import com.u1pena.estimateapi.estimate.dto.response.EstimateProductResponse;
@@ -43,6 +42,6 @@ class EstimateProductsConverterTest {
     assertThat(actual.getUnitPrice()).isEqualByComparingTo(estimateProductResponse.getUnitPrice());
     assertThat(actual.getTotalPrice()).isEqualByComparingTo(
         estimateProductResponse.getTotalPrice());
-    assertTrue(actual.getTotalPrice().compareTo(BigDecimal.ZERO) > 0, "合計金額は正の値であるべき");
+    assertThat(actual.getTotalPrice()).isEqualByComparingTo(BigDecimal.valueOf(2000));
   }
 }

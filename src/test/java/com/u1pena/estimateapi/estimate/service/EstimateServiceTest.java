@@ -370,7 +370,7 @@ class EstimateServiceTest {
       EstimateBase estimateBase = estimateTestHelper.estimateBaseMock();
       Product product = masterTestHelper.productOilMock().get(0);
       GuideProductPermission guideProductPermission = estimateTestHelper.guideProductPermissionMock();
-      doReturnEstimateProductRegisterStub(estimateBase, product, guideProductPermission);
+      setupEstimateProductRegistrationMocks(estimateBase, product, guideProductPermission);
 
       // 実行
       estimateService.registerEstimateProduct(1, estimateProductCreateRequest);
@@ -405,7 +405,7 @@ class EstimateServiceTest {
           .autoAdjustQuantity(true)
           .build();
 
-      doReturnEstimateProductRegisterStub(estimateBase, product, guideProductPermission);
+      setupEstimateProductRegistrationMocks(estimateBase, product, guideProductPermission);
       doReturn(true).when(estimateRepository)
           .existOilFilterProductsByEstimateBaseId(estimateBase.getEstimateBaseId());
 
@@ -438,7 +438,7 @@ class EstimateServiceTest {
       EstimateBase estimateBase = estimateTestHelper.estimateBaseMock();
       Product product = masterTestHelper.productOilMock().get(0);
       GuideProductPermission guideProductPermission = estimateTestHelper.guideProductPermissionMock();
-      doReturnEstimateProductRegisterStub(estimateBase, product, guideProductPermission);
+      setupEstimateProductRegistrationMocks(estimateBase, product, guideProductPermission);
 
       // 実行
       estimateService.registerEstimateProduct(1, estimateProductCreateRequest);
@@ -472,7 +472,7 @@ class EstimateServiceTest {
           .quantity(1.0)
           .autoAdjustQuantity(true)
           .build();
-      doReturnEstimateProductRegisterStub(estimateBase, product, guideProductPermission);
+      setupEstimateProductRegistrationMocks(estimateBase, product, guideProductPermission);
       doReturn(false).when(estimateRepository)
           .existOilFilterProductsByEstimateBaseId(estimateBase.getEstimateBaseId());
       // 実行
@@ -507,7 +507,7 @@ class EstimateServiceTest {
           .quantity(1.0)
           .autoAdjustQuantity(true)
           .build();
-      doReturnEstimateProductRegisterStub(estimateBase, product, guideProductPermission);
+      setupEstimateProductRegistrationMocks(estimateBase, product, guideProductPermission);
       doReturn(1).when(estimateRepository)
           .findProductWithOilCategoryByEstimateBaseId(estimateBase.getEstimateBaseId());
       doReturn(true).when(estimateRepository)
@@ -552,7 +552,7 @@ class EstimateServiceTest {
           .quantity(3.0)
           .autoAdjustQuantity(true)
           .build();
-      doReturnEstimateProductRegisterStub(estimateBase, product, guideProductPermission);
+      setupEstimateProductRegistrationMocks(estimateBase, product, guideProductPermission);
       doReturn(true).when(estimateRepository)
           .existOilProductsByEstimateBaseId(estimateBase.getEstimateBaseId());
 
@@ -583,7 +583,7 @@ class EstimateServiceTest {
           .quantity(1.0)
           .autoAdjustQuantity(true)
           .build();
-      doReturnEstimateProductRegisterStub(estimateBase, product, guideProductPermission);
+      setupEstimateProductRegistrationMocks(estimateBase, product, guideProductPermission);
       doReturn(true).when(estimateRepository)
           .existOilFilterProductsByEstimateBaseId(estimateBase.getEstimateBaseId());
       // 実行
@@ -597,7 +597,7 @@ class EstimateServiceTest {
           estimateBase.getEstimateBaseId());
     }
 
-    private void doReturnEstimateProductRegisterStub(
+    private void setupEstimateProductRegistrationMocks(
         EstimateBase estimateBase, Product product, GuideProductPermission guideProductPermission) {
       doReturn(Optional.of(estimateBase)).when(estimateRepository)
           .findEstimateBaseById(estimateBase.getEstimateBaseId());
@@ -672,7 +672,7 @@ class EstimateServiceTest {
       EstimateBase estimateBase = estimateTestHelper.estimateBaseMock();
       Product product = masterTestHelper.productOilMock().get(0);
       GuideProductPermission guideProductPermission = estimateTestHelper.guideProductPermissionMock();
-      doReturnEstimateProductRegisterStub(estimateBase, product, guideProductPermission);
+      setupEstimateProductRegistrationMocks(estimateBase, product, guideProductPermission);
       doReturn(true).when(estimateRepository)
           .existOilProductsByEstimateBaseId(estimateBase.getEstimateBaseId());
 
@@ -696,7 +696,7 @@ class EstimateServiceTest {
       EstimateBase estimateBase = estimateTestHelper.estimateBaseMock();
       Product product = masterTestHelper.productOilFilterMock().get(0);
       GuideProductPermission guideProductPermission = estimateTestHelper.guideProductPermissionMock();
-      doReturnEstimateProductRegisterStub(estimateBase, product, guideProductPermission);
+      setupEstimateProductRegistrationMocks(estimateBase, product, guideProductPermission);
       doReturn(true).when(estimateRepository)
           .existOilFilterProductsByEstimateBaseId(estimateBase.getEstimateBaseId());
 
