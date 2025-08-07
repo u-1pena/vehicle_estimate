@@ -1,4 +1,4 @@
-INSERT INTO customers VALUES (1, 'suzuki', 'ichiro', 'ｽｽﾞｷ','ｲﾁﾛｳ', 'ichiro@example.com', '090-1234-5678');
+INSERT INTO customers VALUES (1, 'suzuki', 'ichiro', 'ｽｽﾞｷ', 'ｲﾁﾛｳ', 'ichiro@example.com', '090-1234-5678');
 
 INSERT INTO customers VALUES (2, 'sato', 'hanako', 'ｻﾄｳ', 'ﾊﾅｺ','hanako@example.ne.jp', '080-1234-5678');
 
